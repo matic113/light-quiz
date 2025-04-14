@@ -1,0 +1,77 @@
+<div class="max-h-screen flex items-center justify-center mt-25">
+    <div class="flex flex-col md:flex-row w-full max-w-10xl bg-white shadow-lg rounded-lg overflow-hidden">
+  
+      <!-- جزء الصورة -->
+      <div class="w-full md:w-1/2 hidden md:flex items-center justify-center bg-white">
+        <img 
+          src="../../../assets/images/ChatGPT Image 14 أبريل 2025، 02_04_38 م.png" 
+          alt="Exam Portal"
+          class="w-full h-full object-cover"
+        >
+      </div>
+  
+      <!-- نموذج تسجيل الدخول -->
+      <div class="w-full md:w-1/2 flex items-center justify-center p-8">
+        <div class="w-full max-w-md">
+  
+          <h2 class="text-2xl font-bold text-green-600 mb-2 text-center">
+            <i class="fas fa-right-to-bracket mr-2"></i>Log In
+          </h2>
+          <p class="text-gray-600 text-center mb-6">Welcome back! Please sign in to continue</p>
+  
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+            <!-- Email Field -->
+            <div class="mb-4">
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Email</mat-label>
+                <input 
+                  type="email" 
+                  matInput 
+                  formControlName="email" 
+                  placeholder="Enter your email"
+                >
+                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                  Email is <strong>required</strong>
+                </mat-error>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                  Invalid email format
+                </mat-error>
+              </mat-form-field>
+            </div>
+  
+            <!-- Password Field -->
+            <div class="mb-4">
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Password</mat-label>
+                <input 
+                  type="password" 
+                  matInput 
+                  formControlName="password" 
+                  placeholder="Enter your password"
+                >
+                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                  Password is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            
+            <!-- رابط التسجيل -->
+            <div class="text-left mb-4">
+              <a routerLink="/register" class="text-sm text-green-600 hover:underline">
+                Don't have an account? Sign Up
+              </a>
+            </div>
+  
+            <!-- زر الدخول -->
+            <button 
+              type="submit"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
+              [disabled]="!loginForm.valid"
+            >
+              Sign in
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

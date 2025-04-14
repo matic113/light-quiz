@@ -1,0 +1,78 @@
+/* login.component.css */
+
+/* Remove default margins and padding from page */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Ensure full width and height */
+.w-screen {
+  width: 100vw;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+/* Remove underline from Material form fields */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline {
+  display: none !important;
+}
+
+/* Customize form field appearance */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: white !important;
+  padding: 0.75em 0.75em 0 0.75em !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Remove extra padding from form field wrapper */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Adjust input field infix padding */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: 0.5em 0 !important;
+  border-top: none !important;
+}
+
+/* Style focused state of form fields */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-flex {
+  border-color: #48bb78 !important;
+  box-shadow: 0 0 0 1px rgba(72, 187, 120, 0.2) !important;
+}
+
+/* Customize label color and size */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-label {
+  color: #4a5568 !important;
+  font-size: 0.875rem !important;
+}
+
+/* Customize focused label color */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  color: #48bb78 !important;
+}
+
+/* Improve error message styling */
+::ng-deep .mat-error {
+  font-size: 0.75rem !important;
+  margin-top: 0.25rem !important;
+}
+
+/* Media query for small devices */
+@media (max-width: 768px) {
+  .w-full {
+    height: 100%;
+  }
+  
+  .p-8 {
+    padding: 1.5rem;
+  }
+}
