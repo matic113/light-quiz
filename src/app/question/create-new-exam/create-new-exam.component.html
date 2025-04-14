@@ -1,7 +1,347 @@
-<p class="text-red-500">create-new-exam works!</p>
-
-<button routerLink="/enter" 
+<!-- <button routerLink="/enter" 
         class="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition">
     Go to Enter Questions
-</button>
+</button> -->
 
+
+<div class="min-h-screen py-10 px-4 md:px-20">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Step 1 create exam-->
+    <ng-container *ngIf="currentStep === 1">
+      <!-- Header Section -->
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">Create New Exam</h2>
+          <p class="text-sm text-gray-400">Please complete the form below to set up your new exam details.</p>
+        </div>
+        <button (click)="nextStep()" type="button"
+          class="bg-green-800 hover:bg-green-700 text-white font-semibold px-15 py-2 rounded-lg transition-all">
+          Next
+        </button>
+      </div>
+
+      <!-- Exam Card -->
+      <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
+        <div class="mb-6">
+          <h3 class="flex items-center gap-2 text-lg font-semibold text-black">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12h6m2 6H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2z" />
+            </svg>
+            Exam Details
+          </h3>
+        </div>
+
+        <form class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Exam Title</label>
+            <input type="text" placeholder="Enter exam title"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea rows="4" placeholder="Enter Exam Description"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 items-center">
+            <div class="w-full">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Total Marks</label>
+              <input type="number" value="" placeholder="100"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <input type="date"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+              <input type="time"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Minutes)</label>
+              <input type="number" value="" placeholder="120"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!--   Exam Type Card -->
+      <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-black mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5h6M9 12h6m-6 7h6" />
+          </svg>
+          Exam Type
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button
+            class="border-2 border-purple-500 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
+            <div class="bg-purple-100 text-black rounded-full p-2">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11h2v5h-2V7zm0 6h2v2h-2v-2z" />
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Multiple Choice</span>
+          </button>
+          <button
+            class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
+            <div class="bg-purple-100 text-purple-500 rounded-full p-2">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h4v-2H4V5h12v10h-4v2h4a2 2 0 002-2V5a2 2 0 00-2-2H4z" />
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Subjective</span>
+          </button>
+          <button
+            class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
+            <div class="bg-purple-100 text-green-500 rounded-full p-2">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9h4v2H8V9z" />
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700">Mixed</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Grading Preferences Card -->
+      <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
+        <h3 class="flex items-center gap-2 text-lg font-semibold text-black mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h2l1 2h10l1-2h2" />
+          </svg>
+          AI Grading Preferences
+        </h3>
+        <div class="flex items-center justify-between px-4 py-3 border border-gray-200 rounded-xl">
+          <div>
+            <p class="font-medium text-gray-800">Enable AI Auto-grading</p>
+            <p class="text-sm text-gray-500">Let AI handle the grading process automatically</p>
+          </div>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="checkbox" checked class="sr-only">
+            <div class="w-11 h-6 bg-purple-200 rounded-full peer dark:bg-gray-700 relative">
+              <div class="absolute left-1 top-1 bg-black w-4 h-4 rounded-full transition-all"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- Step 2 create qs -->
+    <ng-container *ngIf="currentStep === 2">
+
+
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Enter Questions</h2>
+        <div class="space-x-4">
+          <button class="bg-green-800 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg">Add New
+            Question</button>
+          <button (click)="nextStep()" type="button"
+            class="bg-green-800 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg">Next</button>
+        </div>
+      </div>
+
+      <!-- Multiple Choice Question -->
+      <div class="bg-white p-6 rounded-2xl shadow-md mb-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Question Category</label>
+          <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+            <option>Multiple Choice</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
+          <textarea placeholder="Enter your question here.." rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Answer Options</label>
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <input type="radio" checked class="text-purple-600">
+              <input type="text" value="Option 1" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
+              <button class="text-gray-400 hover:text-red-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="radio" class="text-purple-600">
+              <input type="text" value="Option 1" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
+              <button class="text-gray-400 hover:text-red-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <button class="text-purple-600 text-sm mt-1">+ Add Option</button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Points</label>
+          <div class="flex items-center gap-2 w-40">
+            <input type="text" value="5points" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <button class="px-2 text-lg">-</button>
+            <button class="px-2 text-lg">+</button>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-4">
+          <button class="text-gray-400">Discard</button>
+          <button class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-2 rounded-lg">Save
+            Question</button>
+        </div>
+      </div>
+
+      <!-- Subjective Question -->
+      <div class="bg-white p-6 rounded-2xl shadow-md">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Question Category</label>
+          <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+            <option>Subjective</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
+          <textarea placeholder="Enter your question here.." rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Model Answer</label>
+          <textarea placeholder="Enter the expected answer here..." rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Points</label>
+          <div class="flex items-center gap-2 w-40">
+            <input type="text" value="25 points" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <button class="px-2 text-lg">-</button>
+            <button class="px-2 text-lg">+</button>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-4">
+          <button class="text-gray-400">Discard</button>
+          <button class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-2 rounded-lg">Save
+            Question</button>
+        </div>
+      </div>
+
+
+    </ng-container>
+
+
+    <!-- Step 3 review -->
+    <ng-container *ngIf="currentStep === 3">
+
+
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Review & Order</h2>
+        <button (click)="nextStep()"
+          class="bg-green-800 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg">Confirm</button>
+      </div>
+
+      <!-- Question List -->
+      <div cdkDropList (cdkDropListDropped)="drop($event)" class="space-y-4">
+        <div *ngFor="let item of questions; let i = index" cdkDrag
+          class="flex items-center justify-between bg-white rounded-2xl shadow-sm p-4">
+          <div class="flex items-center gap-4">
+            <div class="text-xl font-bold text-gray-700">{{ i + 1 }}</div>
+            <div>
+              <div class="font-bold text-lg text-right">{{ item.title }}</div>
+              <div class="flex gap-2 mt-1">
+                <span class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 font-semibold">{{ item.type
+                  }}</span>
+                <span class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 font-semibold">{{ item.points }}
+                  Points</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <button class="text-green-700 hover:text-green-900">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.414 2.586a2 2 0 010 2.828L9 13.828l-4 1 1-4L15.586 2.586a2 2 0 012.828 0z" />
+              </svg>
+            </button>
+            <button class="text-red-600 hover:text-red-800">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h1v11a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 5a1 1 0 012 0v8a1 1 0 11-2 0V7zm4 0a1 1 0 012 0v8a1 1 0 11-2 0V7z" />
+              </svg>
+            </button>
+            <button class="text-black">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+
+    <!-- Step 4 link exam -->
+    <ng-container *ngIf="currentStep === 4">
+      <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-sm">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Exam Information</h2>
+        <div class="flex justify-center mb-6">
+          <img src="../../assets/images/exam created.png" alt="Exam illustration" class="w-80 h-80 object-contain" />
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md">
+            <div class="flex items-center">
+              <span class="font-semibold text-gray-700 mr-2">Exam Link:</span>
+              <span class="text-sm font-semibold text-gray-900">https://bascb/id</span>
+            </div>
+            <button class="text-green-800">
+              <img src="../../assets/images/Copy.png" alt="Exam illustration" class="w-18 h-6 object-contain" />
+            </button>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-md">
+            <span class="font-semibold text-gray-700">Exam Name:</span>
+            <span class="font-bold text-gray-900"> PLC Quiz II</span>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-md">
+            <span class="font-semibold text-gray-700">Total marks:</span>
+            <span class="font-bold text-gray-900">130 Points</span>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-md flex items-center">
+            <div class="flex items-center flex-grow">
+              <span class="font-semibold text-gray-700 mr-2">Date:</span>
+              <span class="text-gray-800">23-3-2025 | 12:45</span>
+            </div>
+            <span class="text-green-700 text-xs bg-green-100 px-2 py-1 rounded-md font-semibold ml-auto">30 m</span>
+          </div>
+        </div>
+      </div>
+
+
+    </ng-container>
+
+
+  </div>
+</div>
