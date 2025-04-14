@@ -21,7 +21,7 @@
         </button>
       </div>
 
-      <!-- Exam Card -->
+      <!-- Exam data Card -->
       <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
         <div class="mb-6">
           <h3 class="flex items-center gap-2 text-lg font-semibold text-black">
@@ -36,20 +36,21 @@
         <form class="space-y-6">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Exam Title</label>
-            <input type="text" placeholder="Enter exam title"
+            <input type="text" [(ngModel)]="examData.title" name="title" placeholder="Enter exam title"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea rows="4" placeholder="Enter Exam Description"
+            <textarea [(ngModel)]="examData.description" name="description" rows="4"
+              placeholder="Enter Exam Description"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"></textarea>
           </div>
 
           <div class="flex flex-col sm:flex-row gap-4 items-center">
             <div class="w-full">
               <label class="block text-sm font-medium text-gray-700 mb-1">Total Marks</label>
-              <input type="number" value="" placeholder="100"
+              <input type="number" [(ngModel)]="examData.totalMarks" name="total" value="" placeholder="100"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
             </div>
           </div>
@@ -57,17 +58,17 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-              <input type="date"
+              <input [(ngModel)]="examData.date" name="date" type="date"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-              <input type="time"
+              <input [(ngModel)]="examData.time" name="time" type="time"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Minutes)</label>
-              <input type="number" value="" placeholder="120"
+              <input [(ngModel)]="examData.duration" name="duration" type="number" value="" placeholder="120"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
             </div>
           </div>
@@ -83,8 +84,9 @@
           Exam Type
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button
-            class="border-2 border-purple-500 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
+          <button (click)="examData.exam_type = 'Multiple Choice'"
+            [class.border-purple-500]="examData.exam_type === 'Multiple Choice'"
+            class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
             <div class="bg-purple-100 text-black rounded-full p-2">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11h2v5h-2V7zm0 6h2v2h-2v-2z" />
@@ -92,7 +94,8 @@
             </div>
             <span class="text-sm font-medium text-gray-700">Multiple Choice</span>
           </button>
-          <button
+          <button (click)="examData.exam_type = 'Short Answer'"
+            [class.border-purple-500]="examData.exam_type === 'Short Answer'"
             class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
             <div class="bg-purple-100 text-purple-500 rounded-full p-2">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -101,7 +104,7 @@
             </div>
             <span class="text-sm font-medium text-gray-700">Subjective</span>
           </button>
-          <button
+          <button (click)="examData.exam_type = 'Mixed'" [class.border-purple-500]="examData.exam_type === 'Mixed'"
             class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
             <div class="bg-purple-100 text-green-500 rounded-full p-2">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -262,12 +265,12 @@
 
       <!-- Question List -->
       <div cdkDropList (cdkDropListDropped)="drop($event)" class="space-y-4">
-        <div *ngFor="let item of questions; let i = index" cdkDrag
+        <div *ngFor="let item of examData.questions; let i = index" cdkDrag
           class="flex items-center justify-between bg-white rounded-2xl shadow-sm p-4">
           <div class="flex items-center gap-4">
             <div class="text-xl font-bold text-gray-700">{{ i + 1 }}</div>
             <div>
-              <div class="font-bold text-lg text-right">{{ item.title }}</div>
+              <div class="font-bold text-lg text-right">{{ item.q }}</div>
               <div class="flex gap-2 mt-1">
                 <span class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 font-semibold">{{ item.type
                   }}</span>
@@ -305,7 +308,7 @@
       <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-sm">
         <h2 class="text-lg font-bold text-gray-800 mb-4">Exam Information</h2>
         <div class="flex justify-center mb-6">
-          <img src="../../assets/images/exam created.png" alt="Exam illustration" class="w-80 h-80 object-contain" />
+          <img src="../../assets/images/exam_created.png" alt="Exam illustration" class="w-80 h-80 object-contain" />
         </div>
 
         <div class="space-y-3">
