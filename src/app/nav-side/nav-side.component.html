@@ -1,71 +1,77 @@
 <mat-drawer-container class="h-screen flex overflow-x-hidden">
-    <!-- Side Drawer -->
-    <mat-drawer #drawer [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile"
-        class="relative text-white p-4" style="width: 280px; background-color: #1b593b;">
-        
-      <!-- Close Button fixed at the extreme left of the drawer (separated from the logo) -->
-      <button *ngIf="isMobile" mat-icon-button 
-        class="absolute left-0 top-4 ml-2 text-white"
-        (click)="drawer.close()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      
-      <!-- Logo and Title with left margin to avoid overlapping with the close button -->
-      <div class="flex items-center gap-4 mb-6 mt-5 ms-7">
-        <img src="../../assets/images/png-transparent-light 1.png" alt="Logo"
-            class="w-20 h-20 object-contain rounded-lg animate-glow">
-        <h3 class="text-4xl font-bold text-white">Light Quiz</h3>
-      </div>
-  
-      <!-- Navigation List -->
-      <mat-nav-list class="transform translate-x-4 translate-y-7">
-        <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-          <span class="text-white text-2xl tracking-wide">📊 Dashboard</span>
-        </a>
-        <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-          <span class="text-white text-2xl tracking-wide">📅 Schedule</span>
-        </a>
-        <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-          <span class="text-white text-2xl tracking-wide">🏆 Results</span>
-        </a>
-        <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-          <span class="text-white text-2xl tracking-wide">👥 Groups</span>
-        </a>
-        <a mat-list-item routerLink="create" routerLinkActive="active"
-            class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-            <span class="text-white text-2xl tracking-wide">❓ Questions</span>
-        </a>
-        <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-            <span class="text-white text-2xl tracking-wide">📑 Marks</span>
-        </a>
-        <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
-            <span class="text-white text-2xl tracking-wide">🔔 Notifications</span>
-        </a>
-      </mat-nav-list>
-    </mat-drawer>
-  
-    <!-- Main Content -->
-    <div class="flex flex-col flex-grow">
+
+  <!-- Side Drawer -->
+  <mat-drawer #drawer [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" class="relative text-white p-4"
+    style="width: 280px; background-color: #1b593b;">
+    <!-- Close Button fixed at the extreme left of the drawer (separated from the logo) -->
+    <button *ngIf="isMobile" mat-icon-button class="absolute left-0 top-4 ml-2 text-white" (click)="drawer.close()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- Logo and Title with left margin to avoid overlapping with the close button -->
+    <div class="flex items-center gap-4 mb-6 mt-5 ms-7">
+      <img src="../../assets/images/png-transparent-light 1.png" alt="Logo"
+        class="w-20 h-20 object-contain rounded-lg animate-glow">
+      <h3 class="text-4xl font-bold text-white">Light Quiz</h3>
+    </div>
+
+    <!-- Navigation List -->
+    <mat-nav-list class="transform translate-x-4 translate-y-7">
+      <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">📊 Dashboard</span>
+      </a>
+      <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">📅 Schedule</span>
+      </a>
+      <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">🏆 Results</span>
+      </a>
+      <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">👥 Groups</span>
+      </a>
+      <a mat-list-item routerLink="create" routerLinkActive="active"
+        class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">❓ Questions</span>
+      </a>
+      <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">📑 Marks</span>
+      </a>
+      <a mat-list-item href="#" class="flex items-center gap-3 py-3 p-3 hover:bg-green-700 rounded">
+        <span class="text-white text-2xl tracking-wide">🔔 Notifications</span>
+      </a>
+    </mat-nav-list>
+  </mat-drawer>
+
+  <!-- Main Content -->
+  <div class="flex flex-col flex-grow" style="background-color: #FAFBFD;">
+
+    <div class="flex flex-col flex-grow" style="background-color: #FAFBFD;">
       <!-- Top Navbar -->
-      <mat-toolbar color="primary" class="shadow-md px-4 flex justify-between items-center">
+      <mat-toolbar color="primary" style="background-color: white;"
+        class="shadow-md px-4 flex justify-between items-center">
+
         <!-- Left container for menu button and text -->
         <div class="flex items-center gap-2">
           <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
             <mat-icon>menu</mat-icon>
           </button>
         </div>
-        <!-- Avatar on the right -->
-       <mat-toolbar color="primary" class="shadow-md px-4 flex justify-end items-center gap-2">
-        <span class="text-lg font-medium">Hello Team 15</span>
-        <img src="../../assets/images/avatar 1.png" alt="User"
-             class="w-10 h-10 rounded-full border-2 border-white shadow-lg">
+
+        <!-- Right container for avatar and greeting -->
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-medium text-gray-800">Hello Team 15</span>
+          <img src="../../assets/images/avatar 1.png" alt="User"
+            class="w-10 h-10 rounded-full border-2 border-white shadow-lg">
+        </div>
+
       </mat-toolbar>
-      </mat-toolbar>
-  
-      <!-- Page Content -->
-      <div class="p-6  overflow-x-hidden">
-        <router-outlet></router-outlet>
-      </div>
     </div>
-  </mat-drawer-container>
-  
+
+
+    <!-- Page Content -->
+    <div class="p-6  overflow-x-hidden">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+</mat-drawer-container>
