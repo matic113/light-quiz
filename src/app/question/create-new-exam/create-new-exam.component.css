@@ -6,3 +6,7 @@
   border-radius: 1rem;
   /* اختياري: يطابق نفس شكل العناصر */
 }
+
+button {
+  cursor: pointer;
+}
