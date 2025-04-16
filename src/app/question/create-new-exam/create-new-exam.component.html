@@ -4,8 +4,6 @@
 </button> -->
 
 
-<!-- TODO: لما بعدل ف سؤال في الاخيارات بيعدل ف الباقي -->
-
 <div class="min-h-screen py-10 px-4 md:px-20">
   <div class="max-w-4xl mx-auto">
 
@@ -183,11 +181,12 @@
           <p class="text-sm text-gray-900 mb-2">Answers</p>
           <div class="space-y-2 mb-3">
             <div *ngFor="let opt of q.options; let j = index; trackBy: trackByIndex" class="flex items-center gap-2">
-              <input type="radio" [(ngModel)]="q.correctAnswer" [value]="j" class="text-purple-600">
+              <input type="radio" [name]=`${i}` [(ngModel)]="q.correctAnswer" [value]="j" class="text-purple-600">
               <input [(ngModel)]="q.options![j]" type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg">
               <button (click)="removeOption(q, j)" class="text-red-500">X</button>
             </div>
-            <button (click)="addOption(q)" class="text-purple-600 text-sm">+ Add Option</button>
+            <button *ngIf="q.options!.length < 5" name (click)="addOption(q)" class="text-purple-600 text-sm">+ Add
+              Option</button>
           </div>
 
           <input [(ngModel)]="q.points" type="text" class="w-32 px-4 py-2 border border-gray-300 rounded-lg"
@@ -257,11 +256,8 @@
 
     </ng-container>
 
-
     <!-- Step 3 review -->
     <ng-container *ngIf="currentStep === 3">
-
-
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-2xl font-bold text-gray-800">Review & Order</h2>
@@ -307,7 +303,6 @@
       </div>
 
     </ng-container>
-
 
     <!-- Step 4 link exam -->
     <ng-container *ngIf="currentStep === 4">

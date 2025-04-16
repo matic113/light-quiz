@@ -126,16 +126,18 @@ export class CreateNewExamComponent {
   }
 
   removeOption(question: any, index: number) {
-    question.options.splice(index, 1);
+    if (question.options!.length >= 3) {
+      question.options.splice(index, 1);
+    }
   }
 
   toggleDropdown() {
     this.showDropdown = !this.showDropdown;
   }
+
   trackByIndex(index: number, item: any): number {
     return index;
   }
-
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.questionsList, event.previousIndex, event.currentIndex);
