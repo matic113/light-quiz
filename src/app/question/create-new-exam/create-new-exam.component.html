@@ -122,19 +122,19 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h2l1 2h10l1-2h2" />
           </svg>
-          AI Grading Preferences
+          AI Grading System
         </h3>
-        <div class="flex items-center justify-between px-4 py-3 border border-gray-200 rounded-xl">
-          <div>
-            <p class="font-medium text-gray-800">Enable AI Auto-grading</p>
-            <p class="text-sm text-gray-500">Let AI handle the grading process automatically</p>
-          </div>
-          <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" checked class="sr-only">
-            <div class="w-11 h-6 bg-purple-200 rounded-full peer dark:bg-gray-700 relative">
-              <div class="absolute left-1 top-1 bg-black w-4 h-4 rounded-full transition-all"></div>
+        <div class="flex items-center px-4 py-3 border border-gray-200 rounded-xl bg-purple-50">
+          <div class="flex items-center gap-3">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <div>
+              <p class="font-medium text-gray-800">AI-Powered Auto-grading</p>
+              <p class="text-sm text-gray-600">This exam will be automatically graded using our AI system</p>
             </div>
-          </label>
+          </div>
         </div>
       </div>
 
@@ -155,7 +155,6 @@
             (click)="navigateToReviewStep()">Next</button>
         </div>
       </div>
-
 
       <!-- قائمة الأسئلة -->
       <div *ngFor="let q of questionsList; let i = index" class="mb-6">
@@ -234,7 +233,7 @@
         <p class="text-sm text-gray-500 mb-4">Click the "Add Question" button to get started.</p>
       </div>
 
-      <!-- اضافة سؤال -->
+      <!-- اضافة سؤال جديد-->
       <div class="flex justify-center">
         <div class="relative">
           <button (click)="toggleDropdownForAddQuetion()" type="button"
@@ -252,7 +251,6 @@
           </div>
         </div>
       </div>
-
 
     </ng-container>
 
