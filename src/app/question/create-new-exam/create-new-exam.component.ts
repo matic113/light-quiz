@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
+
 type Question = {
   type: 'Multiple Choice' | 'Short Answer';
   q: string;
@@ -131,8 +132,15 @@ export class CreateNewExamComponent {
     }
   }
 
-  toggleDropdown() {
-    this.showDropdown = !this.showDropdown;
+  toggleDropdownForAddQuetion() {
+    if (this.examData.exam_type === 'Mixed') {
+      this.showDropdown = !this.showDropdown;
+    } else if (this.examData.exam_type === 'Multiple Choice') {
+      this.createQuestion('mcq')
+    }
+    else if (this.examData.exam_type === 'Short Answer') {
+      this.createQuestion('subjective')
+    }
   }
 
   trackByIndex(index: number, item: any): number {
