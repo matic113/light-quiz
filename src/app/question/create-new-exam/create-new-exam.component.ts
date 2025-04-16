@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
+
 type Question = {
   type: 'Multiple Choice' | 'Short Answer';
   q: string;
-  points: number;
+  points?: number;
   correctAnswer: string;
-  options?: string[]; //الاختيارات لو اختياري
+  options?: string[];
 }
 
 type Exam = {
@@ -30,23 +31,9 @@ type Exam = {
 })
 export class CreateNewExamComponent {
   currentStep: number = 1;
-
-  questionsList: Question[] = [
-    {
-      type: 'Multiple Choice',
-      q: 'Which language is used to style web pages?',
-      points: 10,
-      correctAnswer: 'CSS',
-      options: ['HTML', 'JavaScript', 'CSS', 'Python']
-    },
-    {
-      type: 'Short Answer',
-      q: 'What does HTML stand for?',
-      points: 5,
-      correctAnswer: 'HyperText Markup Language'
-    }
-  ];
-
+  showDropdown = false;
+  questionsList: Question[] = [];
+  showTypeSelector = false;
   examData: Exam = {
     title: '',
     description: '',
@@ -59,11 +46,8 @@ export class CreateNewExamComponent {
   };
 
 
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.questionsList, event.previousIndex, event.currentIndex);
-  }
-
-  nextStep() {
+  // next بتاعت اول شاشة
+  navigateToAddQuetionsStep() {
     if (
       this.examData.title.trim() &&
       this.examData.description.trim() &&
@@ -72,15 +56,98 @@ export class CreateNewExamComponent {
       this.examData.duration &&
       this.examData.exam_type
     ) {
-      console.log('✅ Exam Data Valid:', this.examData);
-      this.currentStep++;
+      this.currentStep = 2;
     } else {
-      alert('⚠️ Please complete all required fields before proceeding.');
+      alert('Please complete all required fields:\n' +
+        (!this.examData.title.trim() ? '- Title is required\n' : '') +
+        (!this.examData.description.trim() ? '- Description is required\n' : '') +
+        (!this.examData.date ? '- Date is required\n' : '') +
+        (!this.examData.time ? '- Time is required\n' : '') +
+        (!this.examData.duration ? '- Duration is required\n' : '') +
+        (!this.examData.exam_type ? '- Exam type is required' : '')
+      );
     }
+  }
+
+  // next بتاعت شاشة اضافة الاسئلة
+  navigateToReviewStep() {
+    if (
+      this.questionsList.length > 0
+      && this.questionsList.every(q => q.q.trim() && (q.correctAnswer !== "") && q.points !== undefined)
+    ) {
+      this.currentStep = 3;
+    } else {
+      alert(
+        (!this.questionsList.length ? '- No questions added' : '') +
+        (this.questionsList.some((q, i) => !q.q.trim()) ? `- Question text #${this.questionsList.findIndex((q, i) => !q.q.trim()) + 1} is required\n` : '') +
+        (this.questionsList.some((q, i) => q.correctAnswer === "") ? `- Question #${this.questionsList.findIndex((q, i) => q.correctAnswer === "") + 1}'s correct answer is required\n` : '') +
+        (this.questionsList.some((q, i) => q.points === undefined) ? `- Question #${this.questionsList.findIndex((q, i) => q.points === undefined) + 1}'s points is required\n` : '')
+      );
+    }
+  }
+
+  confirmStep() {
+    console.log(this.examData);
   }
 
   prevStep() {
     if (this.currentStep > 1) this.currentStep--;
   }
 
+
+  addQuestion() {
+    this.showTypeSelector = true;
+  }
+
+  createQuestion(type: 'mcq' | 'subjective') {
+    if (type === 'mcq') {
+      this.questionsList.push({
+        type: 'Multiple Choice',
+        q: '',
+        options: ['', ''],
+        correctAnswer: ''
+      });
+    } else {
+      this.questionsList.push({
+        type: 'Short Answer',
+        q: '',
+        correctAnswer: '',
+      });
+    }
+    this.showDropdown = false;
+    this.showTypeSelector = false;
+  }
+
+  removeQuestion(index: number) {
+    this.questionsList.splice(index, 1);
+  }
+
+  addOption(question: any) {
+    question.options.push('');
+  }
+
+  removeOption(question: any, index: number) {
+    if (question.options!.length >= 3) {
+      question.options.splice(index, 1);
+    }
+  }
+
+  toggleDropdownForAddQuetion() {
+    if (this.examData.exam_type === 'Mixed') {
+      this.showDropdown = !this.showDropdown;
+    } else if (this.examData.exam_type === 'Multiple Choice') {
+      this.createQuestion('mcq')
+    }
+    else if (this.examData.exam_type === 'Short Answer') {
+      this.createQuestion('subjective')
+    }
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.questionsList, event.previousIndex, event.currentIndex);
+  }
 }
