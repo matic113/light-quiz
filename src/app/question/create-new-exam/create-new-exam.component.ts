@@ -2,12 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../auth/auth.service';
 
 type Question = {
   type: 'Multiple Choice' | 'Short Answer';
   q: string;
   points?: number;
-  correctAnswer: string;
+  correctAnswer?: string;
   options?: string[];
 }
 
@@ -29,7 +32,12 @@ type Exam = {
   imports: [CommonModule, DragDropModule, FormsModule],
   standalone: true
 })
+
 export class CreateNewExamComponent {
+  constructor(private http: HttpClient,
+    public authService: AuthService
+  ) { }
+
   currentStep: number = 1;
   showDropdown = false;
   questionsList: Question[] = [];
@@ -44,7 +52,6 @@ export class CreateNewExamComponent {
     duration: undefined,
     questions: this.questionsList
   };
-
 
   // next بتاعت اول شاشة
   navigateToAddQuetionsStep() {
@@ -87,7 +94,73 @@ export class CreateNewExamComponent {
   }
 
   confirmStep() {
-    console.log(this.examData);
+    const apiUrl = 'https://api.theknight.tech/api/quiz';
+    const examPayload = this.mapExamToBackendPayload();
+    const token = this.authService.getToken();
+
+    if (!token) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Authentication Error',
+        text: 'You are not logged in. Please log in first.',
+      });
+      return;
+    }
+
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create this exam?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, create it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.http.post(apiUrl, examPayload, headers).subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Created!',
+              text: 'Exam created successfully.',
+            });
+
+            // Reset form
+            this.currentStep = 1;
+            this.examData = {
+              title: '',
+              description: '',
+              totalMarks: undefined,
+              exam_type: undefined,
+              date: '',
+              time: '',
+              duration: undefined,
+              questions: [],
+            };
+            this.questionsList = [];
+          },
+          error: (err) => {
+            console.error('Error creating exam:', err);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Failed to create exam. Please try again.',
+            });
+          },
+        });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Cancelled',
+          text: 'Exam creation was cancelled.',
+        });
+      }
+    });
   }
 
   prevStep() {
@@ -150,4 +223,44 @@ export class CreateNewExamComponent {
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.questionsList, event.previousIndex, event.currentIndex);
   }
+
+  mapExamToBackendPayload(): any {
+    // دمج التاريخ والوقت وتحويلهم لتنسيق ISO
+    const startsAtUTC = new Date(`${this.examData.date}T${this.examData.time}:00Z`).toISOString();
+
+    const mappedQuestions = this.examData.questions.map((question, index) => {
+
+      const questionTypeId = question.type === 'Multiple Choice' ? 1 : 3;
+      const points = question.points || 0;
+
+      let options = undefined;
+
+      if (question.type === 'Multiple Choice' && question.options) {
+        console.log(question.correctAnswer);
+        options = question.options.map((optionText, i) => ({
+          optionText: optionText,
+          isCorrect: optionText === question.correctAnswer,
+          optionLetter: String.fromCharCode(65 + i), // 65 => 'A'
+        }));
+      }
+
+      return {
+        questionText: question.q,
+        questionTypeId: questionTypeId,
+        points: points,
+        correctAnswer: question.correctAnswer,
+        options: options,
+      };
+    });
+
+    return {
+      title: this.examData.title,
+      description: this.examData.description,
+      startsAtUTC: startsAtUTC,
+      durationMinutes: this.examData.duration || 0,
+      anonymous: true,
+      questions: mappedQuestions,
+    };
+  }
+
 }
