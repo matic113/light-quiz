@@ -5,7 +5,7 @@
       <!-- Header Section -->
       <div class="flex justify-between items-start mb-6">
         <div>
-          <h2 class="text-2xl font-bold text-gray-800">Create New Exam</h2>
+          <h2 class="text-2xl  text-gray-800">Create New Exam</h2>
           <p class="text-sm text-gray-400">
             Please complete the form below to set up your new exam details.
           </p>
@@ -13,7 +13,7 @@
         <button
           (click)="navigateToAddQuetionsStep()"
           type="button"
-          class="bg-green-800 hover:bg-green-700 text-white font-semibold px-15 py-2 rounded-lg transition-all"
+          class="bg-green-800 hover:bg-green-700 text-white  px-15 py-2 rounded-lg transition-all"
         >
           Next
         </button>
@@ -22,7 +22,7 @@
       <!-- Exam data Card -->
       <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
         <div class="mb-6">
-          <h3 class="flex items-center gap-2 text-lg font-semibold text-black">
+          <h3 class="flex items-center gap-2 text-lg  text-black">
             <svg
               class="w-5 h-5"
               fill="none"
@@ -126,7 +126,7 @@
       <!--   Exam Type Card -->
       <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
         <h3
-          class="flex items-center gap-2 text-lg font-semibold text-black mb-4"
+          class="flex items-center gap-2 text-lg  text-black mb-4"
         >
           <svg
             class="w-5 h-5"
@@ -192,7 +192,7 @@
       <!-- AI Grading Preferences Card -->
       <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
         <h3
-          class="flex items-center gap-2 text-lg font-semibold text-black mb-4"
+          class="flex items-center gap-2 text-lg  text-black mb-4"
         >
           <svg
             class="w-5 h-5"
@@ -241,16 +241,16 @@
     <ng-container *ngIf="currentStep === 2">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-bold text-gray-800">Enter Questions</h2>
+        <h2 class="text-2xl  text-gray-800">Enter Questions</h2>
         <div class="flex justify-between items-center gap-4">
           <button
-            class="border border-green-800 border-2 text-green-800 font-bold py-2 px-15 rounded hover:text-green-700 hover:border-green-700"
+            class="border border-green-800 border-2 text-green-800  py-2 px-15 rounded hover:text-green-700 hover:border-green-700"
             (click)="prevStep()"
           >
             Back
           </button>
           <button
-            class="border-green-800 border-2 bg-green-800 hover:bg-green-700 text-white font-bold py-2 px-15 rounded"
+            class="border-green-800 border-2 bg-green-800 hover:bg-green-700 text-white  py-2 px-15 rounded"
             (click)="navigateToReviewStep()"
           >
             Next
@@ -267,7 +267,7 @@
         >
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
-              <h3 class="text-lg font-semibold">Question #{{ i + 1 }}</h3>
+              <h3 class="text-lg ">Question #{{ i + 1 }}</h3>
               <br />
               <span
                 class="bg-purple-100 text-purple-600 text-sm px-3 py-1 rounded-full"
@@ -352,7 +352,7 @@
         >
           <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
-              <h3 class="text-lg font-semibold">Question #{{ i + 1 }}</h3>
+              <h3 class="text-lg ">Question #{{ i + 1 }}</h3>
               <br />
               <span
                 class="bg-purple-100 text-purple-600 text-sm px-3 py-1 rounded-full"
@@ -426,7 +426,7 @@
           </svg>
         </div>
 
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">
+        <h3 class="text-lg  text-gray-700 mb-2">
           No Questions Added
         </h3>
         <p class="text-sm text-gray-500 mb-4">
@@ -440,7 +440,7 @@
           <button
             (click)="toggleDropdownForAddQuetion()"
             type="button"
-            class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-15 py-2 rounded-lg flex items-center gap-2"
+            class="bg-amber-500 hover:bg-amber-600 text-white  px-15 py-2 rounded-lg flex items-center gap-2"
           >
             Add Question
           </button>
@@ -471,10 +471,10 @@
     <ng-container *ngIf="currentStep === 3">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-bold text-gray-800">Review & Order</h2>
+        <h2 class="text-2xl  text-gray-800">Review & Order</h2>
         <button
           (click)="confirmStep()"
-          class="bg-green-800 hover:bg-green-700 text-white font-semibold px-15 py-2 rounded-lg"
+          class="bg-green-800 hover:bg-green-700 text-white  px-15 py-2 rounded-lg"
         >
           Confirm
         </button>
@@ -488,16 +488,16 @@
           class="flex items-center justify-between bg-white rounded-2xl shadow-sm p-4"
         >
           <div class="flex items-center gap-4">
-            <div class="text-xl font-bold text-gray-700">{{ i + 1 }}</div>
+            <div class="text-xl  text-gray-700">{{ i + 1 }}</div>
             <div>
-              <div class="font-bold text-lg text-right">{{ item.q }}</div>
+              <div class=" text-lg text-right">{{ item.q }}</div>
               <div class="flex gap-2 mt-1">
                 <span
-                  class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 font-semibold"
+                  class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 "
                   >{{ item.type }}</span
                 >
                 <span
-                  class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 font-semibold"
+                  class="bg-gray-100 px-3 py-1 rounded-full text-sm text-green-900 "
                   >{{ item.points }} Points</span
                 >
               </div>
@@ -541,7 +541,7 @@
     <!-- Step 4 link exam -->
     <ng-container *ngIf="currentStep === 4">
       <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-sm">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">Exam Information</h2>
+        <h2 class="text-lg  text-gray-800 mb-4">Exam Information</h2>
         <div class="flex justify-center mb-6">
           <img
             src="../../assets/images/exam_created.png"
@@ -555,8 +555,8 @@
             class="flex items-center justify-between bg-gray-50 p-3 rounded-md"
           >
             <div class="flex items-center">
-              <span class="font-semibold text-gray-700 mr-2">Exam Link:</span>
-              <span class="text-sm font-semibold text-gray-900"
+              <span class=" text-gray-700 mr-2">Exam Link:</span>
+              <span class="text-sm  text-gray-900"
                 >https://bascb/id</span
               >
             </div>
@@ -570,22 +570,22 @@
           </div>
 
           <div class="bg-gray-50 p-3 rounded-md">
-            <span class="font-semibold text-gray-700">Exam Name:</span>
-            <span class="font-bold text-gray-900"> PLC Quiz II</span>
+            <span class=" text-gray-700">Exam Name:</span>
+            <span class=" text-gray-900"> PLC Quiz II</span>
           </div>
 
           <div class="bg-gray-50 p-3 rounded-md">
-            <span class="font-semibold text-gray-700">Total marks:</span>
-            <span class="font-bold text-gray-900">130 Points</span>
+            <span class=" text-gray-700">Total marks:</span>
+            <span class=" text-gray-900">130 Points</span>
           </div>
 
           <div class="bg-gray-50 p-3 rounded-md flex items-center">
             <div class="flex items-center flex-grow">
-              <span class="font-semibold text-gray-700 mr-2">Date:</span>
+              <span class=" text-gray-700 mr-2">Date:</span>
               <span class="text-gray-800">23-3-2025 | 12:45</span>
             </div>
             <span
-              class="text-green-700 text-xs bg-green-100 px-2 py-1 rounded-md font-semibold ml-auto"
+              class="text-green-700 text-xs bg-green-100 px-2 py-1 rounded-md  ml-auto"
               >30 m</span
             >
           </div>
