@@ -1,18 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../auth/auth.service';
 
 type Question = {
-  type: 'Multiple Choice' | 'Short Answer';
+  type: 'Multiple Choice' | 'True/False' | 'Short Answer' | 'Text';
   q: string;
   points?: number;
   correctAnswer?: string;
+  correctOptionId?: number;
   options?: string[];
-}
+};
 
 type Exam = {
   title: string;
@@ -23,20 +28,24 @@ type Exam = {
   time: string;
   duration?: number;
   questions: Question[];
-}
+};
+
+const questionTypeNameToId: { [key: string]: number } = {
+  'Multiple Choice': 1,
+  'True/False': 2,
+  'Short Answer': 3,
+  Text: 4,
+};
 
 @Component({
   selector: 'app-create-new-exam',
   templateUrl: './create-new-exam.component.html',
   styleUrls: ['./create-new-exam.component.css'],
   imports: [CommonModule, DragDropModule, FormsModule],
-  standalone: true
+  standalone: true,
 })
-
 export class CreateNewExamComponent {
-  constructor(private http: HttpClient,
-    public authService: AuthService
-  ) { }
+  constructor(private http: HttpClient, public authService: AuthService) {}
 
   currentStep: number = 1;
   showDropdown = false;
@@ -50,7 +59,7 @@ export class CreateNewExamComponent {
     date: '',
     time: '',
     duration: undefined,
-    questions: this.questionsList
+    questions: this.questionsList,
   };
 
   // next بتاعت اول شاشة
@@ -65,13 +74,16 @@ export class CreateNewExamComponent {
     ) {
       this.currentStep = 2;
     } else {
-      alert('Please complete all required fields:\n' +
-        (!this.examData.title.trim() ? '- Title is required\n' : '') +
-        (!this.examData.description.trim() ? '- Description is required\n' : '') +
-        (!this.examData.date ? '- Date is required\n' : '') +
-        (!this.examData.time ? '- Time is required\n' : '') +
-        (!this.examData.duration ? '- Duration is required\n' : '') +
-        (!this.examData.exam_type ? '- Exam type is required' : '')
+      alert(
+        'Please complete all required fields:\n' +
+          (!this.examData.title.trim() ? '- Title is required\n' : '') +
+          (!this.examData.description.trim()
+            ? '- Description is required\n'
+            : '') +
+          (!this.examData.date ? '- Date is required\n' : '') +
+          (!this.examData.time ? '- Time is required\n' : '') +
+          (!this.examData.duration ? '- Duration is required\n' : '') +
+          (!this.examData.exam_type ? '- Exam type is required' : '')
       );
     }
   }
@@ -79,16 +91,52 @@ export class CreateNewExamComponent {
   // next بتاعت شاشة اضافة الاسئلة
   navigateToReviewStep() {
     if (
-      this.questionsList.length > 0
-      && this.questionsList.every(q => q.q.trim() && (q.correctAnswer !== "") && q.points !== undefined)
+      this.questionsList.length > 0 &&
+      this.questionsList.every(
+        (q) => q.q.trim() && q.points !== undefined &&
+        (
+          (q.type === 'Multiple Choice' || q.type === 'True/False')
+            ? q.correctOptionId !== undefined && q.correctOptionId !== null
+            : q.correctAnswer && q.correctAnswer.trim() !== ''
+        )
+      )
     ) {
       this.currentStep = 3;
     } else {
       alert(
-        (!this.questionsList.length ? '- No questions added' : '') +
-        (this.questionsList.some((q, i) => !q.q.trim()) ? `- Question text #${this.questionsList.findIndex((q, i) => !q.q.trim()) + 1} is required\n` : '') +
-        (this.questionsList.some((q, i) => q.correctAnswer === "") ? `- Question #${this.questionsList.findIndex((q, i) => q.correctAnswer === "") + 1}'s correct answer is required\n` : '') +
-        (this.questionsList.some((q, i) => q.points === undefined) ? `- Question #${this.questionsList.findIndex((q, i) => q.points === undefined) + 1}'s points is required\n` : '')
+        (!this.questionsList.length ? '- No questions added\n' : '') +
+        (this.questionsList.some((q) => !q.q.trim())
+          ? `- Question text #${
+              this.questionsList.findIndex((q) => !q.q.trim()) + 1
+            } is required\n`
+          : '') +
+        (this.questionsList.some((q) =>
+          (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+          (q.correctOptionId === undefined || q.correctOptionId === null)
+        )
+          ? `- Question #${
+              this.questionsList.findIndex((q) =>
+                (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+                (q.correctOptionId === undefined || q.correctOptionId === null)
+              ) + 1
+            }'s correct option is required\n`
+          : '') +
+        (this.questionsList.some((q) =>
+          (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
+          (!q.correctAnswer || q.correctAnswer.trim() === '')
+        )
+          ? `- Question #${
+              this.questionsList.findIndex((q) =>
+                (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
+                (!q.correctAnswer || q.correctAnswer.trim() === '')
+              ) + 1
+            }'s correct answer is required\n`
+          : '') +
+        (this.questionsList.some((q) => q.points === undefined)
+          ? `- Question #${
+              this.questionsList.findIndex((q) => q.points === undefined) + 1
+            }'s points is required\n`
+          : '')
       );
     }
   }
@@ -97,6 +145,8 @@ export class CreateNewExamComponent {
     const apiUrl = 'https://api.theknight.tech/api/quiz';
     const examPayload = this.mapExamToBackendPayload();
     const token = this.authService.getToken();
+
+    console.log(JSON.stringify(examPayload));
 
     if (!token) {
       Swal.fire({
@@ -167,7 +217,6 @@ export class CreateNewExamComponent {
     if (this.currentStep > 1) this.currentStep--;
   }
 
-
   addQuestion() {
     this.showTypeSelector = true;
   }
@@ -178,7 +227,7 @@ export class CreateNewExamComponent {
         type: 'Multiple Choice',
         q: '',
         options: ['', ''],
-        correctAnswer: ''
+        correctAnswer: '',
       });
     } else {
       this.questionsList.push({
@@ -209,10 +258,9 @@ export class CreateNewExamComponent {
     if (this.examData.exam_type === 'Mixed') {
       this.showDropdown = !this.showDropdown;
     } else if (this.examData.exam_type === 'Multiple Choice') {
-      this.createQuestion('mcq')
-    }
-    else if (this.examData.exam_type === 'Short Answer') {
-      this.createQuestion('subjective')
+      this.createQuestion('mcq');
+    } else if (this.examData.exam_type === 'Short Answer') {
+      this.createQuestion('subjective');
     }
   }
 
@@ -221,27 +269,38 @@ export class CreateNewExamComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.questionsList, event.previousIndex, event.currentIndex);
+    moveItemInArray(
+      this.questionsList,
+      event.previousIndex,
+      event.currentIndex
+    );
   }
 
   mapExamToBackendPayload(): any {
-    // دمج التاريخ والوقت وتحويلهم لتنسيق ISO
-    const startsAtUTC = new Date(`${this.examData.date}T${this.examData.time}:00Z`).toISOString();
+    const startsAtUTC = new Date(
+      `${this.examData.date}T${this.examData.time}:00Z`
+    ).toISOString();
 
-    const mappedQuestions = this.examData.questions.map((question, index) => {
+    const mappedQuestions = this.examData.questions.map((question) => {
+      // using a dictionary to map question types to ids
+      const questionTypeId = questionTypeNameToId[question.type];
+      // make sure the points are integer as the backend expects
+      const points = parseInt(String(question.points ?? 0), 10);
+      // start with an empty array
+      // if the question has options then we fill the array otherwise leave it empty
+      let options: any[] = [];
 
-      const questionTypeId = question.type === 'Multiple Choice' ? 1 : 3;
-      const points = question.points || 0;
-
-      let options = undefined;
-
-      if (question.type === 'Multiple Choice' && question.options) {
-        console.log(question.correctAnswer);
-        options = question.options.map((optionText, i) => ({
+      if (
+        question.type === 'Multiple Choice' ||
+        question.type === 'True/False'
+      ) {
+        options = (question.options || []).map((optionText, i) => ({
           optionText: optionText,
-          isCorrect: optionText === question.correctAnswer,
-          optionLetter: String.fromCharCode(65 + i), // 65 => 'A'
+          isCorrect: i == question.correctOptionId,
+          optionLetter: String.fromCharCode(97 + i), // 97 => 'a' (ascii codes)
         }));
+        // correctAnswer is always empty string for option-based questions
+        question.correctAnswer = '';
       }
 
       return {
@@ -262,5 +321,4 @@ export class CreateNewExamComponent {
       questions: mappedQuestions,
     };
   }
-
 }
