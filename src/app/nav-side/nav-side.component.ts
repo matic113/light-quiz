@@ -11,7 +11,7 @@ import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-nav-side',
-  imports: [MatSidenavModule,MatListModule,MatToolbarModule,RouterLink,RouterLinkActive,RouterOutlet,CommonModule,MatIconModule],
+  imports: [MatSidenavModule, MatListModule, MatToolbarModule, RouterLink, RouterLinkActive, RouterOutlet, CommonModule, MatIconModule],
   templateUrl: './nav-side.component.html',
   styleUrl: './nav-side.component.css'
 })
@@ -21,10 +21,10 @@ export class NavSideComponent implements OnInit {
     public authService: AuthService, // Changed to public for template access
     private router: Router,
     private breakpointObserver: BreakpointObserver
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.sub = this.authService.getFirstname(); 
+    this.sub = this.authService.getFirstname();
     this.token = this.authService.getToken();
     // Monitor the screen size to determine if the device is portable
     this.breakpointObserver.observe([Breakpoints.Handset])
@@ -32,22 +32,22 @@ export class NavSideComponent implements OnInit {
         this.isMobile = result.matches;
       });
   }
-  
+
 
   token: string | null = null;
   sub: string | null = null;
 
-  
+
 
   logout(): void {
-    this.authService.logout(); 
+    this.authService.logout();
     this.router.navigate(['/create']);
     this.sub = null;
     this.token = null;
   }
   isMenuOpen = false;
 
-toggleMenu() {
-  this.isMenuOpen = !this.isMenuOpen;
-}
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 }
