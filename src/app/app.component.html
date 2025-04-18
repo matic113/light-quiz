@@ -1,2 +1,8 @@
-<app-nav-side></app-nav-side>
-<router-outlet></router-outlet>
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <app-nav-side *ngIf="showSidebar"></app-nav-side>
+  <!-- Main Content -->
+  <div class="flex-1 overflow-auto bg-gray-100 p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

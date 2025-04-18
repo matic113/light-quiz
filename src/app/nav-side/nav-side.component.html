@@ -1,101 +1,88 @@
-<mat-drawer-container class="h-screen flex overflow-x-hidden">
+<!-- The open/close button appears only on small screens -->
+<button 
+  *ngIf="isMobile"
+  (click)="toggleMenu()"
+  class="fixed z-50 me-4 ms-1"
+>
+  <mat-icon>{{ isExpanded ? 'menue' : 'menue' }}</mat-icon>
+</button>
 
-  <!-- Side Drawer -->
-  <mat-drawer #drawer [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" class="relative text-white p-4"
-    style="width: 280px; background-color: #1b593b;">
-
-    <!-- Close button (for mobile view) -->
-    <button *ngIf="isMobile" mat-icon-button class="absolute left-0 top-4 ml-2 text-white" (click)="drawer.close()">
-      <mat-icon>menu</mat-icon>
-    </button>
-
-    <!-- Logo and App Title -->
-    <div class="flex items-center gap-4 mb-6 mt-5 ms-7">
-      <img src="../../assets/images/logo.png" alt="Logo" class="w-20 h-20 object-contain rounded-lg animate-glow">
-      <h3 class="text-4xl font-bold text-white">Light Quiz</h3>
+<!-- Sidebar -->
+<div class="relative">
+  <div 
+    class="h-screen bg-emerald-600 flex flex-col transition-all duration-300 ease-in-out fixed z-40 top-0 left-0"
+    [ngClass]="{
+      'w-56': isExpanded && !isMobile,
+      'w-16': !isExpanded && !isMobile,
+      'w-1/2': isExpanded && isMobile,
+      'w-0 overflow-hidden': !isExpanded && isMobile
+    }"
+  >
+    <!-- Logo -->
+    <div class="flex items-center justify-center h-16 p-2">
+      <div class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center">
+        <mat-icon class="text-white">description</mat-icon>
+      </div>
+      <span *ngIf="isExpanded" class="ml-2 text-lg font-semibold text-white">Light Quiz</span>
     </div>
 
-    <!-- Navigation List -->
-    <mat-nav-list class="translate-y-7 px-2">
-      <a mat-list-item href="#" class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">📊 Dashboard</span>
-      </a>
-      <a mat-list-item href="#" class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">📅 Schedule</span>
-      </a>
-      <a mat-list-item href="#" class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">🏆 Results</span>
-      </a>
-      <a mat-list-item href="#" class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">👥 Groups</span>
-      </a>
-      <a mat-list-item routerLink="create" routerLinkActive="active"
-        class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">❓ Questions</span>
-      </a>
-      <a mat-list-item href="#" class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">📑 Marks</span>
-      </a>
-      <a mat-list-item href="#" class="flex items-center gap-3 py-3 px-3 hover:bg-green-700 rounded">
-        <span class="text-white text-2xl tracking-wide">🔔 Notifications</span>
-      </a>
-    </mat-nav-list>
-  </mat-drawer>
+    <!-- Collapse button (for desktop only) -->
+    <div class="flex justify-end px-3 py-2" *ngIf="!isMobile">
+      <button 
+        class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded"
+        (click)="toggleMenu()"
+      >
+        <mat-icon *ngIf="isExpanded">chevron_left</mat-icon>
+        <mat-icon *ngIf="!isExpanded">chevron_right</mat-icon>
+      </button>
+    </div>
 
-  <!-- Main Content Area -->
-  <div class="flex flex-col flex-grow overflow-x-hidden" style="background-color: #FAFBFD;">
+    <!-- Navigation items -->
+    <div class="flex flex-col gap-1 px-2">
+      <a
+        *ngFor="let item of items"
+        [routerLink]="item.to"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors"
+        [ngClass]="{
+          'text-emerald-600 bg-white/10 hover:bg-white/20': router.url === item.to,
+          'text-white/80 hover:text-white hover:bg-white/10': router.url !== item.to,
+          'justify-center px-0': !isExpanded
+        }"
+      >
+        <mat-icon class="w-5 h-5">{{ item.icon }}</mat-icon>
+        <span *ngIf="isExpanded">{{ item.label }}</span>
+      </a>
+    </div>
 
-    <!-- Top Navbar -->
-    <mat-toolbar color="primary" style="background-color: white;"
-      class="shadow-md px-4 flex justify-between items-center">
+    <!-- User icon when sidebar is collapsed -->
+    <div *ngIf="!isExpanded && token" class="px-3 pb-1 mt-auto flex justify-center">
+      <button
+        mat-icon-button
+        [matTooltip]="sub"
+        [matTooltipPosition]="'right'"
+        class="text-white hover:text-white/80"
+      >
+        <mat-icon>person</mat-icon>
+      </button>
+    </div>
 
-      <!-- Left side: menu button (mobile only) -->
-      <div class="flex items-center gap-2">
-        <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
-          <mat-icon>menu</mat-icon>
-        </button>
+    <!-- User name when sidebar is expanded -->
+    <div *ngIf="isExpanded && token" class="px-3 py-2 mt-auto flex justify-center items-center text-white">
+      <mat-icon class="w-5 h-5">person</mat-icon>
+      <span class="ml-2">{{ sub }}</span>
+    </div>
+
+    <!-- Logout button -->
+    <div class="px-3 py-4 mb-4" *ngIf="token">
+      <div
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors text-white/80 hover:text-white hover:bg-white/10"
+        (click)="logout()"
+        style="cursor: pointer;"
+        [ngClass]="{ 'justify-center px-0': !isExpanded }"
+      >
+        <mat-icon class="w-5 h-5">logout</mat-icon>
+        <span *ngIf="isExpanded">Logout</span>
       </div>
-
-      <!-- Right side: dynamic content based on login status -->
-      <div class="flex items-center gap-3">
-
-        <!-- If user is logged in -->
-        <ng-container *ngIf="authService.getToken(); else guest">
-          <span class="text-lg font-semibold">Hello, {{sub}}</span>
-          <img src="../../assets/images/avatar 1.png" alt="User"
-            class="w-10 h-10 rounded-full border-2 border-white shadow-lg">
-          <button
-            (click)="logout()"
-            class="flex items-center gap-2 bg-[#e53935] hover:bg-[#c62828] text-white px-3 py-1 rounded-lg transition"
-          >
-            <i class="fa-solid fa-right-from-bracket"></i>
-            Logout
-          </button>
-        </ng-container>
-
-        <!-- If user is not logged in -->
-        <ng-template #guest>
-          <a
-            routerLink="login"
-            class="bg-[#43a047] hover:bg-[#2e7d32] text-white px-4 py-1 rounded-lg transition"
-          >
-            Login
-          </a>
-          <a
-            routerLink="register"
-            class="bg-[#2e7d32] hover:bg-[#1b5e20] text-white px-4 py-1 rounded-lg transition"
-          >
-            Sign Up
-          </a>
-        </ng-template>
-
-      </div>
-    </mat-toolbar>
-
-    <!-- Page Content Area -->
-    <div class="p-6 overflow-x-hidden">
-      <router-outlet></router-outlet>
     </div>
   </div>
-
-</mat-drawer-container>
+</div>
