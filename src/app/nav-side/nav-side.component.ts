@@ -7,47 +7,76 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../auth/auth.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
   selector: 'app-nav-side',
-  imports: [MatSidenavModule, MatListModule, MatToolbarModule, RouterLink, RouterLinkActive, RouterOutlet, CommonModule, MatIconModule],
+  imports: [MatSidenavModule, MatListModule, MatToolbarModule, RouterLink, CommonModule, MatIconModule,MatTooltipModule],
   templateUrl: './nav-side.component.html',
   styleUrl: './nav-side.component.css'
 })
-export class NavSideComponent implements OnInit {
-  isMobile: boolean = false;
-  constructor(
-    public authService: AuthService, // Changed to public for template access
-    private router: Router,
-    private breakpointObserver: BreakpointObserver
-  ) { }
+export class NavSideComponent  {
+  isExpanded = false;
+  token: string | null = null;
+  sub: string | null = null;
+  isMobile = false;
 
+  constructor(public router: Router, public authService: AuthService,    private breakpointObserver: BreakpointObserver
+  ) {}
   ngOnInit(): void {
     this.sub = this.authService.getFirstname();
     this.token = this.authService.getToken();
-    // Monitor the screen size to determine if the device is portable
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
         this.isMobile = result.matches;
+        this.isExpanded = !this.isMobile;
       });
   }
-
-
-  token: string | null = null;
-  sub: string | null = null;
-
-
-
+  items = [
+    { label: 'Dashboard', icon: 'dashboard', to: '/dashboard' },
+    { label: 'Reports', icon: 'bar_chart', to: '/reports' },
+    { label: 'Users', icon: 'group', to: '/users' },
+    { label: 'Notifications', icon: 'notifications', to: '/notifications' },
+    { label: 'Questions', icon: 'help', to: '/create' },
+    { label: 'Search', icon: 'search', to: '/search' }
+  ];
+  toggleMenu(): void {
+    this.isExpanded = !this.isExpanded;
+  }
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/create']);
     this.sub = null;
     this.token = null;
   }
-  isMenuOpen = false;
-
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
+  
+  
 }
+
+// isMobile: boolean = false;
+//   constructor(
+//     public authService: AuthService, // Changed to public for template access
+//     private router: Router,
+//     private breakpointObserver: BreakpointObserver
+//   ) { }
+
+
+
+
+//   token: string | null = null;
+//   sub: string | null = null;
+
+
+
+//   logout(): void {
+//     this.authService.logout();
+//     this.router.navigate(['/create']);
+//     this.sub = null;
+//     this.token = null;
+//   }
+//   isMenuOpen = false;
+
+//   toggleMenu() {
+//     this.isMenuOpen = !this.isMenuOpen;
+//   }
