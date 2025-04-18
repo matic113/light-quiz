@@ -22,7 +22,6 @@ type Question = {
 type Exam = {
   title: string;
   description: string;
-  totalMarks?: number;
   exam_type?: 'Multiple Choice' | 'Short Answer' | 'Mixed';
   date: string;
   time: string;
@@ -54,7 +53,6 @@ export class CreateNewExamComponent {
   examData: Exam = {
     title: '',
     description: '',
-    totalMarks: undefined,
     exam_type: undefined,
     date: '',
     time: '',
@@ -185,7 +183,6 @@ export class CreateNewExamComponent {
             this.examData = {
               title: '',
               description: '',
-              totalMarks: undefined,
               exam_type: undefined,
               date: '',
               time: '',
