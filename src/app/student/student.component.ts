@@ -25,7 +25,7 @@ export class StudentComponent {
   isSubmittedSuccessfully = false;
 
   isPageBlurred: boolean = false;
-  private screenThreshold = 0.9;
+  private screenThreshold = 0.5;
 
   constructor(
     private http: HttpClient,
@@ -53,6 +53,8 @@ export class StudentComponent {
       this.isPageBlurred = false;
     }
   };
+
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const quizId = params['quizId'];
