@@ -54,7 +54,7 @@ export class CreateNewExamComponent {
     public authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   currentStep: number = 1;
   showDropdown = false;
@@ -84,14 +84,14 @@ export class CreateNewExamComponent {
     } else {
       alert(
         'Please complete all required fields:\n' +
-          (!this.examData.title.trim() ? '- Title is required\n' : '') +
-          (!this.examData.description.trim()
-            ? '- Description is required\n'
-            : '') +
-          (!this.examData.date ? '- Date is required\n' : '') +
-          (!this.examData.time ? '- Time is required\n' : '') +
-          (!this.examData.duration ? '- Duration is required\n' : '') +
-          (!this.examData.exam_type ? '- Exam type is required' : '')
+        (!this.examData.title.trim() ? '- Title is required\n' : '') +
+        (!this.examData.description.trim()
+          ? '- Description is required\n'
+          : '') +
+        (!this.examData.date ? '- Date is required\n' : '') +
+        (!this.examData.time ? '- Time is required\n' : '') +
+        (!this.examData.duration ? '- Duration is required\n' : '') +
+        (!this.examData.exam_type ? '- Exam type is required' : '')
       );
     }
   }
@@ -102,11 +102,11 @@ export class CreateNewExamComponent {
       this.questionsList.length > 0 &&
       this.questionsList.every(
         (q) => q.q.trim() && q.points !== undefined &&
-        (
-          (q.type === 'Multiple Choice' || q.type === 'True/False')
-            ? q.correctOptionId !== undefined && q.correctOptionId !== null
-            : q.correctAnswer && q.correctAnswer.trim() !== ''
-        )
+          (
+            (q.type === 'Multiple Choice' || q.type === 'True/False')
+              ? q.correctOptionId !== undefined && q.correctOptionId !== null
+              : q.correctAnswer && q.correctAnswer.trim() !== ''
+          )
       )
     ) {
       this.currentStep = 3;
@@ -114,36 +114,32 @@ export class CreateNewExamComponent {
       alert(
         (!this.questionsList.length ? '- No questions added\n' : '') +
         (this.questionsList.some((q) => !q.q.trim())
-          ? `- Question text #${
-              this.questionsList.findIndex((q) => !q.q.trim()) + 1
-            } is required\n`
+          ? `- Question text #${this.questionsList.findIndex((q) => !q.q.trim()) + 1
+          } is required\n`
           : '') +
         (this.questionsList.some((q) =>
           (q.type === 'Multiple Choice' || q.type === 'True/False') &&
           (q.correctOptionId === undefined || q.correctOptionId === null)
         )
-          ? `- Question #${
-              this.questionsList.findIndex((q) =>
-                (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-                (q.correctOptionId === undefined || q.correctOptionId === null)
-              ) + 1
-            }'s correct option is required\n`
+          ? `- Question #${this.questionsList.findIndex((q) =>
+            (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+            (q.correctOptionId === undefined || q.correctOptionId === null)
+          ) + 1
+          }'s correct option is required\n`
           : '') +
         (this.questionsList.some((q) =>
           (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
           (!q.correctAnswer || q.correctAnswer.trim() === '')
         )
-          ? `- Question #${
-              this.questionsList.findIndex((q) =>
-                (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
-                (!q.correctAnswer || q.correctAnswer.trim() === '')
-              ) + 1
-            }'s correct answer is required\n`
+          ? `- Question #${this.questionsList.findIndex((q) =>
+            (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
+            (!q.correctAnswer || q.correctAnswer.trim() === '')
+          ) + 1
+          }'s correct answer is required\n`
           : '') +
         (this.questionsList.some((q) => q.points === undefined)
-          ? `- Question #${
-              this.questionsList.findIndex((q) => q.points === undefined) + 1
-            }'s points is required\n`
+          ? `- Question #${this.questionsList.findIndex((q) => q.points === undefined) + 1
+          }'s points is required\n`
           : '')
       );
     }
