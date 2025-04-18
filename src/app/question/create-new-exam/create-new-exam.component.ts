@@ -6,9 +6,14 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../auth/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../../shared/components/dialog/confirm-dialog.component';
+import { CustomSnackbarComponent } from '../../shared/components/snackbar/custom-snackbar.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 type Question = {
   type: 'Multiple Choice' | 'True/False' | 'Short Answer' | 'Text';
@@ -40,11 +45,16 @@ const questionTypeNameToId: { [key: string]: number } = {
   selector: 'app-create-new-exam',
   templateUrl: './create-new-exam.component.html',
   styleUrls: ['./create-new-exam.component.css'],
-  imports: [CommonModule, DragDropModule, FormsModule],
+  imports: [CommonModule, DragDropModule, FormsModule, MatDialogModule, MatSnackBarModule],
   standalone: true,
 })
 export class CreateNewExamComponent {
-  constructor(private http: HttpClient, public authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    public authService: AuthService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
 
   currentStep: number = 1;
   showDropdown = false;
@@ -147,10 +157,16 @@ export class CreateNewExamComponent {
     console.log(JSON.stringify(examPayload));
 
     if (!token) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Authentication Error',
-        text: 'You are not logged in. Please log in first.',
+      this.snackBar.openFromComponent(CustomSnackbarComponent, {
+        data: {
+          message: 'You are not logged in. Please log in first.',
+          action: 'Close',
+          panelClass: ['bg-red-100', 'text-red-800']
+        },
+        duration: 5000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-red-100', 'text-red-800']
       });
       return;
     }
@@ -161,21 +177,29 @@ export class CreateNewExamComponent {
       },
     };
 
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to create this exam?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, create it!',
-      cancelButtonText: 'No, cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Are you sure?',
+        text: 'Do you want to create this exam?',
+        confirmText: 'Yes, create it!',
+        cancelText: 'No, cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.http.post(apiUrl, examPayload, headers).subscribe({
           next: () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Created!',
-              text: 'Exam created successfully.',
+            this.snackBar.openFromComponent(CustomSnackbarComponent, {
+              data: {
+                message: 'Exam created successfully',
+                action: 'Close',
+                panelClass: ['bg-green-100', 'text-green-800']
+              },
+              duration: 5000,
+              horizontalPosition: 'right',
+              verticalPosition: 'bottom',
+              panelClass: ['bg-green-100', 'text-green-800']
             });
 
             // Reset form
@@ -193,18 +217,19 @@ export class CreateNewExamComponent {
           },
           error: (err) => {
             console.error('Error creating exam:', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error!',
-              text: 'Failed to create exam. Please try again.',
+            this.snackBar.open('Failed to create exam. Please try again.', 'Close', {
+              duration: 5000,
+              horizontalPosition: 'right',
+              verticalPosition: 'bottom',
+              panelClass: ['bg-red-100', 'text-red-800']
             });
           },
         });
       } else {
-        Swal.fire({
-          icon: 'info',
-          title: 'Cancelled',
-          text: 'Exam creation was cancelled.',
+        this.snackBar.open('Exam creation was cancelled', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'bottom'
         });
       }
     });
