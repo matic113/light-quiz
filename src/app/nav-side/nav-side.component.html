@@ -1,15 +1,13 @@
-<!-- زر صغير دائري في أعلى يسار الشاشة للجوال -->
-<!-- زر الفتح/الإغلاق يظهر فقط على الشاشات الصغيرة -->
+<!-- The open/close button appears only on small screens -->
 <button 
   *ngIf="isMobile"
   (click)="toggleMenu()"
-  class="fixed  z-50  me-4 ms-1  "
+  class="fixed z-50 me-4 ms-1"
 >
   <mat-icon>{{ isExpanded ? 'menue' : 'menue' }}</mat-icon>
 </button>
 
-
-<!-- الشريط الجانبي -->
+<!-- Sidebar -->
 <div class="relative">
   <div 
     class="h-screen bg-emerald-600 flex flex-col transition-all duration-300 ease-in-out fixed z-40 top-0 left-0"
@@ -20,7 +18,7 @@
       'w-0 overflow-hidden': !isExpanded && isMobile
     }"
   >
-    <!-- الشعار -->
+    <!-- Logo -->
     <div class="flex items-center justify-center h-16 p-2">
       <div class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center">
         <mat-icon class="text-white">description</mat-icon>
@@ -28,7 +26,7 @@
       <span *ngIf="isExpanded" class="ml-2 text-lg font-semibold text-white">Light Quiz</span>
     </div>
 
-    <!-- زر طي الشريط الجانبي (للكمبيوتر فقط) -->
+    <!-- Collapse button (for desktop only) -->
     <div class="flex justify-end px-3 py-2" *ngIf="!isMobile">
       <button 
         class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded"
@@ -39,7 +37,7 @@
       </button>
     </div>
 
-    <!-- عناصر التنقل -->
+    <!-- Navigation items -->
     <div class="flex flex-col gap-1 px-2">
       <a
         *ngFor="let item of items"
@@ -56,7 +54,7 @@
       </a>
     </div>
 
-    <!-- أيقونة المستخدم عند إغلاق الشريط -->
+    <!-- User icon when sidebar is collapsed -->
     <div *ngIf="!isExpanded && token" class="px-3 pb-1 mt-auto flex justify-center">
       <button
         mat-icon-button
@@ -68,13 +66,13 @@
       </button>
     </div>
 
-    <!-- اسم المستخدم عند فتح الشريط -->
+    <!-- User name when sidebar is expanded -->
     <div *ngIf="isExpanded && token" class="px-3 py-2 mt-auto flex justify-center items-center text-white">
       <mat-icon class="w-5 h-5">person</mat-icon>
       <span class="ml-2">{{ sub }}</span>
     </div>
 
-    <!-- زر تسجيل الخروج -->
+    <!-- Logout button -->
     <div class="px-3 py-4 mb-4" *ngIf="token">
       <div
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors text-white/80 hover:text-white hover:bg-white/10"

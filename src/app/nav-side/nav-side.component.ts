@@ -54,29 +54,3 @@ export class NavSideComponent  {
   
 }
 
-// isMobile: boolean = false;
-//   constructor(
-//     public authService: AuthService, // Changed to public for template access
-//     private router: Router,
-//     private breakpointObserver: BreakpointObserver
-//   ) { }
-
-
-
-
-//   token: string | null = null;
-//   sub: string | null = null;
-
-
-
-//   logout(): void {
-//     this.authService.logout();
-//     this.router.navigate(['/create']);
-//     this.sub = null;
-//     this.token = null;
-//   }
-//   isMenuOpen = false;
-
-//   toggleMenu() {
-//     this.isMenuOpen = !this.isMenuOpen;
-//   }
