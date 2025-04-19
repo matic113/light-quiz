@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-question',
   imports: [],
   templateUrl: './question.component.html',
-  styleUrl: './question.component.css'
+  styleUrl: './question.component.css',
 })
-export class QuestionComponent {
-
-}
+export class QuestionComponent {}

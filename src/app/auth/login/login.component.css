@@ -1,7 +1,8 @@
 /* login.component.css */
 
 /* Remove default margins and padding from page */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -71,7 +72,7 @@ html, body {
   .w-full {
     height: 100%;
   }
-  
+
   .p-8 {
     padding: 1.5rem;
   }

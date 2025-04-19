@@ -45,7 +45,13 @@ const questionTypeNameToId: { [key: string]: number } = {
   selector: 'app-create-new-exam',
   templateUrl: './create-new-exam.component.html',
   styleUrls: ['./create-new-exam.component.css'],
-  imports: [CommonModule, DragDropModule, FormsModule, MatDialogModule, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    FormsModule,
+    MatDialogModule,
+    MatSnackBarModule,
+  ],
   standalone: true,
 })
 export class CreateNewExamComponent {
@@ -53,8 +59,8 @@ export class CreateNewExamComponent {
     private http: HttpClient,
     public authService: AuthService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+  ) {}
 
   currentStep: number = 1;
   showDropdown = false;
@@ -84,14 +90,14 @@ export class CreateNewExamComponent {
     } else {
       alert(
         'Please complete all required fields:\n' +
-        (!this.examData.title.trim() ? '- Title is required\n' : '') +
-        (!this.examData.description.trim()
-          ? '- Description is required\n'
-          : '') +
-        (!this.examData.date ? '- Date is required\n' : '') +
-        (!this.examData.time ? '- Time is required\n' : '') +
-        (!this.examData.duration ? '- Duration is required\n' : '') +
-        (!this.examData.exam_type ? '- Exam type is required' : '')
+          (!this.examData.title.trim() ? '- Title is required\n' : '') +
+          (!this.examData.description.trim()
+            ? '- Description is required\n'
+            : '') +
+          (!this.examData.date ? '- Date is required\n' : '') +
+          (!this.examData.time ? '- Time is required\n' : '') +
+          (!this.examData.duration ? '- Duration is required\n' : '') +
+          (!this.examData.exam_type ? '- Exam type is required' : ''),
       );
     }
   }
@@ -101,46 +107,57 @@ export class CreateNewExamComponent {
     if (
       this.questionsList.length > 0 &&
       this.questionsList.every(
-        (q) => q.q.trim() && q.points !== undefined &&
-          (
-            (q.type === 'Multiple Choice' || q.type === 'True/False')
-              ? q.correctOptionId !== undefined && q.correctOptionId !== null
-              : q.correctAnswer && q.correctAnswer.trim() !== ''
-          )
+        (q) =>
+          q.q.trim() &&
+          q.points !== undefined &&
+          (q.type === 'Multiple Choice' || q.type === 'True/False'
+            ? q.correctOptionId !== undefined && q.correctOptionId !== null
+            : q.correctAnswer && q.correctAnswer.trim() !== ''),
       )
     ) {
       this.currentStep = 3;
     } else {
       alert(
         (!this.questionsList.length ? '- No questions added\n' : '') +
-        (this.questionsList.some((q) => !q.q.trim())
-          ? `- Question text #${this.questionsList.findIndex((q) => !q.q.trim()) + 1
-          } is required\n`
-          : '') +
-        (this.questionsList.some((q) =>
-          (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-          (q.correctOptionId === undefined || q.correctOptionId === null)
-        )
-          ? `- Question #${this.questionsList.findIndex((q) =>
-            (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-            (q.correctOptionId === undefined || q.correctOptionId === null)
-          ) + 1
-          }'s correct option is required\n`
-          : '') +
-        (this.questionsList.some((q) =>
-          (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
-          (!q.correctAnswer || q.correctAnswer.trim() === '')
-        )
-          ? `- Question #${this.questionsList.findIndex((q) =>
-            (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
-            (!q.correctAnswer || q.correctAnswer.trim() === '')
-          ) + 1
-          }'s correct answer is required\n`
-          : '') +
-        (this.questionsList.some((q) => q.points === undefined)
-          ? `- Question #${this.questionsList.findIndex((q) => q.points === undefined) + 1
-          }'s points is required\n`
-          : '')
+          (this.questionsList.some((q) => !q.q.trim())
+            ? `- Question text #${
+                this.questionsList.findIndex((q) => !q.q.trim()) + 1
+              } is required\n`
+            : '') +
+          (this.questionsList.some(
+            (q) =>
+              (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+              (q.correctOptionId === undefined || q.correctOptionId === null),
+          )
+            ? `- Question #${
+                this.questionsList.findIndex(
+                  (q) =>
+                    (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+                    (q.correctOptionId === undefined ||
+                      q.correctOptionId === null),
+                ) + 1
+              }'s correct option is required\n`
+            : '') +
+          (this.questionsList.some(
+            (q) =>
+              q.type !== 'Multiple Choice' &&
+              q.type !== 'True/False' &&
+              (!q.correctAnswer || q.correctAnswer.trim() === ''),
+          )
+            ? `- Question #${
+                this.questionsList.findIndex(
+                  (q) =>
+                    q.type !== 'Multiple Choice' &&
+                    q.type !== 'True/False' &&
+                    (!q.correctAnswer || q.correctAnswer.trim() === ''),
+                ) + 1
+              }'s correct answer is required\n`
+            : '') +
+          (this.questionsList.some((q) => q.points === undefined)
+            ? `- Question #${
+                this.questionsList.findIndex((q) => q.points === undefined) + 1
+              }'s points is required\n`
+            : ''),
       );
     }
   }
@@ -157,12 +174,12 @@ export class CreateNewExamComponent {
         data: {
           message: 'You are not logged in. Please log in first.',
           action: 'Close',
-          panelClass: ['bg-red-100', 'text-red-800']
+          panelClass: ['bg-red-100', 'text-red-800'],
         },
         duration: 5000,
         horizontalPosition: 'right',
         verticalPosition: 'bottom',
-        panelClass: ['bg-red-100', 'text-red-800']
+        panelClass: ['bg-red-100', 'text-red-800'],
       });
       return;
     }
@@ -178,11 +195,11 @@ export class CreateNewExamComponent {
         title: 'Are you sure?',
         text: 'Do you want to create this exam?',
         confirmText: 'Yes, create it!',
-        cancelText: 'No, cancel'
-      }
+        cancelText: 'No, cancel',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.http.post(apiUrl, examPayload, headers).subscribe({
           next: () => {
@@ -190,12 +207,12 @@ export class CreateNewExamComponent {
               data: {
                 message: 'Exam created successfully',
                 action: 'Close',
-                panelClass: ['bg-green-100', 'text-green-800']
+                panelClass: ['bg-green-100', 'text-green-800'],
               },
               duration: 5000,
               horizontalPosition: 'right',
               verticalPosition: 'bottom',
-              panelClass: ['bg-green-100', 'text-green-800']
+              panelClass: ['bg-green-100', 'text-green-800'],
             });
 
             // Reset form
@@ -213,19 +230,23 @@ export class CreateNewExamComponent {
           },
           error: (err) => {
             console.error('Error creating exam:', err);
-            this.snackBar.open('Failed to create exam. Please try again.', 'Close', {
-              duration: 5000,
-              horizontalPosition: 'right',
-              verticalPosition: 'bottom',
-              panelClass: ['bg-red-100', 'text-red-800']
-            });
+            this.snackBar.open(
+              'Failed to create exam. Please try again.',
+              'Close',
+              {
+                duration: 5000,
+                horizontalPosition: 'right',
+                verticalPosition: 'bottom',
+                panelClass: ['bg-red-100', 'text-red-800'],
+              },
+            );
           },
         });
       } else {
         this.snackBar.open('Exam creation was cancelled', 'Close', {
           duration: 3000,
           horizontalPosition: 'right',
-          verticalPosition: 'bottom'
+          verticalPosition: 'bottom',
         });
       }
     });
@@ -290,13 +311,13 @@ export class CreateNewExamComponent {
     moveItemInArray(
       this.questionsList,
       event.previousIndex,
-      event.currentIndex
+      event.currentIndex,
     );
   }
 
   mapExamToBackendPayload(): any {
     const startsAtUTC = new Date(
-      `${this.examData.date}T${this.examData.time}:00Z`
+      `${this.examData.date}T${this.examData.time}:00Z`,
     ).toISOString();
 
     const mappedQuestions = this.examData.questions.map((question) => {

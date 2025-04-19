@@ -3,7 +3,8 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url("https://source.unsplash.com/1600x900/?technology,abstract") no-repeat center center/cover;
+  background: url("https://source.unsplash.com/1600x900/?technology,abstract")
+    no-repeat center center/cover;
   padding-top: 100px;
 }
 
@@ -137,26 +138,26 @@ h2 {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .left-column,
   .right-column {
     gap: 15px;
   }
-  
+
   .mat-form-field {
     margin-bottom: 15px;
   }
-  
+
   .btn-warning {
     font-size: 14px;
     padding: 12px 0;
   }
-  
+
   .social-btn {
     height: 45px;
     font-size: 14px;
   }
-  
+
   .social-btn img {
     width: 18px;
   }
@@ -166,28 +167,28 @@ h2 {
   .login-container {
     padding-top: 50px;
   }
-  
+
   .form-wrapper {
     padding: 25px;
     border-radius: 8px;
   }
-  
+
   .logo {
     width: 120px;
   }
-  
+
   h2 {
     font-size: 24px;
   }
-  
+
   .subtitle {
     font-size: 14px;
   }
-  
+
   .divider {
     margin: 15px 0;
   }
-  
+
   .login-text {
     font-size: 13px;
   }
