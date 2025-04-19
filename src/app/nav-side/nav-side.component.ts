@@ -46,7 +46,7 @@ export class NavSideComponent  {
   }
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/create']);
+    this.router.navigate(['/login']);
     this.sub = null;
     this.token = null;
   }

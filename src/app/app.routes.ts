@@ -8,18 +8,30 @@ import { ExamInformationComponent } from './question/exam-information/exam-infor
 import { RegisterComponent } from './auth/register/register.component';
 import { StudentComponent } from './student/student.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  // Redirect from the root path '' to 'create' to ensure the app starts with the create page
-  { path: '', redirectTo: 'create', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'create', component: CreateNewExamComponent },
-  { path: 'enter', component: EnterQuestionsComponent },
-  { path: 'review', component: ReviewComponent },
-  { path: 'info', component: ExamInformationComponent },
-  { path: 'student/:quizId', component: StudentComponent },
-  // Catch-all route for undefined paths, displaying the NotFoundComponent (404 error page)
-  { path: "**", component: NotFoundComponent }
+   // Redirecting the root path '' to 'login' to ensure the app starts with the login page
+   { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+   // Public routes that do not require authentication (login and register pages)
+   { path: 'login', component: LoginComponent },
+   { path: 'register', component: RegisterComponent },
+ 
+   // Root path protection, applying AuthGuard to all child routes
+   {
+     path: '',
+     canActivate: [authGuard],  // Adding AuthGuard to all child routes
+     children: [
+       { path: 'dashboard', component: DashboardComponent },  // Protected route
+       { path: 'create', component: CreateNewExamComponent },  // Protected route
+       { path: 'enter', component: EnterQuestionsComponent },  // Protected route
+       { path: 'review', component: ReviewComponent },  // Protected route
+       { path: 'info', component: ExamInformationComponent },  // Protected route
+       { path: 'student/:quizId', component: StudentComponent },  // Protected route
+     ]
+   },
+ 
+   // Catch-all route for undefined paths, displaying the NotFoundComponent (404 error page)
+   { path: '**', component: NotFoundComponent }
 ];
