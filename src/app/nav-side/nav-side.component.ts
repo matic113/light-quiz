@@ -39,7 +39,8 @@ export class NavSideComponent  {
     { label: 'Users', icon: 'group', to: '/users' },
     { label: 'Notifications', icon: 'notifications', to: '/notifications' },
     { label: 'Questions', icon: 'help', to: '/create' },
-    { label: 'Search', icon: 'search', to: '/search' }
+    { label: 'Search', icon: 'search', to: '/search' },
+    { label: 'Join Quiz', icon: 'quiz', to: '/quiz' }
   ];
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
