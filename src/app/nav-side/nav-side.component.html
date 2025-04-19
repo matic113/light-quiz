@@ -42,9 +42,9 @@
       <a
         *ngFor="let item of items"
         [routerLink]="item.to"
-        class="flex items-center gap-3 h-12 px-3 rounded transition-colors"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
         [ngClass]="{
-          'text-emerald-600 bg-white/10 hover:bg-white/20': router.url === item.to,
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500': router.url === item.to,
           'text-white/80 hover:text-white hover:bg-white/10': router.url !== item.to,
           'justify-center px-0': !isExpanded
         }"
