@@ -29,9 +29,8 @@ export const routes: Routes = [
        { path: 'review', component: ReviewComponent },  // Protected route
        { path: 'info', component: ExamInformationComponent },  // Protected route
        { path: 'student/:quizId', component: StudentComponent },  // Protected route
+       { path: '**', component: NotFoundComponent }
+
      ]
    },
- 
-   // Catch-all route for undefined paths, displaying the NotFoundComponent (404 error page)
-   { path: '**', component: NotFoundComponent }
 ];
