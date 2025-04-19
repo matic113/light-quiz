@@ -12,7 +12,7 @@ import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
    // Redirecting the root path '' to 'login' to ensure the app starts with the login page
-   { path: '', redirectTo: 'login', pathMatch: 'full' },
+   { path: '', redirectTo: 'create', pathMatch: 'full' },
 
    // Public routes that do not require authentication (login and register pages)
    { path: 'login', component: LoginComponent },
