@@ -12,27 +12,26 @@ import { QuizComponent } from './quiz/quiz.component';
 import { TakeQuizComponent } from './take-quiz/take-quiz.component';
 
 export const routes: Routes = [
-   // Redirecting the root path '' to 'login' to ensure the app starts with the login page
-   { path: '', redirectTo: 'create', pathMatch: 'full' },
+  // Redirecting the root path '' to 'login' to ensure the app starts with the login page
+  { path: '', redirectTo: 'create', pathMatch: 'full' },
 
-   // Public routes that do not require authentication (login and register pages)
-   { path: 'login', component: LoginComponent },
-   { path: 'register', component: RegisterComponent },
- 
-   // Root path protection, applying AuthGuard to all child routes
-   {
-     path: '',
-     canActivate: [authGuard],  // Adding AuthGuard to all child routes
-     children: [
-       { path: 'dashboard', component: DashboardComponent },  // Protected route
-       { path: 'create', component: CreateNewExamComponent },  // Protected route
-       { path: 'enter', component: EnterQuestionsComponent },  // Protected route
-       { path: 'review', component: ReviewComponent },  // Protected route
-       { path: 'info', component: ExamInformationComponent },  // Protected route
-       { path: 'take-quiz/:quizId', component: TakeQuizComponent },  // Protected route
-       { path: 'quiz', component: QuizComponent },  // Protected route
-       { path: '**', component: NotFoundComponent }
+  // Public routes that do not require authentication (login and register pages)
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
 
-     ]
-   },
+  // Root path protection, applying AuthGuard to all child routes
+  {
+    path: '',
+    canActivate: [authGuard], // Adding AuthGuard to all child routes
+    children: [
+      { path: 'dashboard', component: DashboardComponent }, // Protected route
+      { path: 'create', component: CreateNewExamComponent }, // Protected route
+      { path: 'enter', component: EnterQuestionsComponent }, // Protected route
+      { path: 'review', component: ReviewComponent }, // Protected route
+      { path: 'info', component: ExamInformationComponent }, // Protected route
+      { path: 'take-quiz/:quizId', component: TakeQuizComponent }, // Protected route
+      { path: 'quiz', component: QuizComponent }, // Protected route
+      { path: '**', component: NotFoundComponent },
+    ],
+  },
 ];

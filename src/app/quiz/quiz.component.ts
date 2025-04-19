@@ -52,10 +52,10 @@ interface QuizData extends QuizMetadata {
     MatCardModule,
     MatButtonModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
   ],
   templateUrl: './quiz.component.html',
-  styleUrl: './quiz.component.css'
+  styleUrl: './quiz.component.css',
 })
 export class QuizComponent {
   shortcode: string = '';
@@ -64,10 +64,12 @@ export class QuizComponent {
   error: string = '';
   loading: boolean = false;
 
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     public authService: AuthService,
-     private snackBar: MatSnackBar,
-     private router: Router) {}
+    private snackBar: MatSnackBar,
+    private router: Router,
+  ) {}
 
   async getQuizMetadata() {
     if (!this.shortcode.trim()) {
@@ -78,19 +80,19 @@ export class QuizComponent {
     const token = this.authService.getToken();
 
     if (!token) {
-          this.snackBar.openFromComponent(CustomSnackbarComponent, {
-            data: {
-              message: 'You are not logged in. Please log in first.',
-              action: 'Close',
-              panelClass: ['bg-red-100', 'text-red-800']
-            },
-            duration: 5000,
-            horizontalPosition: 'right',
-            verticalPosition: 'bottom',
-            panelClass: ['bg-red-100', 'text-red-800']
-          });
-          return;
-        }
+      this.snackBar.openFromComponent(CustomSnackbarComponent, {
+        data: {
+          message: 'You are not logged in. Please log in first.',
+          action: 'Close',
+          panelClass: ['bg-red-100', 'text-red-800'],
+        },
+        duration: 5000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-red-100', 'text-red-800'],
+      });
+      return;
+    }
 
     this.loading = true;
     this.error = '';
@@ -100,12 +102,18 @@ export class QuizComponent {
         Authorization: `Bearer ${token}`,
       },
     };
-    
+
     try {
-      const result = await firstValueFrom(this.http.get<QuizMetadata>(`${this.baseLink}/api/quiz/metadata/${this.shortcode}`, headers));
+      const result = await firstValueFrom(
+        this.http.get<QuizMetadata>(
+          `${this.baseLink}/api/quiz/metadata/${this.shortcode}`,
+          headers,
+        ),
+      );
       this.quizMetadata = result ?? null;
     } catch (err) {
-      this.error = 'Failed to fetch quiz metadata. Please check your shortcode.';
+      this.error =
+        'Failed to fetch quiz metadata. Please check your shortcode.';
       this.quizMetadata = null;
     } finally {
       this.loading = false;
@@ -121,12 +129,12 @@ export class QuizComponent {
         data: {
           message: 'You are not logged in. Please log in first.',
           action: 'Close',
-          panelClass: ['bg-red-100', 'text-red-800']
+          panelClass: ['bg-red-100', 'text-red-800'],
         },
         duration: 5000,
         horizontalPosition: 'right',
         verticalPosition: 'bottom',
-        panelClass: ['bg-red-100', 'text-red-800']
+        panelClass: ['bg-red-100', 'text-red-800'],
       });
       return;
     }
@@ -136,20 +144,20 @@ export class QuizComponent {
         Authorization: `Bearer ${token}`,
       },
     };
-    
+
     try {
       this.loading = true;
       const quizData = await firstValueFrom(
         this.http.post<QuizData>(
           `${this.baseLink}/api/quiz/start/${this.quizMetadata.quizId}`,
           {},
-          headers
-        )
+          headers,
+        ),
       );
-      
+
       // Navigate with quiz data in state
       this.router.navigate(['/take-quiz', quizData.quizId], {
-        state: { quizData }
+        state: { quizData },
       });
     } catch (err) {
       this.error = 'Failed to start the quiz. Please try again.';

@@ -8,7 +8,7 @@ import {
   NgForm,
   ReactiveFormsModule,
   ValidatorFn,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -30,10 +30,10 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatInputModule,
     RouterLink,
     MatRadioModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
   ],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css'] // ✅ Corrected to "styleUrls"
+  styleUrls: ['./register.component.css'], // ✅ Corrected to "styleUrls"
 })
 export class RegisterComponent {
   // Validator to check if password and confirm password match
@@ -45,18 +45,24 @@ export class RegisterComponent {
   };
 
   // Reactive form definition
-  signupForm = new FormGroup({
-    fullName: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(6)
-    ]),
-    confirmPassword: new FormControl('', [Validators.required]),
-    userType: new FormControl('', [Validators.required]) // ✅ Fixed comma issue
-  }, { validators: this.passwordMatchValidator });
+  signupForm = new FormGroup(
+    {
+      fullName: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+      ]),
+      confirmPassword: new FormControl('', [Validators.required]),
+      userType: new FormControl('', [Validators.required]), // ✅ Fixed comma issue
+    },
+    { validators: this.passwordMatchValidator },
+  );
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   // Form submission
   onSubmit() {
@@ -65,7 +71,7 @@ export class RegisterComponent {
         fullname: this.signupForm.value.fullName,
         email: this.signupForm.value.email,
         password: this.signupForm.value.password,
-        userType: this.signupForm.value.userType // ✅ Send userType to the backend
+        userType: this.signupForm.value.userType, // ✅ Send userType to the backend
       };
 
       this.authService.onSignup(formData).subscribe({
@@ -76,7 +82,7 @@ export class RegisterComponent {
         },
         error: (err) => {
           console.error('Registration error:', err); // ✅ Error logging
-        }
+        },
       });
     }
   }
@@ -84,8 +90,15 @@ export class RegisterComponent {
 
 // Custom ErrorStateMatcher for Material inputs
 export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+  isErrorState(
+    control: FormControl | null,
+    form: FormGroupDirective | NgForm | null,
+  ): boolean {
     const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+    return !!(
+      control &&
+      control.invalid &&
+      (control.dirty || control.touched || isSubmitted)
+    );
   }
 }

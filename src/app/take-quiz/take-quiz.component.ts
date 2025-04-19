@@ -35,7 +35,7 @@ interface QuizData {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './take-quiz.component.html',
-  styleUrl: './take-quiz.component.css'
+  styleUrl: './take-quiz.component.css',
 })
 export class TakeQuizComponent implements OnInit, OnDestroy {
   private baseUrl = 'https://api.theknight.tech';
@@ -52,7 +52,7 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     // Get quiz data from router state
     const navigation = this.router.getCurrentNavigation();
@@ -81,7 +81,7 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
 
   private startTimer(durationMinutes: number): void {
     if (!durationMinutes) return;
-    
+
     let totalSeconds = durationMinutes * 60;
     this.updateTimerDisplay(totalSeconds);
 
@@ -111,17 +111,21 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
   getProgress(): number {
     if (!this.quiz?.durationMinutes) return 0;
     const totalSeconds = this.quiz.durationMinutes * 60;
-    const remainingSeconds = (this.minutes * 60) + this.seconds;
+    const remainingSeconds = this.minutes * 60 + this.seconds;
     return ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
   }
 
   submitQuiz(): void {
     if (!this.quiz || this.isSubmitted) return;
 
-    const formattedAnswers = this.quiz.questions.map(question => ({
+    const formattedAnswers = this.quiz.questions.map((question) => ({
       questionId: question.questionId,
-      optionLetter: (question.typeId === 1 || question.typeId === 2) ? this.answers[question.questionId] : null,
-      answerText: question.typeId === 3 ? this.answers[question.questionId] : null,
+      optionLetter:
+        question.typeId === 1 || question.typeId === 2
+          ? this.answers[question.questionId]
+          : null,
+      answerText:
+        question.typeId === 3 ? this.answers[question.questionId] : null,
     }));
 
     const payload = {
@@ -133,19 +137,21 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     const token = this.authService.getToken();
     this.loading = true;
 
-    this.http.post(`${this.baseUrl}/api/student/submit/${this.quiz.quizId}`, payload, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    }).subscribe({
-      next: () => {
-        this.isSubmitted = true;
-        this.loading = false;
-        this.stopTimer();
-      },
-      error: (error) => {
-        this.error = error.message || 'Failed to submit quiz';
-        this.loading = false;
-      }
-    });
+    this.http
+      .post(`${this.baseUrl}/api/student/submit/${this.quiz.quizId}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .subscribe({
+        next: () => {
+          this.isSubmitted = true;
+          this.loading = false;
+          this.stopTimer();
+        },
+        error: (error) => {
+          this.error = error.message || 'Failed to submit quiz';
+          this.loading = false;
+        },
+      });
   }
 
   goToDashboard(): void {

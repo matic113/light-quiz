@@ -1,34 +1,34 @@
 <!-- The open/close button appears only on small screens -->
-<button 
-  *ngIf="isMobile"
-  (click)="toggleMenu()"
-  class="fixed z-50 me-4 ms-1"
->
-  <mat-icon>{{ isExpanded ? 'menue' : 'menue' }}</mat-icon>
+<button *ngIf="isMobile" (click)="toggleMenu()" class="fixed z-50 me-4 ms-1">
+  <mat-icon>{{ isExpanded ? "menue" : "menue" }}</mat-icon>
 </button>
 
 <!-- Sidebar -->
 <div class="relative">
-  <div 
+  <div
     class="h-screen bg-emerald-600 flex flex-col transition-all duration-300 ease-in-out fixed z-40 top-0 left-0"
     [ngClass]="{
       'w-56': isExpanded && !isMobile,
       'w-16': !isExpanded && !isMobile,
       'w-1/2': isExpanded && isMobile,
-      'w-0 overflow-hidden': !isExpanded && isMobile
+      'w-0 overflow-hidden': !isExpanded && isMobile,
     }"
   >
     <!-- Logo -->
     <div class="flex items-center justify-center h-16 p-2">
-      <div class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center">
+      <div
+        class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center"
+      >
         <mat-icon class="text-white">description</mat-icon>
       </div>
-      <span *ngIf="isExpanded" class="ml-2 text-lg font-semibold text-white">Light Quiz</span>
+      <span *ngIf="isExpanded" class="ml-2 text-lg font-semibold text-white"
+        >Light Quiz</span
+      >
     </div>
 
     <!-- Collapse button (for desktop only) -->
     <div class="flex justify-end px-3 py-2" *ngIf="!isMobile">
-      <button 
+      <button
         class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded"
         (click)="toggleMenu()"
       >
@@ -44,9 +44,11 @@
         [routerLink]="item.to"
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
         [ngClass]="{
-          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500': router.url === item.to,
-          'text-white/80 hover:text-white hover:bg-white/10': router.url !== item.to,
-          'justify-center px-0': !isExpanded
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === item.to,
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== item.to,
+          'justify-center px-0': !isExpanded,
         }"
       >
         <mat-icon class="w-5 h-5">{{ item.icon }}</mat-icon>
@@ -55,7 +57,10 @@
     </div>
 
     <!-- User icon when sidebar is collapsed -->
-    <div *ngIf="!isExpanded && token" class="px-3 pb-1 mt-auto flex justify-center">
+    <div
+      *ngIf="!isExpanded && token"
+      class="px-3 pb-1 mt-auto flex justify-center"
+    >
       <button
         mat-icon-button
         [matTooltip]="sub"
@@ -67,7 +72,10 @@
     </div>
 
     <!-- User name when sidebar is expanded -->
-    <div *ngIf="isExpanded && token" class="px-3 py-2 mt-auto flex justify-center items-center text-white">
+    <div
+      *ngIf="isExpanded && token"
+      class="px-3 py-2 mt-auto flex justify-center items-center text-white"
+    >
       <mat-icon class="w-5 h-5">person</mat-icon>
       <span class="ml-2">{{ sub }}</span>
     </div>
@@ -77,7 +85,7 @@
       <div
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors text-white/80 hover:text-white hover:bg-white/10"
         (click)="logout()"
-        style="cursor: pointer;"
+        style="cursor: pointer"
         [ngClass]="{ 'justify-center px-0': !isExpanded }"
       >
         <mat-icon class="w-5 h-5">logout</mat-icon>

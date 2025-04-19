@@ -5,8 +5,6 @@ import { RouterLink } from '@angular/router';
   selector: 'app-review',
   imports: [RouterLink],
   templateUrl: './review.component.html',
-  styleUrl: './review.component.css'
+  styleUrl: './review.component.css',
 })
-export class ReviewComponent {
-
-}
+export class ReviewComponent {}

@@ -5,15 +5,17 @@ import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private registerUrl = 'https://api.theknight.tech/api/auth/register';
   private loginUrl = 'https://api.theknight.tech/api/auth/token';
   private tokenKey = 'auth_token';
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   onSignup(userData: any): Observable<any> {
     return this.http.post(this.registerUrl, userData).pipe(
@@ -22,7 +24,7 @@ export class AuthService {
           localStorage.setItem(this.tokenKey, response.token);
           this.router.navigate(['/create']);
         }
-      })
+      }),
     );
   }
 
@@ -33,7 +35,7 @@ export class AuthService {
           localStorage.setItem(this.tokenKey, response.token);
           this.router.navigate(['/create']);
         }
-      })
+      }),
     );
   }
 
@@ -41,35 +43,33 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
   isLoggedIn(): boolean {
-    return this.getToken() !== null; 
+    return this.getToken() !== null;
   }
   decodeToken(): any {
     const token = this.getToken();
     if (!token) {
-      console.error("No token found in localStorage");
+      console.error('No token found in localStorage');
       return null;
     }
     try {
       return jwtDecode(token);
     } catch (error) {
-      console.error("Invalid token:", error);
+      console.error('Invalid token:', error);
       return null;
     }
   }
 
   getFirstname(): string | null {
     const decoded = this.decodeToken();
-    console.log("Decoded Token Data:", decoded);
-    console.log("Decoded Token Data:");
+    console.log('Decoded Token Data:', decoded);
+    console.log('Decoded Token Data:');
     return decoded ? decoded.sub || decoded.sub : null;
   }
 
   getStudentId(): string | null {
-    const decoded = this.decodeToken(); 
+    const decoded = this.decodeToken();
     return decoded ? decoded.userId || decoded.userId : null;
   }
-
-
 
   logout(): void {
     localStorage.removeItem('token');
