@@ -40,7 +40,9 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
-
+  isLoggedIn(): boolean {
+    return this.getToken() !== null; 
+  }
   decodeToken(): any {
     const token = this.getToken();
     if (!token) {
