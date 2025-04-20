@@ -1,220 +1,220 @@
-<div class="min-h-screen py-10 px-4 md:px-20">
+<div class=" flex min-h-screen py-10 px-4 md:px-20">
   <div class="max-w-4xl mx-auto">
     <!-- Step 1 create exam-->
     <ng-container *ngIf="currentStep === 1">
       <!-- Header Section -->
-      <div class="flex justify-between items-start mb-6">
-        <div>
-          <h2 class="text-2xl text-gray-800">Create New Exam</h2>
-          <p class="text-sm text-gray-400">
-            Please complete the form below to set up your new exam details.
-          </p>
-        </div>
-        <button
-          (click)="navigateToAddQuetionsStep()"
-          type="button"
-          class="bg-green-800 hover:bg-green-700 text-white px-15 py-2 rounded-lg transition-all"
-        >
-          Next
-        </button>
-      </div>
-
-      <!-- Exam data Card -->
-      <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
-        <div class="mb-6">
-          <h3 class="flex items-center gap-2 text-lg text-black">
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9 12h6m2 6H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2z"
-              />
-            </svg>
-            Exam Details
-          </h3>
-        </div>
-
-        <form class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Exam Title</label
-            >
-            <input
-              type="text"
-              [(ngModel)]="examData.title"
-              name="title"
-              placeholder="Enter exam title"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Description</label
-            >
-            <textarea
-              [(ngModel)]="examData.description"
-              name="description"
-              rows="4"
-              placeholder="Enter Exam Description"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"
-            ></textarea>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="max-w-4xl mx-auto">
+        <!-- Step 1 create exam-->
+        <ng-container *ngIf="currentStep === 1">
+          <!-- Header Section -->
+          <div class="flex justify-between items-start mb-6">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Date</label
-              >
-              <input
-                [(ngModel)]="examData.date"
-                name="date"
-                type="date"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Time</label
-              >
-              <input
-                [(ngModel)]="examData.time"
-                name="time"
-                type="time"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Duration (Minutes)</label
-              >
-              <input
-                [(ngModel)]="examData.duration"
-                name="duration"
-                type="number"
-                value=""
-                placeholder="120"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <!--   Exam Type Card -->
-      <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
-        <h3 class="flex items-center gap-2 text-lg text-black mb-4">
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 5h6M9 12h6m-6 7h6"
-            />
-          </svg>
-          Exam Type
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <button
-            (click)="examData.exam_type = 'Multiple Choice'"
-            [class.border-purple-500]="examData.exam_type === 'Multiple Choice'"
-            class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition"
-          >
-            <div class="bg-purple-100 text-black rounded-full p-2">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11h2v5h-2V7zm0 6h2v2h-2v-2z"
-                />
-              </svg>
-            </div>
-            <span class="text-sm font-medium text-gray-700"
-              >Multiple Choice</span
-            >
-          </button>
-          <button
-            (click)="examData.exam_type = 'Short Answer'"
-            [class.border-purple-500]="examData.exam_type === 'Short Answer'"
-            class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition"
-          >
-            <div class="bg-purple-100 text-purple-500 rounded-full p-2">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h4v-2H4V5h12v10h-4v2h4a2 2 0 002-2V5a2 2 0 00-2-2H4z"
-                />
-              </svg>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Subjective</span>
-          </button>
-          <button
-            (click)="examData.exam_type = 'Mixed'"
-            [class.border-purple-500]="examData.exam_type === 'Mixed'"
-            class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition"
-          >
-            <div class="bg-purple-100 text-green-500 rounded-full p-2">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9h4v2H8V9z" />
-              </svg>
-            </div>
-            <span class="text-sm font-medium text-gray-700">Mixed</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- AI Grading Preferences Card -->
-      <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
-        <h3 class="flex items-center gap-2 text-lg text-black mb-4">
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 10h2l1 2h10l1-2h2"
-            />
-          </svg>
-          AI Grading System
-        </h3>
-        <div
-          class="flex items-center px-4 py-3 border border-gray-200 rounded-xl bg-purple-50"
-        >
-          <div class="flex items-center gap-3">
-            <svg
-              class="w-8 h-8 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-              />
-            </svg>
-            <div>
-              <p class="font-medium text-gray-800">AI-Powered Auto-grading</p>
-              <p class="text-sm text-gray-600">
-                This exam will be automatically graded using our AI system
+              <h2 class="text-2xl text-gray-800">Create New Exam</h2>
+              <p class="text-sm text-gray-400">
+                Please complete the form below to set up your new exam details.
               </p>
             </div>
           </div>
-        </div>
+
+          <!-- Exam data Card -->
+          <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
+            <div class="mb-6">
+              <h3 class="flex items-center gap-2 text-lg text-black">
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12h6m2 6H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2z"
+                  />
+                </svg>
+                Exam Details
+              </h3>
+            </div>
+      
+            <form class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Exam Title</label>
+                <input
+                  type="text"
+                  [(ngModel)]="examData.title"
+                  name="title"
+                  placeholder="Enter exam title"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                />
+              </div>
+      
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  [(ngModel)]="examData.description"
+                  name="description"
+                  rows="4"
+                  placeholder="Enter Exam Description"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"
+                ></textarea>
+              </div>
+      
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                  <input
+                    [(ngModel)]="examData.date"
+                    name="date"
+                    type="date"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                  <input
+                    [(ngModel)]="examData.time"
+                    name="time"
+                    type="time"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Duration (Minutes)</label>
+                  <input
+                    [(ngModel)]="examData.duration"
+                    name="duration"
+                    type="number"
+                    value=""
+                    placeholder="120"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+      
+          <!-- Exam Type Card -->
+          <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
+            <h3 class="flex items-center gap-2 text-lg text-black mb-4">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5h6M9 12h6m-6 7h6"
+                />
+              </svg>
+              Exam Type
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <button
+                (click)="examData.exam_type = 'Multiple Choice'"
+                [class.border-purple-500]="examData.exam_type === 'Multiple Choice'"
+                class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition"
+              >
+                <div class="bg-purple-100 text-black rounded-full p-2">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11h2v5h-2V7zm0 6h2v2h-2v-2z"
+                    />
+                  </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-700">Multiple Choice</span>
+              </button>
+              <button
+                (click)="examData.exam_type = 'Short Answer'"
+                [class.border-purple-500]="examData.exam_type === 'Short Answer'"
+                class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition"
+              >
+                <div class="bg-purple-100 text-purple-500 rounded-full p-2">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h4v-2H4V5h12v10h-4v2h4a2 2 0 002-2V5a2 2 0 00-2-2H4z"
+                    />
+                  </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-700">Subjective</span>
+              </button>
+              <button
+                (click)="examData.exam_type = 'Mixed'"
+                [class.border-purple-500]="examData.exam_type === 'Mixed'"
+                class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition"
+              >
+                <div class="bg-purple-100 text-green-500 rounded-full p-2">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 9h4v2H8V9z" />
+                  </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-700">Mixed</span>
+              </button>
+            </div>
+          </div>
+      
+          <!-- AI Grading Preferences Card -->
+          <div class="bg-white p-8 rounded-2xl shadow-md mb-6">
+            <h3 class="flex items-center gap-2 text-lg text-black mb-4">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 10h2l1 2h10l1-2h2"
+                />
+              </svg>
+              AI Grading System
+            </h3>
+            <div
+              class="flex items-center px-4 py-3 border border-gray-200 rounded-xl bg-purple-50"
+            >
+              <div class="flex items-center gap-3">
+                <svg
+                  class="w-8 h-8 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  />
+                </svg>
+                <div>
+                  <p class="font-medium text-gray-800">AI-Powered Auto-grading</p>
+                  <p class="text-sm text-gray-600">
+                    This exam will be automatically graded using our AI system
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Next Button (Bottom) -->
+<div class="flex justify-center mt-6">
+  <button
+    (click)="navigateToAddQuestionsStep()"
+    type="button"
+    class="w-full sm:w-1/2 md:w-1/3 bg-green-800 hover:bg-green-700 text-white text-lg font-semibold px-6 py-3 rounded-xl transition-all"
+  >
+    Next
+  </button>
+</div>
+
+        </ng-container>
       </div>
+      
     </ng-container>
 
     <!-- Step 2 create qs -->
@@ -224,7 +224,7 @@
         <h2 class="text-2xl text-gray-800">Enter Questions</h2>
         <div class="flex justify-between items-center gap-4">
           <button
-            class="border border-green-800 border-2 text-green-800 py-2 px-15 rounded hover:text-green-700 hover:border-green-700"
+            class=" border-green-800 border-2 text-green-800 py-2 px-15 rounded hover:text-green-700 hover:border-green-700"
             (click)="prevStep()"
           >
             Back
@@ -457,7 +457,7 @@
           Confirm
         </button>
         <button
-          class="border border-green-800 border-2 text-green-800 py-2 px-15 rounded hover:text-green-700 hover:border-green-700"
+          class=" border-green-800 border-2 text-green-800 py-2 px-15 rounded hover:text-green-700 hover:border-green-700"
           (click)="prevStep()"
         >
           Back
@@ -523,51 +523,53 @@
     </ng-container>
 
     <!-- Step 4 link exam -->
-    <ng-container *ngIf="currentStep === 4">
-      <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-sm">
-        <h2 class="text-lg text-gray-800 mb-4">Exam Information</h2>
-        <div class="flex justify-center mb-6">
+<ng-container *ngIf="currentStep === 4">
+  <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-sm">
+    <h2 class="text-lg text-gray-800 mb-4">Exam Information</h2>
+    <div class="flex justify-center mb-6">
+      <img
+        src="../../assets/images/exam_created.png"
+        alt="Exam illustration"
+        class="w-80 h-80 object-contain"
+      />
+    </div>
+
+    <div class="space-y-3">
+      <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md">
+        <div class="flex items-center">
+          <span class="text-gray-700 mr-2">Exam Link:</span>
+          <span class="text-sm text-gray-900">
+            {{ generatedExamCode }}
+          </span>
+        </div>
+        <button class="text-green-800" (click)="copyExamLink()">
           <img
-            src="../../assets/images/exam_created.png"
+            src="../../assets/images/Copy.png"
             alt="Exam illustration"
-            class="w-80 h-80 object-contain"
+            class="w-18 h-6 object-contain"
           />
-        </div>
-
-        <div class="space-y-3">
-          <div
-            class="flex items-center justify-between bg-gray-50 p-3 rounded-md"
-          >
-            <div class="flex items-center">
-              <span class="text-gray-700 mr-2">Exam Link:</span>
-              <span class="text-sm text-gray-900">https://bascb/id</span>
-            </div>
-            <button class="text-green-800">
-              <img
-                src="../../assets/images/Copy.png"
-                alt="Exam illustration"
-                class="w-18 h-6 object-contain"
-              />
-            </button>
-          </div>
-
-          <div class="bg-gray-50 p-3 rounded-md">
-            <span class="text-gray-700">Exam Name:</span>
-            <span class="text-gray-900"> PLC Quiz II</span>
-          </div>
-
-          <div class="bg-gray-50 p-3 rounded-md flex items-center">
-            <div class="flex items-center flex-grow">
-              <span class="text-gray-700 mr-2">Date:</span>
-              <span class="text-gray-800">23-3-2025 | 12:45</span>
-            </div>
-            <span
-              class="text-green-700 text-xs bg-green-100 px-2 py-1 rounded-md ml-auto"
-              >30 m</span
-            >
-          </div>
-        </div>
+        </button>
       </div>
-    </ng-container>
+
+      <div class="bg-gray-50 p-3 rounded-md">
+        <span class="text-gray-700">Exam Name:</span>
+        <span class="text-gray-900">{{ examData.title }}</span>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-md flex items-center">
+        <div class="flex items-center flex-grow">
+          <span class="text-gray-700 mr-2">Date:</span>
+          <span class="text-gray-800">{{ examData.date }} | {{ examData.time }}</span>
+        </div>
+        <span
+          class="text-green-700 text-xs bg-green-100 px-2 py-1 rounded-md ml-auto"
+        >
+          {{ examData.duration }} m
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
   </div>
 </div>

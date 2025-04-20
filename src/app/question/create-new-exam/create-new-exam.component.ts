@@ -14,6 +14,7 @@ import { ConfirmDialogComponent } from '../../shared/components/dialog/confirm-d
 import { CustomSnackbarComponent } from '../../shared/components/snackbar/custom-snackbar.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 type Question = {
   type: 'Multiple Choice' | 'True/False' | 'Short Answer' | 'Text';
@@ -61,6 +62,7 @@ export class CreateNewExamComponent {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {}
+  generatedExamCode: string = '';
 
   currentStep: number = 1;
   showDropdown = false;
@@ -77,30 +79,48 @@ export class CreateNewExamComponent {
   };
 
   // next بتاعت اول شاشة
-  navigateToAddQuetionsStep() {
-    if (
-      this.examData.title.trim() &&
-      this.examData.description.trim() &&
-      this.examData.date &&
-      this.examData.time &&
-      this.examData.duration &&
-      this.examData.exam_type
-    ) {
+  navigateToAddQuestionsStep() {
+    const missingFields: string[] = [];
+  
+    if (!this.examData.title.trim())       missingFields.push('• Title');
+    if (!this.examData.description.trim()) missingFields.push('• Description');
+    if (!this.examData.date)               missingFields.push('• Date');
+    if (!this.examData.time)               missingFields.push('• Time');
+    if (!this.examData.duration)           missingFields.push('• Duration');
+    if (!this.examData.exam_type)          missingFields.push('• Exam Type');
+  
+    if (missingFields.length === 0) {
       this.currentStep = 2;
     } else {
-      alert(
-        'Please complete all required fields:\n' +
-          (!this.examData.title.trim() ? '- Title is required\n' : '') +
-          (!this.examData.description.trim()
-            ? '- Description is required\n'
-            : '') +
-          (!this.examData.date ? '- Date is required\n' : '') +
-          (!this.examData.time ? '- Time is required\n' : '') +
-          (!this.examData.duration ? '- Duration is required\n' : '') +
-          (!this.examData.exam_type ? '- Exam type is required' : ''),
-      );
+      const htmlMessage = `
+      <div style="text-align: center;">
+        <strong>Please complete the following fields:</strong>
+      </div>
+      <div style="text-align: left; display: inline-block; padding-left: 20px; margin-top: 10px;">
+        ${missingFields.join('<br>')}
+      </div>
+    `;
+    
+
+  
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Required Fields',
+        html: htmlMessage,
+        confirmButtonText: 'OK',
+        showCloseButton: true,
+        timer: 3000,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        allowEscapeKey: true
+      });
     }
   }
+  
+  
+  
+  
+  
 
   // next بتاعت شاشة اضافة الاسئلة
   navigateToReviewStep() {
@@ -166,9 +186,9 @@ export class CreateNewExamComponent {
     const apiUrl = 'https://api.theknight.tech/api/quiz';
     const examPayload = this.mapExamToBackendPayload();
     const token = this.authService.getToken();
-
-    console.log(JSON.stringify(examPayload));
-
+  
+    console.log('Exam Payload:', JSON.stringify(examPayload));   
+  
     if (!token) {
       this.snackBar.openFromComponent(CustomSnackbarComponent, {
         data: {
@@ -179,17 +199,10 @@ export class CreateNewExamComponent {
         duration: 5000,
         horizontalPosition: 'right',
         verticalPosition: 'bottom',
-        panelClass: ['bg-red-100', 'text-red-800'],
       });
       return;
     }
-
-    const headers = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
+  
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Are you sure?',
@@ -198,11 +211,23 @@ export class CreateNewExamComponent {
         cancelText: 'No, cancel',
       },
     });
-
+  
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.http.post(apiUrl, examPayload, headers).subscribe({
-          next: () => {
+        this.http.post(apiUrl, examPayload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          observe: 'response' as const,
+        }).subscribe({
+          next: (response) => {
+            const locationHeader =
+              response.headers.get('Location') || response.headers.get('location') || '';
+            const examCode = locationHeader.split('/').pop() || '';
+            this.generatedExamCode = examCode;
+            this.currentStep = 4;
+  
+  
             this.snackBar.openFromComponent(CustomSnackbarComponent, {
               data: {
                 message: 'Exam created successfully',
@@ -212,21 +237,7 @@ export class CreateNewExamComponent {
               duration: 5000,
               horizontalPosition: 'right',
               verticalPosition: 'bottom',
-              panelClass: ['bg-green-100', 'text-green-800'],
             });
-
-            // Reset form
-            this.currentStep = 1;
-            this.examData = {
-              title: '',
-              description: '',
-              exam_type: undefined,
-              date: '',
-              time: '',
-              duration: undefined,
-              questions: [],
-            };
-            this.questionsList = [];
           },
           error: (err) => {
             console.error('Error creating exam:', err);
@@ -251,7 +262,7 @@ export class CreateNewExamComponent {
       }
     });
   }
-
+  
   prevStep() {
     if (this.currentStep > 1) this.currentStep--;
   }
@@ -360,4 +371,32 @@ export class CreateNewExamComponent {
       questions: mappedQuestions,
     };
   }
+
+  copyExamLink() {
+    const examLink = `${this.generatedExamCode}`;
+    navigator.clipboard.writeText(examLink).then(() => {
+      this.snackBar.openFromComponent(CustomSnackbarComponent, {
+        data: {
+          message: 'Exam link copied to clipboard!',
+          action: 'Close',
+          panelClass: ['bg-green-100', 'text-green-800'],
+        },
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom',
+      });
+    }, (err) => {
+      this.snackBar.openFromComponent(CustomSnackbarComponent, {
+        data: {
+          message: 'Failed to copy the link.',
+          action: 'Close',
+          panelClass: ['bg-red-100', 'text-red-800'],
+        },
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom',
+      });
+    });
+  }
+  
 }
