@@ -64,6 +64,8 @@ export class QuizComponent {
   error: string = '';
   loading: boolean = false;
 
+
+
   constructor(
     private http: HttpClient,
     public authService: AuthService,
@@ -159,8 +161,35 @@ export class QuizComponent {
       this.router.navigate(['/take-quiz', quizData.quizId], {
         state: { quizData },
       });
-    } catch (err) {
-      this.error = 'Failed to start the quiz. Please try again.';
+    } catch (err: any) {
+      console.log(err);
+
+      if (err.status === 400) {
+        this.snackBar.openFromComponent(CustomSnackbarComponent, {
+          data: {
+            message: 'You have already attempted this quiz before.',
+            action: 'Close',
+            panelClass: ['bg-red-100', 'text-red-800'],
+          },
+          duration: 5000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['bg-red-100', 'text-red-800'],
+        });
+      } else {
+        this.snackBar.openFromComponent(CustomSnackbarComponent, {
+          data: {
+            message: 'Failed to start the quiz. Please try again.',
+            action: 'Close',
+            panelClass: ['bg-red-100', 'text-red-800'],
+          },
+          duration: 5000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['bg-red-100', 'text-red-800'],
+        });
+
+      }
     } finally {
       this.loading = false;
     }
