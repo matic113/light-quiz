@@ -148,7 +148,7 @@
   </div>
 
   <!-- Floating user/logout buttons when collapsed -->
-  <div *ngIf="!isExpanded && token" class="fixed left-2 bottom-4 z-50 flex flex-col gap-2 mb-7">
+  <div *ngIf="!isExpanded && token && !isMobile" class="fixed left-2 bottom-4 z-50 flex flex-col gap-2 mb-7">
     <a 
       [routerLink]="'/profile'"
       class="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
