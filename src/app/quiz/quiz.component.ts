@@ -69,7 +69,7 @@ export class QuizComponent {
     public authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
-  ) {}
+  ) { }
 
   async getQuizMetadata() {
     if (!this.shortcode.trim()) {

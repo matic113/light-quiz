@@ -10,6 +10,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { authGuard } from './guards/auth.guard';
 import { QuizComponent } from './quiz/quiz.component';
 import { TakeQuizComponent } from './take-quiz/take-quiz.component';
+import { ResultsComponent } from './results/results.component';
 
 export const routes: Routes = [
   // Redirecting the root path '' to 'login' to ensure the app starts with the login page
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: 'info', component: ExamInformationComponent }, // Protected route
       { path: 'take-quiz/:quizId', component: TakeQuizComponent }, // Protected route
       { path: 'quiz', component: QuizComponent }, // Protected route
+      { path: 'results', component: ResultsComponent }, // Protected route
       { path: '**', component: NotFoundComponent },
     ],
   },

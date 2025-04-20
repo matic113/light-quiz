@@ -32,16 +32,19 @@ export class NavSideComponent {
   isExpanded = false;
   token: string | null = null;
   sub: string | null = null;
+  role: string | null = null;
   isMobile = false;
 
   constructor(
     public router: Router,
     public authService: AuthService,
     private breakpointObserver: BreakpointObserver,
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.sub = this.authService.getFirstname();
     this.token = this.authService.getToken();
+    this.role = this.authService.getRule();
+
     this.breakpointObserver
       .observe([Breakpoints.Handset])
       .subscribe((result) => {
@@ -57,6 +60,7 @@ export class NavSideComponent {
     { label: 'Questions', icon: 'help', to: '/create' },
     { label: 'Search', icon: 'search', to: '/search' },
     { label: 'Join Quiz', icon: 'quiz', to: '/quiz' },
+    { label: 'Results', icon: 'insert_chart', to: '/results' },
   ];
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
