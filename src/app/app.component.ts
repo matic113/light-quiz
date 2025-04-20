@@ -25,7 +25,7 @@ export class AppComponent {
         if (
           event.url === '/login' ||
           event.url === '/register' ||
-          event.url.startsWith('/student/')
+          event.url.startsWith('/take-quiz/')
         ) {
           this.showSidebar = false;
         } else {
