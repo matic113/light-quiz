@@ -16,11 +16,11 @@
   </div>
 
   <!-- Quiz Content -->
-  <div *ngIf="quiz && !loading" class="space-y-6">
+  <div *ngIf="quiz && !loading" class="space-y-6 mt-24">
     <!-- Timer and Progress -->
     <div
       [class]="getProgress() >= 70 ? 'bg-red-50' : 'bg-blue-50'"
-      class="p-4 rounded-xl shadow space-y-2 sticky top-4 z-10"
+      class="p-4 rounded-xl shadow space-y-2 fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-4xl"
     >
       <div class="flex justify-between items-center">
         <h2 class="text-2xl font-bold text-gray-800">{{ quiz.title }}</h2>
@@ -124,9 +124,7 @@
       </div>
 
       <!-- Submit Button -->
-      <div
-        class="sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg"
-      >
+      <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg mt-8">
         <div class="flex justify-center">
           <button
             type="submit"
