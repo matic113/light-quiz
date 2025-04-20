@@ -17,12 +17,17 @@ export class AuthService {
     private router: Router,
   ) { }
 
+  private getDefaultRoute(): string {
+    const role = this.getRole();
+    return role === 'teacher' ? '/create' : '/quiz';
+  }
+
   onSignup(userData: any): Observable<any> {
     return this.http.post(this.registerUrl, userData).pipe(
       tap((response: any) => {
         if (response.token) {
           localStorage.setItem(this.tokenKey, response.token);
-          this.router.navigate(['/create']);
+          this.router.navigate([this.getDefaultRoute()]);
         }
       }),
     );
@@ -33,7 +38,7 @@ export class AuthService {
       tap((response: any) => {
         if (response.token) {
           localStorage.setItem(this.tokenKey, response.token);
-          this.router.navigate(['/create']);
+          this.router.navigate([this.getDefaultRoute()]);
         }
       }),
     );
@@ -72,13 +77,23 @@ export class AuthService {
   }
   getRole(): string | null {
     const decoded = this.decodeToken();
-    return decoded ? decoded.roles || decoded.roles : null;
+    if (!decoded) return null;
+    
+    // Handle both array and single string cases
+    const roles = decoded.roles;
+    if (Array.isArray(roles)) {
+      return roles[0]; // Return first role if it's an array
+    }
+    return roles || null;
   }
 
   logout(): void {
+    // Clear all auth-related data
     localStorage.removeItem('token');
-    localStorage.removeItem('auth_token');
-
+    localStorage.removeItem(this.tokenKey);
     localStorage.removeItem('sub');
+    
+    // Navigate to login page after logout
+    this.router.navigate(['/login']);
   }
 }
