@@ -1,1 +1,365 @@
-<p class="ms-100">dashboard works!</p>
+<div class="min-h-screen bg-gray-100 p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">
+            Good morning Amr, how's you feel today, Checkout recent overview.
+        </h1>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+            </svg>
+            Quick Create
+        </button>
+    </div>
+
+    <!-- Upcoming Deadlines & Reminders -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines & Reminders</h2>
+        <ul>
+            <li *ngFor="let reminder of dashboardData.reminders"
+                class="flex justify-between items-center py-2 border-b">
+                <span class="text-sm text-gray-800">{{ reminder.title }}</span>
+                <span class="text-sm text-gray-600">{{ reminder.dueDate }}</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-blue-100 p-4 rounded-full mr-4">
+                <svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-600">Total Quizzes</p>
+                <p class="text-2xl font-bold text-gray-800">{{ dashboardData.totalQuizzes }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-purple-100 p-4 rounded-full mr-4">
+                <svg class="w-8 h-8 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm-1-9h2v4H9V7zm0 6h2v2H9v-2z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-600">Total Number of Questions</p>
+                <p class="text-2xl font-bold text-gray-800">{{ dashboardData.totalQuestions }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-green-100 p-4 rounded-full mr-4">
+                <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM7 9l2 2 4-4" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-600">Ongoing / Active Exam</p>
+                <p class="text-2xl font-bold text-gray-800">{{ dashboardData.activeExams }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-yellow-100 p-4 rounded-full mr-4">
+                <svg class="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM9 7h2v4H9V7zm0 6h2v2H9v-2z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-600">Completed Exams</p>
+                <p class="text-2xl font-bold text-gray-800">{{ dashboardData.completedExams }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-red-100 p-4 rounded-full mr-4">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM8 8l4 4m0-4L8 12" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-600">Cancelled Exam</p>
+                <p class="text-2xl font-bold text-gray-800">{{ dashboardData.canceledExams }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-orange-100 p-4 rounded-full mr-4">
+                <svg class="w-8 h-8 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM7 9l2 2 4-4" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-600">Total Pass / Fail</p>
+                <p class="text-2xl font-bold text-gray-800">{{ dashboardData.totalPassFail }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Results and Group Results Over Time -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Exam Results -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Exam Performance Breakdown</h2>
+                <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'examResults')">
+                    <option>Last 3 Quizzes</option>
+                    <option>Last 5 Quizzes</option>
+                    <option selected>Last 10 Quizzes</option>
+                </select>
+            </div>
+            <div class="h-8 bg-gray-200 rounded-lg flex overflow-hidden">
+                <div class="h-full bg-blue-500" [style.width]="dashboardData.passed + '%'">
+                    <span class="text-sm text-white px-2">{{ dashboardData.passed }}%</span>
+                </div>
+                <div class="h-full bg-green-500" [style.width]="dashboardData.merit + '%'">
+                    <span class="text-sm text-white px-2">{{ dashboardData.merit }}%</span>
+                </div>
+                <div class="h-full bg-red-500" [style.width]="dashboardData.failed + '%'">
+                    <span class="text-sm text-white px-2">{{ dashboardData.failed }}%</span>
+                </div>
+            </div>
+            <div class="flex justify-around mt-4">
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">Passed</p>
+                    <p class="text-lg font-semibold text-blue-500">{{ dashboardData.passed }}%</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">Merit</p>
+                    <p class="text-lg font-semibold text-green-500">{{ dashboardData.merit }}%</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-lg font-semibold text-red-500">{{ dashboardData.failed }}%</p>
+                    <p class="text-sm text-gray-600">Failed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Results Over Time -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Group Performance Trends</h2>
+                <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'groupResults')">
+                    <option>Last 3 Quizzes</option>
+                    <option>Last 5 Quizzes</option>
+                    <option selected>Last 10 Quizzes</option>
+                </select>
+            </div>
+            <div class="space-y-4">
+                <div *ngFor="let group of groupResultsData" class="space-y-2">
+                    <div class="text-sm font-semibold text-gray-800">{{ group.label }}</div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="col-span-1"></div>
+                        <div *ngFor="let quizBatch of group.quizBreakdown" class="space-y-1">
+                            <div class="h-4 bg-gray-200 rounded-lg flex overflow-hidden">
+                                <div class="h-full bg-blue-500" [style.width]="quizBatch.passed + '%'"></div>
+                                <div class="h-full bg-green-500" [style.width]="quizBatch.merit + '%'"></div>
+                                <div class="h-full bg-red-500" [style.width]="quizBatch.failed + '%'"></div>
+                            </div>
+                            <div class="text-center text-xs text-gray-600">{{ quizBatch.batch }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center mt-4 space-x-4">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+                    <span class="text-sm text-gray-600">Passed</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-green-500 rounded mr-2"></div>
+                    <span class="text-sm text-gray-600">Merit</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                    <span class="text-sm text-gray-600">Failed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frequently Missed Topics -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Frequently Missed Topics</h2>
+            <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'missedQuestions')">
+                <option>Last 3 Quizzes</option>
+                <option>Last 5 Quizzes</option>
+                <option selected>Last 10 Quizzes</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <p class="text-gray-600">Topic</p>
+                <p class="text-sm font-semibold text-gray-800">{{ dashboardData.missedQuestions.topic }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Quiz</p>
+                <p class="text-sm font-semibold text-gray-800">{{ dashboardData.missedQuestions.quiz }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Miss Rate</p>
+                <div class="flex items-center">
+                    <p class="text-lg font-semibold text-red-500">{{ dashboardData.missedQuestions.missRate }}%</p>
+                    <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM8 8l4 4m0-4L8 12" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teaching Analytics -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Teaching Analytics</h2>
+            <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'teachingAnalytics')">
+                <option>Last 3 Quizzes</option>
+                <option>Last 5 Quizzes</option>
+                <option selected>Last 10 Quizzes</option>
+            </select>
+        </div>
+        <div class="space-y-4">
+            <!-- Student Engagement Trends -->
+            <div class="flex items-center">
+                <div class="w-48 text-gray-600 text-sm">Low Participation Quizzes</div>
+                <div class="flex-1 h-6 bg-gray-200 rounded-lg overflow-hidden">
+                    <div class="h-full bg-orange-500 rounded-lg"
+                        [style.width]="dashboardData.teachingAnalytics.lowParticipationRate + '%'"></div>
+                </div>
+                <div class="w-16 text-right text-gray-800 text-sm">{{
+                    dashboardData.teachingAnalytics.lowParticipationRate }}%</div>
+            </div>
+            <!-- Quiz Difficulty Insights -->
+            <div class="flex items-center">
+                <div class="w-48 text-gray-600 text-sm">High Failure Rate Quizzes</div>
+                <div class="flex-1 h-6 bg-gray-200 rounded-lg overflow-hidden">
+                    <div class="h-full bg-red-500 rounded-lg"
+                        [style.width]="dashboardData.teachingAnalytics.highFailureRate + '%'"></div>
+                </div>
+                <div class="w-16 text-right text-gray-800 text-sm">{{ dashboardData.teachingAnalytics.highFailureRate
+                    }}%</div>
+            </div>
+            <!-- Topic Performance Gaps -->
+            <div class="flex items-center">
+                <div class="w-48 text-gray-600 text-sm">Struggling Topic: {{
+                    dashboardData.teachingAnalytics.strugglingTopic.topic }}</div>
+                <div class="flex-1 h-6 bg-gray-200 rounded-lg overflow-hidden">
+                    <div class="h-full bg-purple-500 rounded-lg"
+                        [style.width]="dashboardData.teachingAnalytics.strugglingTopic.performanceGap + '%'"></div>
+                </div>
+                <div class="w-16 text-right text-gray-800 text-sm">{{
+                    dashboardData.teachingAnalytics.strugglingTopic.performanceGap }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Performance -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Student Performance Overview</h2>
+            <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'studentPerformance')">
+                <option>Last 3 Quizzes</option>
+                <option>Last 5 Quizzes</option>
+                <option selected>Last 10 Quizzes</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p class="text-gray-600">Top Performers</p>
+                <ul class="mt-2">
+                    <li *ngFor="let student of dashboardData.topPerformers"
+                        class="flex justify-between items-center py-2">
+                        <span class="text-sm font-semibold text-gray-800">{{ student.name }}</span>
+                        <span class="text-lg font-semibold text-green-500">{{ student.grade }}%</span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <p class="text-gray-600">Students Needing Attention</p>
+                <ul class="mt-2">
+                    <li *ngFor="let student of dashboardData.needingAttention"
+                        class="flex justify-between items-center py-2">
+                        <span class="text-sm font-semibold text-gray-800">{{ student.name }}</span>
+                        <span class="text-lg font-semibold text-red-500">{{ student.grade }}%</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engagement Metrics -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Engagement Metrics</h2>
+            <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'engagement')">
+                <option>Last 3 Quizzes</option>
+                <option>Last 5 Quizzes</option>
+                <option selected>Last 10 Quizzes</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <p class="text-gray-600">Avg Time Spent per Quiz</p>
+                <p class="text-lg font-semibold text-gray-800">{{ dashboardData.engagement.avgTimeSpent }} mins</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Incomplete Quizzes</p>
+                <p class="text-lg font-semibold text-gray-800">{{ dashboardData.engagement.incompleteQuizzes }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Participation Rate</p>
+                <p class="text-lg font-semibold text-gray-800">{{ dashboardData.engagement.participationRate }}%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Difficulty Analysis -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Quiz Difficulty Analysis</h2>
+            <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'quizDifficulty')">
+                <option>Last 3 Quizzes</option>
+                <option>Last 5 Quizzes</option>
+                <option selected>Last 10 Quizzes</option>
+            </select>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div *ngFor="let quiz of dashboardData.quizDifficulty">
+                <p class="text-gray-600">{{ quiz.title }}</p>
+                <p class="text-sm font-semibold text-gray-800">Avg Score: {{ quiz.avgScore }}%</p>
+                <p class="text-sm text-gray-600">Pass Rate: {{ quiz.passRate }}%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group-wise Performance -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Group-wise Performance</h2>
+            <select class="border rounded-lg p-2 text-gray-600" (change)="updateRange($event, 'groupPerformance')">
+                <option>Last 3 Quizzes</option>
+                <option>Last 5 Quizzes</option>
+                <option selected>Last 10 Quizzes</option>
+            </select>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-gray-600">
+                        <th class="py-2">Group Name</th>
+                        <th class="py-2">Avg Score</th>
+                        <th class="py-2">Pass Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let group of dashboardData.groupPerformance" class="border-t">
+                        <td class="py-2">{{ group.name }}</td>
+                        <td class="py-2">{{ group.avgScore }}%</td>
+                        <td class="py-2">{{ group.passRate }}%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
