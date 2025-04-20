@@ -14,7 +14,7 @@ import { ResultsComponent } from './results/results.component';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'create', pathMatch: 'full' },
 
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
