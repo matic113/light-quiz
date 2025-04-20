@@ -14,7 +14,7 @@ export class AppComponent {
   title = 'light-quiz';
   showSidebar: boolean = true;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     // Listen to route changes

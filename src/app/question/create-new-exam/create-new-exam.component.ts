@@ -61,7 +61,7 @@ export class CreateNewExamComponent {
     public authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-  ) {}
+  ) { }
   generatedExamCode: string = '';
 
   currentStep: number = 1;
@@ -81,14 +81,14 @@ export class CreateNewExamComponent {
   // next بتاعت اول شاشة
   navigateToAddQuestionsStep() {
     const missingFields: string[] = [];
-  
-    if (!this.examData.title.trim())       missingFields.push('• Title');
+
+    if (!this.examData.title.trim()) missingFields.push('• Title');
     if (!this.examData.description.trim()) missingFields.push('• Description');
-    if (!this.examData.date)               missingFields.push('• Date');
-    if (!this.examData.time)               missingFields.push('• Time');
-    if (!this.examData.duration)           missingFields.push('• Duration');
-    if (!this.examData.exam_type)          missingFields.push('• Exam Type');
-  
+    if (!this.examData.date) missingFields.push('• Date');
+    if (!this.examData.time) missingFields.push('• Time');
+    if (!this.examData.duration) missingFields.push('• Duration');
+    if (!this.examData.exam_type) missingFields.push('• Exam Type');
+
     if (missingFields.length === 0) {
       this.currentStep = 2;
     } else {
@@ -100,9 +100,9 @@ export class CreateNewExamComponent {
         ${missingFields.join('<br>')}
       </div>
     `;
-    
 
-  
+
+
       Swal.fire({
         icon: 'warning',
         title: 'Missing Required Fields',
@@ -116,11 +116,8 @@ export class CreateNewExamComponent {
       });
     }
   }
-  
-  
-  
-  
-  
+
+
 
   // next بتاعت شاشة اضافة الاسئلة
   navigateToReviewStep() {
@@ -139,45 +136,41 @@ export class CreateNewExamComponent {
     } else {
       alert(
         (!this.questionsList.length ? '- No questions added\n' : '') +
-          (this.questionsList.some((q) => !q.q.trim())
-            ? `- Question text #${
-                this.questionsList.findIndex((q) => !q.q.trim()) + 1
-              } is required\n`
-            : '') +
-          (this.questionsList.some(
+        (this.questionsList.some((q) => !q.q.trim())
+          ? `- Question text #${this.questionsList.findIndex((q) => !q.q.trim()) + 1
+          } is required\n`
+          : '') +
+        (this.questionsList.some(
+          (q) =>
+            (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+            (q.correctOptionId === undefined || q.correctOptionId === null),
+        )
+          ? `- Question #${this.questionsList.findIndex(
             (q) =>
               (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-              (q.correctOptionId === undefined || q.correctOptionId === null),
-          )
-            ? `- Question #${
-                this.questionsList.findIndex(
-                  (q) =>
-                    (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-                    (q.correctOptionId === undefined ||
-                      q.correctOptionId === null),
-                ) + 1
-              }'s correct option is required\n`
-            : '') +
-          (this.questionsList.some(
+              (q.correctOptionId === undefined ||
+                q.correctOptionId === null),
+          ) + 1
+          }'s correct option is required\n`
+          : '') +
+        (this.questionsList.some(
+          (q) =>
+            q.type !== 'Multiple Choice' &&
+            q.type !== 'True/False' &&
+            (!q.correctAnswer || q.correctAnswer.trim() === ''),
+        )
+          ? `- Question #${this.questionsList.findIndex(
             (q) =>
               q.type !== 'Multiple Choice' &&
               q.type !== 'True/False' &&
               (!q.correctAnswer || q.correctAnswer.trim() === ''),
-          )
-            ? `- Question #${
-                this.questionsList.findIndex(
-                  (q) =>
-                    q.type !== 'Multiple Choice' &&
-                    q.type !== 'True/False' &&
-                    (!q.correctAnswer || q.correctAnswer.trim() === ''),
-                ) + 1
-              }'s correct answer is required\n`
-            : '') +
-          (this.questionsList.some((q) => q.points === undefined)
-            ? `- Question #${
-                this.questionsList.findIndex((q) => q.points === undefined) + 1
-              }'s points is required\n`
-            : ''),
+          ) + 1
+          }'s correct answer is required\n`
+          : '') +
+        (this.questionsList.some((q) => q.points === undefined)
+          ? `- Question #${this.questionsList.findIndex((q) => q.points === undefined) + 1
+          }'s points is required\n`
+          : ''),
       );
     }
   }
@@ -186,9 +179,7 @@ export class CreateNewExamComponent {
     const apiUrl = 'https://api.theknight.tech/api/quiz';
     const examPayload = this.mapExamToBackendPayload();
     const token = this.authService.getToken();
-  
-    console.log('Exam Payload:', JSON.stringify(examPayload));   
-  
+
     if (!token) {
       this.snackBar.openFromComponent(CustomSnackbarComponent, {
         data: {
@@ -202,7 +193,7 @@ export class CreateNewExamComponent {
       });
       return;
     }
-  
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Are you sure?',
@@ -211,7 +202,7 @@ export class CreateNewExamComponent {
         cancelText: 'No, cancel',
       },
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.http.post(apiUrl, examPayload, {
@@ -226,8 +217,8 @@ export class CreateNewExamComponent {
             const examCode = locationHeader.split('/').pop() || '';
             this.generatedExamCode = examCode;
             this.currentStep = 4;
-  
-  
+
+
             this.snackBar.openFromComponent(CustomSnackbarComponent, {
               data: {
                 message: 'Exam created successfully',
@@ -262,7 +253,7 @@ export class CreateNewExamComponent {
       }
     });
   }
-  
+
   prevStep() {
     if (this.currentStep > 1) this.currentStep--;
   }
@@ -372,6 +363,12 @@ export class CreateNewExamComponent {
     };
   }
 
+  calculateTotalPoints() {
+    return this.questionsList.reduce((total, question) => {
+      return total + (question.points || 0);
+    }, 0);
+  }
+
   copyExamLink() {
     const examLink = `${this.generatedExamCode}`;
     navigator.clipboard.writeText(examLink).then(() => {
@@ -398,5 +395,5 @@ export class CreateNewExamComponent {
       });
     });
   }
-  
+
 }
