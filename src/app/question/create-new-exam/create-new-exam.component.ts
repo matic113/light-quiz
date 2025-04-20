@@ -14,6 +14,7 @@ import { ConfirmDialogComponent } from '../../shared/components/dialog/confirm-d
 import { CustomSnackbarComponent } from '../../shared/components/snackbar/custom-snackbar.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 type Question = {
   type: 'Multiple Choice' | 'True/False' | 'Short Answer' | 'Text';
@@ -45,7 +46,13 @@ const questionTypeNameToId: { [key: string]: number } = {
   selector: 'app-create-new-exam',
   templateUrl: './create-new-exam.component.html',
   styleUrls: ['./create-new-exam.component.css'],
-  imports: [CommonModule, DragDropModule, FormsModule, MatDialogModule, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    DragDropModule,
+    FormsModule,
+    MatDialogModule,
+    MatSnackBarModule,
+  ],
   standalone: true,
 })
 export class CreateNewExamComponent {
@@ -53,8 +60,9 @@ export class CreateNewExamComponent {
     private http: HttpClient,
     public authService: AuthService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) { }
+  generatedExamCode: string = '';
 
   currentStep: number = 1;
   showDropdown = false;
@@ -71,42 +79,57 @@ export class CreateNewExamComponent {
   };
 
   // next بتاعت اول شاشة
-  navigateToAddQuetionsStep() {
-    if (
-      this.examData.title.trim() &&
-      this.examData.description.trim() &&
-      this.examData.date &&
-      this.examData.time &&
-      this.examData.duration &&
-      this.examData.exam_type
-    ) {
+  navigateToAddQuestionsStep() {
+    const missingFields: string[] = [];
+
+    if (!this.examData.title.trim()) missingFields.push('• Title');
+    if (!this.examData.description.trim()) missingFields.push('• Description');
+    if (!this.examData.date) missingFields.push('• Date');
+    if (!this.examData.time) missingFields.push('• Time');
+    if (!this.examData.duration) missingFields.push('• Duration');
+    if (!this.examData.exam_type) missingFields.push('• Exam Type');
+
+    if (missingFields.length === 0) {
       this.currentStep = 2;
     } else {
-      alert(
-        'Please complete all required fields:\n' +
-        (!this.examData.title.trim() ? '- Title is required\n' : '') +
-        (!this.examData.description.trim()
-          ? '- Description is required\n'
-          : '') +
-        (!this.examData.date ? '- Date is required\n' : '') +
-        (!this.examData.time ? '- Time is required\n' : '') +
-        (!this.examData.duration ? '- Duration is required\n' : '') +
-        (!this.examData.exam_type ? '- Exam type is required' : '')
-      );
+      const htmlMessage = `
+      <div style="text-align: center;">
+        <strong>Please complete the following fields:</strong>
+      </div>
+      <div style="text-align: left; display: inline-block; padding-left: 20px; margin-top: 10px;">
+        ${missingFields.join('<br>')}
+      </div>
+    `;
+
+
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Required Fields',
+        html: htmlMessage,
+        confirmButtonText: 'OK',
+        showCloseButton: true,
+        timer: 3000,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        allowEscapeKey: true
+      });
     }
   }
+
+
 
   // next بتاعت شاشة اضافة الاسئلة
   navigateToReviewStep() {
     if (
       this.questionsList.length > 0 &&
       this.questionsList.every(
-        (q) => q.q.trim() && q.points !== undefined &&
-          (
-            (q.type === 'Multiple Choice' || q.type === 'True/False')
-              ? q.correctOptionId !== undefined && q.correctOptionId !== null
-              : q.correctAnswer && q.correctAnswer.trim() !== ''
-          )
+        (q) =>
+          q.q.trim() &&
+          q.points !== undefined &&
+          (q.type === 'Multiple Choice' || q.type === 'True/False'
+            ? q.correctOptionId !== undefined && q.correctOptionId !== null
+            : q.correctAnswer && q.correctAnswer.trim() !== ''),
       )
     ) {
       this.currentStep = 3;
@@ -117,30 +140,37 @@ export class CreateNewExamComponent {
           ? `- Question text #${this.questionsList.findIndex((q) => !q.q.trim()) + 1
           } is required\n`
           : '') +
-        (this.questionsList.some((q) =>
-          (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-          (q.correctOptionId === undefined || q.correctOptionId === null)
-        )
-          ? `- Question #${this.questionsList.findIndex((q) =>
+        (this.questionsList.some(
+          (q) =>
             (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-            (q.correctOptionId === undefined || q.correctOptionId === null)
+            (q.correctOptionId === undefined || q.correctOptionId === null),
+        )
+          ? `- Question #${this.questionsList.findIndex(
+            (q) =>
+              (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+              (q.correctOptionId === undefined ||
+                q.correctOptionId === null),
           ) + 1
           }'s correct option is required\n`
           : '') +
-        (this.questionsList.some((q) =>
-          (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
-          (!q.correctAnswer || q.correctAnswer.trim() === '')
+        (this.questionsList.some(
+          (q) =>
+            q.type !== 'Multiple Choice' &&
+            q.type !== 'True/False' &&
+            (!q.correctAnswer || q.correctAnswer.trim() === ''),
         )
-          ? `- Question #${this.questionsList.findIndex((q) =>
-            (q.type !== 'Multiple Choice' && q.type !== 'True/False') &&
-            (!q.correctAnswer || q.correctAnswer.trim() === '')
+          ? `- Question #${this.questionsList.findIndex(
+            (q) =>
+              q.type !== 'Multiple Choice' &&
+              q.type !== 'True/False' &&
+              (!q.correctAnswer || q.correctAnswer.trim() === ''),
           ) + 1
           }'s correct answer is required\n`
           : '') +
         (this.questionsList.some((q) => q.points === undefined)
           ? `- Question #${this.questionsList.findIndex((q) => q.points === undefined) + 1
           }'s points is required\n`
-          : '')
+          : ''),
       );
     }
   }
@@ -150,82 +180,75 @@ export class CreateNewExamComponent {
     const examPayload = this.mapExamToBackendPayload();
     const token = this.authService.getToken();
 
-    console.log(JSON.stringify(examPayload));
-
     if (!token) {
       this.snackBar.openFromComponent(CustomSnackbarComponent, {
         data: {
           message: 'You are not logged in. Please log in first.',
           action: 'Close',
-          panelClass: ['bg-red-100', 'text-red-800']
+          panelClass: ['bg-red-100', 'text-red-800'],
         },
         duration: 5000,
         horizontalPosition: 'right',
         verticalPosition: 'bottom',
-        panelClass: ['bg-red-100', 'text-red-800']
       });
       return;
     }
-
-    const headers = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Are you sure?',
         text: 'Do you want to create this exam?',
         confirmText: 'Yes, create it!',
-        cancelText: 'No, cancel'
-      }
+        cancelText: 'No, cancel',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.http.post(apiUrl, examPayload, headers).subscribe({
-          next: () => {
+        this.http.post(apiUrl, examPayload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          observe: 'response' as const,
+        }).subscribe({
+          next: (response) => {
+            const locationHeader =
+              response.headers.get('Location') || response.headers.get('location') || '';
+            const examCode = locationHeader.split('/').pop() || '';
+            this.generatedExamCode = examCode;
+            this.currentStep = 4;
+
+
             this.snackBar.openFromComponent(CustomSnackbarComponent, {
               data: {
                 message: 'Exam created successfully',
                 action: 'Close',
-                panelClass: ['bg-green-100', 'text-green-800']
+                panelClass: ['bg-green-100', 'text-green-800'],
               },
               duration: 5000,
               horizontalPosition: 'right',
               verticalPosition: 'bottom',
-              panelClass: ['bg-green-100', 'text-green-800']
             });
-
-            // Reset form
-            this.currentStep = 1;
-            this.examData = {
-              title: '',
-              description: '',
-              exam_type: undefined,
-              date: '',
-              time: '',
-              duration: undefined,
-              questions: [],
-            };
-            this.questionsList = [];
           },
           error: (err) => {
             console.error('Error creating exam:', err);
-            this.snackBar.open('Failed to create exam. Please try again.', 'Close', {
-              duration: 5000,
-              horizontalPosition: 'right',
-              verticalPosition: 'bottom',
-              panelClass: ['bg-red-100', 'text-red-800']
-            });
+            this.snackBar.open(
+              'Failed to create exam. Please try again.',
+              'Close',
+              {
+                duration: 5000,
+                horizontalPosition: 'right',
+                verticalPosition: 'bottom',
+                panelClass: ['bg-red-100', 'text-red-800'],
+              },
+            );
           },
         });
       } else {
         this.snackBar.open('Exam creation was cancelled', 'Close', {
           duration: 3000,
           horizontalPosition: 'right',
-          verticalPosition: 'bottom'
+          verticalPosition: 'bottom',
         });
       }
     });
@@ -290,13 +313,13 @@ export class CreateNewExamComponent {
     moveItemInArray(
       this.questionsList,
       event.previousIndex,
-      event.currentIndex
+      event.currentIndex,
     );
   }
 
   mapExamToBackendPayload(): any {
     const startsAtUTC = new Date(
-      `${this.examData.date}T${this.examData.time}:00Z`
+      `${this.examData.date}T${this.examData.time}:00Z`,
     ).toISOString();
 
     const mappedQuestions = this.examData.questions.map((question) => {
@@ -339,4 +362,38 @@ export class CreateNewExamComponent {
       questions: mappedQuestions,
     };
   }
+
+  calculateTotalPoints() {
+    return this.questionsList.reduce((total, question) => {
+      return total + (question.points || 0);
+    }, 0);
+  }
+
+  copyExamLink() {
+    const examLink = `${this.generatedExamCode}`;
+    navigator.clipboard.writeText(examLink).then(() => {
+      this.snackBar.openFromComponent(CustomSnackbarComponent, {
+        data: {
+          message: 'Exam link copied to clipboard!',
+          action: 'Close',
+          panelClass: ['bg-green-100', 'text-green-800'],
+        },
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom',
+      });
+    }, (err) => {
+      this.snackBar.openFromComponent(CustomSnackbarComponent, {
+        data: {
+          message: 'Failed to copy the link.',
+          action: 'Close',
+          panelClass: ['bg-red-100', 'text-red-800'],
+        },
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'bottom',
+      });
+    });
+  }
+
 }

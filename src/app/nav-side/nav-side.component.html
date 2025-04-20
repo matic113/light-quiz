@@ -1,23 +1,13 @@
-<!-- The open/close button appears only on small screens -->
-<button 
-  *ngIf="isMobile"
-  (click)="toggleMenu()"
-  class="fixed z-50 me-4 ms-1"
->
-  <mat-icon>{{ isExpanded ? 'menue' : 'menue' }}</mat-icon>
-</button>
-
 <!-- Sidebar -->
 <div class="relative">
-  <div 
-    class="h-screen bg-emerald-600 flex flex-col transition-all duration-300 ease-in-out fixed z-40 top-0 left-0"
+  <div class="h-screen bg-emerald-600 flex flex-col transition-all duration-300 ease-in-out fixed z-40 top-0 left-0"
     [ngClass]="{
       'w-56': isExpanded && !isMobile,
       'w-16': !isExpanded && !isMobile,
       'w-1/2': isExpanded && isMobile,
-      'w-0 overflow-hidden': !isExpanded && isMobile
-    }"
-  >
+      '-translate-x-full': !isExpanded && isMobile
+    }">
+    
     <!-- Logo -->
     <div class="flex items-center justify-center h-16 p-2">
       <div class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center">
@@ -28,10 +18,7 @@
 
     <!-- Collapse button (for desktop only) -->
     <div class="flex justify-end px-3 py-2" *ngIf="!isMobile">
-      <button 
-        class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded"
-        (click)="toggleMenu()"
-      >
+      <button class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded" (click)="toggleMenu()">
         <mat-icon *ngIf="isExpanded">chevron_left</mat-icon>
         <mat-icon *ngIf="!isExpanded">chevron_right</mat-icon>
       </button>
@@ -39,50 +26,169 @@
 
     <!-- Navigation items -->
     <div class="flex flex-col gap-1 px-2">
-      <a
-        *ngFor="let item of items"
-        [routerLink]="item.to"
+      <!-- Dashboard -->
+      <a *ngIf="role === 'teacher'" [routerLink]="'/dashboard'"
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
         [ngClass]="{
-          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500': router.url === item.to,
-          'text-white/80 hover:text-white hover:bg-white/10': router.url !== item.to,
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/dashboard',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/dashboard',
           'justify-center px-0': !isExpanded
-        }"
-      >
-        <mat-icon class="w-5 h-5">{{ item.icon }}</mat-icon>
-        <span *ngIf="isExpanded">{{ item.label }}</span>
+        }">
+        <mat-icon class="w-5 h-5">dashboard</mat-icon>
+        <span *ngIf="isExpanded">Dashboard</span>
+      </a>
+
+      <!-- Questions -->
+      <a *ngIf="role === 'teacher'" [routerLink]="'/create'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
+        [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/questions',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/questions',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">help</mat-icon>
+        <span *ngIf="isExpanded">Questions</span>
+      </a>
+
+      <!-- Student Links -->
+      <a *ngIf="role === 'student'" [routerLink]="'/quiz'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
+        [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/quiz',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/quiz',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">quiz</mat-icon>
+        <span *ngIf="isExpanded">Join Quiz</span>
+      </a>
+
+      <a *ngIf="role === 'student'" [routerLink]="'/results'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
+        [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/results',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/results',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">insert_chart</mat-icon>
+        <span *ngIf="isExpanded">Results</span>
+      </a>
+
+      <!-- Teacher Links -->
+      <a *ngIf="role === 'teacher'" [routerLink]="'/reports'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
+        [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/reports',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/reports',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">bar_chart</mat-icon>
+        <span *ngIf="isExpanded">Reports</span>
+      </a>
+
+      <a *ngIf="role === 'teacher'" [routerLink]="'/users'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
+        [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/users',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/users',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">group</mat-icon>
+        <span *ngIf="isExpanded">Users</span>
+      </a>
+
+      <a *ngIf="role === 'teacher'" [routerLink]="'/notifications'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative"
+        [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/notifications',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/notifications',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">notifications</mat-icon>
+        <span *ngIf="isExpanded">Notifications</span>
       </a>
     </div>
 
-    <!-- User icon when sidebar is collapsed -->
-    <div *ngIf="!isExpanded && token" class="px-3 pb-1 mt-auto flex justify-center">
-      <button
-        mat-icon-button
-        [matTooltip]="sub"
-        [matTooltipPosition]="'right'"
-        class="text-white hover:text-white/80"
-      >
-        <mat-icon>person</mat-icon>
+
+   <!-- User info when expanded -->
+<div *ngIf="isExpanded && token" class="flex flex-col items-center pb-4"
+[ngClass]="{
+  'mt-[300px]': role === 'student',
+  'mt-[150px]': role === 'teacher'
+}">
+<div class="px-3 py-2 flex items-center text-white">
+<mat-icon class="h-5">person</mat-icon>
+<span class="ml-2">{{ sub }}</span>
+</div>
+<span class="text-sm text-gray-300">{{ role }}</span>
+</div>
+
+    <!-- Logout when expanded -->
+    <div *ngIf="isExpanded && token" class="px-3 mt-auto mb-30">
+      <button 
+        class="w-full flex items-center gap-3 h-12 px-3 rounded transition-colors text-white/80 hover:text-white hover:bg-white/10"
+        (click)="logout()">
+        <mat-icon class="w-5 h-5">logout</mat-icon>
+        <span>Logout</span>
       </button>
     </div>
-
-    <!-- User name when sidebar is expanded -->
-    <div *ngIf="isExpanded && token" class="px-3 py-2 mt-auto flex justify-center items-center text-white">
-      <mat-icon class="w-5 h-5">person</mat-icon>
-      <span class="ml-2">{{ sub }}</span>
-    </div>
-
-    <!-- Logout button -->
-    <div class="px-3 py-4 mb-4" *ngIf="token">
-      <div
-        class="flex items-center gap-3 h-12 px-3 rounded transition-colors text-white/80 hover:text-white hover:bg-white/10"
-        (click)="logout()"
-        style="cursor: pointer;"
-        [ngClass]="{ 'justify-center px-0': !isExpanded }"
-      >
-        <mat-icon class="w-5 h-5">logout</mat-icon>
-        <span *ngIf="isExpanded">Logout</span>
-      </div>
-    </div>
   </div>
+
+  <!-- Floating user/logout buttons when collapsed -->
+  <div *ngIf="!isExpanded && token" class="fixed left-2 bottom-4 z-50 flex flex-col gap-2 mb-7">
+    <a 
+      [routerLink]="'/profile'"
+      class="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+      matTooltip="{{ sub }}"
+    >
+      <mat-icon>person</mat-icon>
+    </a>
+    <button 
+      mat-icon-button 
+      class="text-white hover:bg-white/10 rounded-full"
+      (click)="logout()"
+      matTooltip="Logout"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</div>
+<div *ngIf="isMobile" class="fixed bottom-0 left-0 w-full bg-emerald-600 z-50 flex justify-between items-center py-3 px-6 text-white rounded-t-xl shadow-lg">
+  <a *ngIf="role === 'teacher'" [routerLink]="'/dashboard'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>dashboard</mat-icon>
+  </a>
+  <a *ngIf="role === 'teacher'" [routerLink]="'/create'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>help</mat-icon>
+  </a>
+  <a *ngIf="role === 'student'" [routerLink]="'/quiz'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>quiz</mat-icon>
+  </a>
+  <a *ngIf="role === 'student'" [routerLink]="'/results'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>insert_chart</mat-icon>
+  </a>
+  <a *ngIf="role === 'teacher'" [routerLink]="'/reports'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>bar_chart</mat-icon>
+  </a>
+  <a *ngIf="role === 'teacher'" [routerLink]="'/users'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>group</mat-icon>
+  </a>
+  <a *ngIf="role === 'teacher'" [routerLink]="'/notifications'" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>notifications</mat-icon>
+  </a>
+  <button (click)="logout()" class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>logout</mat-icon>
+  </button>
 </div>

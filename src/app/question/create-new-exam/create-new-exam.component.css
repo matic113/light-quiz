@@ -2,9 +2,12 @@
   opacity: 1 !important;
   /* يخلي العنصر غير شفاف أثناء السحب */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  /* اختياري: يخليه واضح أكتر */
   border-radius: 1rem;
-  /* اختياري: يطابق نفس شكل العناصر */
+  background: #FFF;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
 }
 
 button {
