@@ -7,4 +7,4 @@ import { RouterLink } from '@angular/router';
   templateUrl: './enter-questions.component.html',
   styleUrl: './enter-questions.component.css',
 })
-export class EnterQuestionsComponent {}
+export class EnterQuestionsComponent { }

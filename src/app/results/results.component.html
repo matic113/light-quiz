@@ -1,0 +1,46 @@
+<div class="min-h-screen bg-gray-100 p-6">
+  <div *ngIf="isLoading" class="text-gray-500 text-xl text-center">Loading...</div>
+
+  <ng-container *ngIf="!isLoading && results.length">
+    <div class="flex flex-col gap-4 items-center">
+      <div *ngFor="let result of results" [ngClass]="{
+          'bg-white': result.grade >= (result.possiblePoints/2),
+          'bg-red-50': result.grade < (result.possiblePoints/2)
+        }"
+        class="rounded-xl shadow-lg p-4 w-full max-w-4xl flex items-center space-x-6 animate-fade-in border border-gray-200">
+
+        <!-- Icon -->
+        <div [ngClass]="{
+            'bg-gradient-to-tr from-indigo-500 to-purple-500': result.grade >= (result.possiblePoints/2),
+            'bg-red-400': result.grade < (result.possiblePoints/2)
+          }" class="text-white rounded-xl w-14 h-14 flex items-center justify-center text-2xl font-bold shadow">
+          {{ result.grade >= (result.possiblePoints/2) ? '✔' : '❌' }}
+        </div>
+
+        <!-- Info Grid -->
+        <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm sm:text-base">
+          <div class="text-gray-700 font-medium">
+            <span class="block text-gray-400 text-xs">Quiz</span>
+            {{ result.quizTitle }}
+          </div>
+          <div class="text-gray-700 font-medium">
+            <span class="block text-gray-400 text-xs">Correct</span>
+            {{ result.correctQuestions }} / {{ result.totalQuestions }}
+          </div>
+          <div class="text-gray-700 font-medium">
+            <span class="block text-gray-400 text-xs">Grade</span>
+            {{ result.grade }}
+          </div>
+          <div class="text-gray-700 font-medium">
+            <span class="block text-gray-400 text-xs">Total Mark</span>
+            {{ result.possiblePoints }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <div *ngIf="!isLoading && !results.length" class="text-gray-500 text-lg text-center mt-10">
+    No results found.
+  </div>
+</div>

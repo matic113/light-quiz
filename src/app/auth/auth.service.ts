@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-  ) {}
+  ) { }
 
   onSignup(userData: any): Observable<any> {
     return this.http.post(this.registerUrl, userData).pipe(
@@ -69,6 +69,10 @@ export class AuthService {
   getStudentId(): string | null {
     const decoded = this.decodeToken();
     return decoded ? decoded.userId || decoded.userId : null;
+  }
+  getRule(): string | null {
+    const decoded = this.decodeToken();
+    return decoded ? decoded.roles || decoded.roles : null;
   }
 
   logout(): void {
