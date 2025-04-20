@@ -40,10 +40,11 @@ export class NavSideComponent {
     public authService: AuthService,
     private breakpointObserver: BreakpointObserver,
   ) { }
+
   ngOnInit(): void {
     this.sub = this.authService.getFirstname();
     this.token = this.authService.getToken();
-    this.role = this.authService.getRule();
+    this.role = this.authService.getRole();
 
     this.breakpointObserver
       .observe([Breakpoints.Handset])
@@ -52,19 +53,12 @@ export class NavSideComponent {
         this.isExpanded = !this.isMobile;
       });
   }
-  items = [
-    { label: 'Dashboard', icon: 'dashboard', to: '/dashboard' },
-    { label: 'Reports', icon: 'bar_chart', to: '/reports' },
-    { label: 'Users', icon: 'group', to: '/users' },
-    { label: 'Notifications', icon: 'notifications', to: '/notifications' },
-    { label: 'Questions', icon: 'help', to: '/create' },
-    { label: 'Search', icon: 'search', to: '/search' },
-    { label: 'Join Quiz', icon: 'quiz', to: '/quiz' },
-    { label: 'Results', icon: 'insert_chart', to: '/results' },
-  ];
+  
+  
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
   }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

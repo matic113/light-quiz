@@ -70,7 +70,7 @@ export class AuthService {
     const decoded = this.decodeToken();
     return decoded ? decoded.userId || decoded.userId : null;
   }
-  getRule(): string | null {
+  getRole(): string | null {
     const decoded = this.decodeToken();
     return decoded ? decoded.roles || decoded.roles : null;
   }
