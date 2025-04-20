@@ -1,4 +1,10 @@
-<div class=" flex min-h-screen py-10 px-4 md:px-20">
+<div
+  [ngClass]="{
+    'translate-x-30': isExpanded,
+    'translate-x-0': !isExpanded
+  }"
+  class="flex min-h-screen py-10 px-4 md:px-20 transition-transform duration-300 "
+>
   <div class="max-w-4xl mx-auto w-full">
     <!-- Step 1 create exam-->
     <ng-container *ngIf="currentStep === 1">

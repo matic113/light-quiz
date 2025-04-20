@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 @Component({
   imports: [CommonModule],
@@ -9,6 +10,22 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
+// ----------------sidebar stste--------------------------------
+  isExpanded: boolean = true;
+
+  ngOnInit(): void {
+    this.sidebarStateService.setSidebarState(true); 
+  
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+        this.loadDashboardData();
+    
+    });
+  }
+  constructor(
+    private sidebarStateService: SidebarStateService
+  ) { }
+  // ----------------------------------------------------------------------------
   dashboardData: any = {
     totalQuizzes: 48,
     totalQuestions: 32,
@@ -82,12 +99,8 @@ export class DashboardComponent implements OnInit {
 
   currentRange: string = 'Last 10 Quizzes'; // Default range
 
-  constructor() {}
 
-  ngOnInit(): void {
-    this.loadDashboardData();
-  }
-
+  
   loadDashboardData() {
     
   }

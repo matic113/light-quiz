@@ -15,6 +15,7 @@ import { CustomSnackbarComponent } from '../../shared/components/snackbar/custom
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
+import { SidebarStateService } from '../../services/sidebar-state.service';
 
 type Question = {
   type: 'Multiple Choice' | 'True/False' | 'Short Answer' | 'Text';
@@ -61,9 +62,20 @@ export class CreateNewExamComponent {
     public authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private sidebarStateService: SidebarStateService
   ) { }
-  generatedExamCode: string = '';
+  isExpanded: boolean = true;
 
+  ngOnInit(): void {
+    this.sidebarStateService.setSidebarState(true); 
+  
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
+  }
+  
+
+  generatedExamCode: string = '';
   currentStep: number = 1;
   showDropdown = false;
   questionsList: Question[] = [];

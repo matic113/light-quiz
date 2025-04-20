@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../auth/auth.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 @Component({
   selector: 'app-nav-side',
@@ -29,7 +30,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './nav-side.component.css',
 })
 export class NavSideComponent {
-  isExpanded = false;
+  isExpanded = true;
   token: string | null = null;
   sub: string | null = null;
   role: string | null = null;
@@ -39,6 +40,8 @@ export class NavSideComponent {
     public router: Router,
     public authService: AuthService,
     private breakpointObserver: BreakpointObserver,
+    private sidebarStateService: SidebarStateService
+
   ) { }
 
   ngOnInit(): void {
@@ -57,6 +60,8 @@ export class NavSideComponent {
   
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
+    this.sidebarStateService.setSidebarState(this.isExpanded);
+
   }
 
   logout(): void {

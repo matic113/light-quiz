@@ -1,4 +1,9 @@
-<div class="min-h-screen bg-gray-100 p-6">
+<div 
+[ngClass]="{
+    'translate-x-32': isExpanded,
+    'translate-x-10': !isExpanded
+  }"
+class="min-h-screen bg-gray-100 ">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-800">
