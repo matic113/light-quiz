@@ -145,9 +145,15 @@ export class QuizComponent {
         ),
       );
       this.quizMetadata = result ?? null;
-    } catch (err) {
-      this.error =
-        'Failed to fetch quiz metadata. Please check your shortcode.';
+    } catch (err: any) {
+
+      if (err.status === 404) {
+        this.error =
+          'Failed to fetch quiz metadata. Please check your shortcode.';
+      } else if (err.status === 400) {
+        this.error = "You have already attempted this quiz before.";
+      }
+
       this.quizMetadata = null;
     } finally {
       this.loading = false;
