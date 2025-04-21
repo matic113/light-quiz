@@ -19,6 +19,7 @@ interface QuizMetadata {
   timeAllowed: number;
   startsAt: string;
   numberOfQuestions: number;
+  didStartQuiz: boolean;
 }
 
 interface QuizOption {
@@ -36,6 +37,37 @@ interface QuizQuestion {
   options: QuizOption[];
 }
 
+// Interfaces matching those in take-quiz.component.ts for consistency
+interface QuizDetails { // Structure expected within ResumeResponse and potentially from start
+  quizId: string;
+  attemptId: string;
+  title: string;
+  description: string;
+  startsAtUTC: string;
+  durationMinutes: number;
+  questions: QuizQuestion[];
+}
+
+interface QuestionAnswer { // Needed for QuizProgress
+  questionId: string;
+  optionLetter: string | null;
+  answerText: string | null;
+}
+
+interface QuizProgress { // Structure expected within ResumeResponse
+  attemptId: string;
+  questionsAnswers: QuestionAnswer[];
+  lastSaved: string;
+  attemptStartTimeUTC: string;
+  attemptEndTimeUTC: string;
+}
+
+interface ResumeResponse { // Structure returned by the resume endpoint
+  quiz: QuizDetails;
+  progress: QuizProgress;
+}
+
+// Original QuizData interface (potentially returned by start endpoint)
 interface QuizData extends QuizMetadata {
   attemptId: string;
   questions: QuizQuestion[];
@@ -149,17 +181,52 @@ export class QuizComponent {
 
     try {
       this.loading = true;
-      const quizData = await firstValueFrom(
-        this.http.post<QuizData>(
-          `${this.baseLink}/api/quiz/start/${this.quizMetadata.quizId}`,
-          {},
-          headers,
-        ),
-      );
+      const quizId = this.quizMetadata.quizId;
+      let navigationData: any; // Use 'any' temporarily or create a union type
+      let navigateToQuizId: string;
 
-      // Navigate with quiz data in state
-      this.router.navigate(['/take-quiz', quizData.quizId], {
-        state: { quizData },
+      if (this.quizMetadata.didStartQuiz) {
+        // Call the resume endpoint - Expects ResumeResponse
+        const resumeResponse = await firstValueFrom(
+          this.http.post<ResumeResponse>( // <-- Expect ResumeResponse
+            `${this.baseLink}/api/quiz/resume/${quizId}`,
+            {},
+            headers
+          )
+        );
+        navigationData = resumeResponse; // Pass the whole ResumeResponse
+        navigateToQuizId = resumeResponse.quiz.quizId; // Get quizId from the nested structure
+      } else {
+        // Call the start endpoint - Assume it returns QuizData (adjust if needed)
+        const startResponse = await firstValueFrom(
+          this.http.post<QuizData>( // <-- Assume QuizData for start
+            `${this.baseLink}/api/quiz/start/${quizId}`,
+            {},
+            headers
+          )
+        );
+        // Map QuizData to the structure expected by TakeQuizComponent (like ResumeResponse)
+        const mappedQuizDetails: QuizDetails = {
+          quizId: startResponse.quizId,
+          attemptId: startResponse.attemptId,
+          title: startResponse.title,
+          description: startResponse.description,
+          startsAtUTC: startResponse.startsAtUTC, // Directly use from QuizData
+          durationMinutes: startResponse.durationMinutes, // Directly use from QuizData
+          questions: startResponse.questions
+        };
+
+        // Create the navigation data structure similar to ResumeResponse
+        navigationData = {
+          quiz: mappedQuizDetails,
+          progress: null // No progress when starting fresh
+        };
+        navigateToQuizId = startResponse.quizId;
+      }
+
+      // Navigate with the correct data structure in state
+      this.router.navigate(['/take-quiz', navigateToQuizId], {
+        state: { quizData: navigationData }, // Pass data under 'quizData' key
       });
     } catch (err: any) {
       console.log(err);
@@ -193,5 +260,11 @@ export class QuizComponent {
     } finally {
       this.loading = false;
     }
+  }
+
+  cancel() {
+    this.quizMetadata = null;
+    this.error = '';
+    this.shortcode = ''; // Also clear the shortcode input
   }
 }
