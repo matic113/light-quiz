@@ -44,20 +44,43 @@ export class LoginComponent {
       const { email, password } = this.loginForm.value;
       this.authService.login({ email, password }).subscribe({
         next: (response) => {
-          console.log('Login successful! Response:', response);
-          this.router.navigate(['/create']).then(() => {
-            window.location.reload();
+          import('sweetalert2').then((Swal) => {
+            Swal.default.fire({
+              icon: 'success',
+              title: 'Login Successful',
+              text: 'Welcome back!',
+              toast: true,
+              position: 'bottom-end',
+              showConfirmButton: false,
+              timer: 1000,
+              timerProgressBar: true,
+            }).then(() => {
+              this.router.navigate(['/create']).then(() => {
+                window.location.reload();
+              });
+            });
           });
         },
         error: (err) => {
-          console.error('Login error:', err);
-          alert(
-            'Login failed: ' + (err.error?.message || 'Invalid credentials'),
-          );
+          import('sweetalert2').then((Swal) => {
+            Swal.default.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: 'Email or password is incorrect.',
+              confirmButtonText: 'Try Again',
+            });
+          });
         },
       });
     } else {
-      alert('Please fill in all fields correctly.');
+      import('sweetalert2').then((Swal) => {
+        Swal.default.fire({
+          icon: 'warning',
+          title: 'Invalid Input',
+          text: 'Please fill in all fields correctly.',
+          confirmButtonText: 'OK',
+        });
+      });
     }
   }
 }
