@@ -34,6 +34,7 @@ type Exam = {
   time: string;
   duration?: number;
   questions: Question[];
+  randomize: boolean;
 };
 
 const questionTypeNameToId: { [key: string]: number } = {
@@ -94,6 +95,7 @@ export class CreateNewExamComponent {
     time: '',
     duration: undefined,
     questions: this.questionsList,
+    randomize: false,
   };
 
   // next بتاعت اول شاشة
@@ -429,6 +431,7 @@ export class CreateNewExamComponent {
       startsAtUTC: startsAtUTC,
       durationMinutes: this.examData.duration || 0,
       anonymous: true,
+      randomize: this.examData.randomize,
       questions: mappedQuestions,
     };
   }
