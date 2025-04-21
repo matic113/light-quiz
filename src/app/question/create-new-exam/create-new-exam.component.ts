@@ -259,17 +259,15 @@ export class CreateNewExamComponent {
       return;
     }
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Are you sure?',
-        text: 'Do you want to create this exam?',
-        confirmText: 'Yes, create it!',
-        cancelText: 'No, cancel',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create this exam?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, create it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
         this.http.post(apiUrl, examPayload, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -282,7 +280,6 @@ export class CreateNewExamComponent {
             const examCode = locationHeader.split('/').pop() || '';
             this.generatedExamCode = examCode;
             this.currentStep = 4;
-
 
             this.snackBar.openFromComponent(CustomSnackbarComponent, {
               data: {
@@ -317,6 +314,10 @@ export class CreateNewExamComponent {
         });
       }
     });
+
+
+
+
   }
 
   prevStep() {
