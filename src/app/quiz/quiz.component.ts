@@ -196,7 +196,7 @@ export class QuizComponent {
         );
         navigationData = resumeResponse; // Pass the whole ResumeResponse
         navigateToQuizId = resumeResponse.quiz.quizId; // Get quizId from the nested structure
-      } else {
+      } else { // else means that it's the first time to start this quiz
         // Call the start endpoint - Assume it returns QuizData (adjust if needed)
         const startResponse = await firstValueFrom(
           this.http.post<QuizData>( // <-- Assume QuizData for start
