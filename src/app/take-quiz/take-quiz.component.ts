@@ -116,54 +116,105 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     if (this.quiz) {
       // Initialize answers from progress if available
       if (this.progress && this.progress.questionsAnswers?.length > 0) {
-        this.progress.questionsAnswers.forEach(qa => {
-          // Prioritize optionLetter for MC/TF, otherwise use answerText
-          // Ensure null is handled correctly if neither exists
-          const questionId = qa.questionId;
-          const correspondingQuestion = this.quiz?.questions.find(q => q.questionId === questionId); // Find the question details
+        this.applySavedAnswers(this.progress.questionsAnswers);
+      }
 
-          if (correspondingQuestion) {
-            let savedValue: string | null = null;
-            if (correspondingQuestion.typeId === 1 || correspondingQuestion.typeId === 2) {
-              // For choice questions, use optionLetter
-              // The API might return either optionLetter or answerOptionLetter, check both
-              savedValue = qa.optionLetter ?? (qa as any).answerOptionLetter ?? null;
-              // console.log(`Loading answer for Choice Q ${questionId}:`, savedValue, `(Raw: Option='${qa.optionLetter}')`);
-            } else if (correspondingQuestion.typeId === 3 || correspondingQuestion.typeId === 4) {
-              // For text questions, use answerText
-              savedValue = qa.answerText ?? null; // Use only answerText
-              // console.log(`Loading answer for Text Q ${questionId}:`, savedValue, `(Raw: Text='${qa.answerText}')`);
-            } else {
-              console.warn(`Unknown question type ${correspondingQuestion.typeId} for Q ${questionId} during loading.`);
-              savedValue = qa.optionLetter ?? qa.answerText ?? null; // Fallback to original logic
-            }
-            this.answers[questionId] = savedValue;
-          } else {
-            console.warn(`Could not find question details for saved answer with questionId: ${questionId}`);
-          }
-        });
+      // Check if we need to fetch the latest progress
+      // If we're coming from a page refresh (not from resume endpoint)
+      // we should fetch the latest progress
+      const navigation = this.router.getCurrentNavigation();
+      const isFromNavigation = navigation && navigation.extras.state;
+      
+      if (!isFromNavigation) {
+        // Only fetch progress if we're not coming directly from navigation
+        // (i.e., page was refreshed)
+        this.fetchLatestProgress();
       }
 
       // Start timer based on progress or initial duration
-    if (this.progress?.attemptEndTimeUTC) {
-      this.startTimerFromEndTime(this.progress.attemptEndTimeUTC);
+      if (this.progress?.attemptEndTimeUTC) {
+        this.startTimerFromEndTime(this.progress.attemptEndTimeUTC);
+      } else {
+        this.startTimer(this.quiz.durationMinutes);
+      }
+
+      // Setup debounced saving
+      this.saveSubscription = this.saveSubject
+        .pipe(debounceTime(1500)) // Wait 1.5 seconds after the last change
+        .subscribe(() => this.saveProgress());
+
     } else {
-      this.startTimer(this.quiz.durationMinutes);
+      // If no quiz data found, redirect back
+      this.error = 'No quiz data found';
+      setTimeout(() => {
+        this.router.navigate(['/quiz']);
+      }, 2000);
+    }
+  }
+
+  private fetchLatestProgress(): void {
+    if (!this.quiz) return;
+    
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('Cannot fetch progress: Authentication token not found.');
+      return;
     }
 
-    // Setup debounced saving
-    this.saveSubscription = this.saveSubject
-      .pipe(debounceTime(1500)) // Wait 1.5 seconds after the last change
-      .subscribe(() => this.saveProgress());
-
-  } else {
-    // If no quiz data found, redirect back
-    this.error = 'No quiz data found';
-    setTimeout(() => {
-      this.router.navigate(['/quiz']);
-    }, 2000);
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    
+    this.http.get<QuizProgress>(`${this.baseUrl}/api/student/progress/${this.quiz.quizId}`, { headers })
+      .subscribe({
+        next: (latestProgress) => {
+          if (latestProgress && latestProgress.questionsAnswers?.length > 0) {
+            // Update the progress object
+            this.progress = latestProgress;
+            
+            // Clear existing answers
+            this.answers = {};
+            
+            // Load the latest answers using the shared function
+            this.applySavedAnswers(latestProgress.questionsAnswers);
+            
+            // Update timer if needed
+            if (latestProgress.attemptEndTimeUTC) {
+              this.stopTimer();
+              this.startTimerFromEndTime(latestProgress.attemptEndTimeUTC);
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Failed to fetch latest progress:', error);
+          // Continue with existing progress data if fetch fails
+        }
+      });
   }
-}
+
+  /**
+   * Applies saved answers from progress data to the current quiz
+   * @param questionsAnswers Array of saved question answers
+   */
+  private applySavedAnswers(questionsAnswers: QuestionAnswer[]): void {
+    questionsAnswers.forEach(qa => {
+      const questionId = qa.questionId;
+      const correspondingQuestion = this.quiz?.questions.find(q => q.questionId === questionId);
+      
+      if (correspondingQuestion) {
+        let savedValue: string | null = null;
+        if (correspondingQuestion.typeId === 1 || correspondingQuestion.typeId === 2) {
+          // For choice questions, check both possible field names
+          savedValue = qa.optionLetter ?? (qa as any).answerOptionLetter ?? null;
+        } else if (correspondingQuestion.typeId === 3 || correspondingQuestion.typeId === 4) {
+          // For text questions, use answerText
+          savedValue = qa.answerText ?? null;
+        } else {
+          console.warn(`Unknown question type ${correspondingQuestion.typeId} for Q ${questionId} during loading.`);
+          savedValue = qa.optionLetter ?? qa.answerText ?? null;
+        }
+        this.answers[questionId] = savedValue;
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     this.stopTimer();
