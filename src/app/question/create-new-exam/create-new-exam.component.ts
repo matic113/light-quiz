@@ -10,7 +10,6 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../auth/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ConfirmDialogComponent } from '../../shared/components/dialog/confirm-dialog.component';
 import { CustomSnackbarComponent } from '../../shared/components/snackbar/custom-snackbar.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -24,6 +23,7 @@ type Question = {
   correctAnswer?: string;
   correctOptionId?: number;
   options?: string[];
+  questionNumber : number;
 };
 
 type Exam = {
@@ -162,20 +162,25 @@ export class CreateNewExamComponent {
 
   // next بتاعت شاشة اضافة الاسئلة
   navigateToReviewStep() {
+    if (this.questionsList.length > 0 &&
+      this.questionsList.every((q) => {
+        // Basic validations for all question types
+        if (!q.q.trim() || q.points === undefined || q.points <= 0) {
+          return false;
+        }
 
-    if (
-      this.questionsList.length > 0 &&
-      this.questionsList.every(
-        (q) =>
-          q.q.trim() &&
-          q.points !== undefined && q.points > 0 &&
-          q.options!.every(opt => opt && opt.trim()) &&
-          (q.type === 'Multiple Choice' || q.type === 'True/False'
-            ? q.correctOptionId !== undefined && q.correctOptionId !== null
-            : q.correctAnswer && q.correctAnswer.trim() !== ''),
-      )
+        // Specific validations based on question type
+        if (q.type === 'Multiple Choice' || q.type === 'True/False') {
+          return q.options && 
+                 q.options.every(opt => opt && opt.trim()) &&
+                 q.correctOptionId !== undefined && 
+                 q.correctOptionId !== null;
+        } else {
+          // Short Answer or Text questions
+          return q.correctAnswer && q.correctAnswer.trim() !== '';
+        }
+      })
     ) {
-
       this.currentStep = 3;
     } else {
       this.checkInputsQuetionsData();
@@ -329,18 +334,21 @@ export class CreateNewExamComponent {
   }
 
   createQuestion(type: 'mcq' | 'subjective') {
+    const nextQuestionNumber = this.questionsList.length + 1;
     if (type === 'mcq') {
       this.questionsList.push({
         type: 'Multiple Choice',
         q: '',
         options: ['', ''],
         correctAnswer: '',
+        questionNumber: nextQuestionNumber
       });
     } else {
       this.questionsList.push({
         type: 'Short Answer',
         q: '',
         correctAnswer: '',
+        questionNumber: nextQuestionNumber
       });
     }
     this.showDropdown = false;
@@ -388,13 +396,9 @@ export class CreateNewExamComponent {
       `${this.examData.date}T${this.examData.time}:00Z`,
     ).toISOString();
 
-    const mappedQuestions = this.examData.questions.map((question) => {
-      // using a dictionary to map question types to ids
+    const mappedQuestions = this.examData.questions.map((question, index) => {
       const questionTypeId = questionTypeNameToId[question.type];
-      // make sure the points are integer as the backend expects
       const points = parseInt(String(question.points ?? 0), 10);
-      // start with an empty array
-      // if the question has options then we fill the array otherwise leave it empty
       let options: any[] = [];
 
       if (
@@ -404,13 +408,13 @@ export class CreateNewExamComponent {
         options = (question.options || []).map((optionText, i) => ({
           optionText: optionText,
           isCorrect: i == question.correctOptionId,
-          optionLetter: String.fromCharCode(97 + i), // 97 => 'a' (ascii codes)
+          optionLetter: String.fromCharCode(97 + i),
         }));
-        // correctAnswer is always empty string for option-based questions
         question.correctAnswer = '';
       }
 
       return {
+        questionNumber: index + 1,
         questionText: question.q,
         questionTypeId: questionTypeId,
         points: points,
