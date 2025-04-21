@@ -65,14 +65,20 @@ export class CreateNewExamComponent {
     private sidebarStateService: SidebarStateService
   ) { }
   isExpanded: boolean = true;
-
+  isMobile: boolean = true;
+  
   ngOnInit(): void {
     this.sidebarStateService.setSidebarState(true); 
-  
+    
     this.sidebarStateService.isExpanded$.subscribe(value => {
       this.isExpanded = value;
     });
+  
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });
   }
+  
   
 
   generatedExamCode: string = '';

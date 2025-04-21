@@ -54,6 +54,7 @@ export class NavSideComponent {
       .subscribe((result) => {
         this.isMobile = result.matches;
         this.isExpanded = !this.isMobile;
+        this.sidebarStateService.setIsMobile(this.isMobile);
       });
   }
   
@@ -61,7 +62,6 @@ export class NavSideComponent {
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
     this.sidebarStateService.setSidebarState(this.isExpanded);
-
   }
 
   logout(): void {

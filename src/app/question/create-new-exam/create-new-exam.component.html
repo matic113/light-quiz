@@ -1,7 +1,7 @@
 <div
   [ngClass]="{
-    'translate-x-30': isExpanded,
-    'translate-x-0': !isExpanded
+    'translate-x-30': isExpanded &&!isMobile ,
+    'translate-x-11': !isExpanded &&!isMobile
   }"
   class="flex min-h-screen py-10 px-4 md:px-20 transition-transform duration-300 "
 >
