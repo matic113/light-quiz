@@ -1,10 +1,7 @@
-<div
-  [ngClass]="{
+<div [ngClass]="{
     'translate-x-30': isExpanded &&!isMobile ,
     'translate-x-11': !isExpanded &&!isMobile
-  }"
-  class="flex min-h-screen py-10 px-4 md:px-20 transition-transform duration-300 "
->
+  }" class="flex min-h-screen py-10 px-4 md:px-20 transition-transform duration-300 ">
   <div class="max-w-4xl mx-auto w-full">
     <!-- Step 1 create exam-->
     <ng-container *ngIf="currentStep === 1">
@@ -79,6 +76,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <button (click)="examData.exam_type = 'Multiple Choice'"
                 [class.border-purple-500]="examData.exam_type === 'Multiple Choice'"
+                [class.bg-purple-100]="examData.exam_type === 'Multiple Choice'"
                 class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
                 <div class="bg-purple-100 text-black rounded-full p-2">
                   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -89,6 +87,7 @@
               </button>
               <button (click)="examData.exam_type = 'Short Answer'"
                 [class.border-purple-500]="examData.exam_type === 'Short Answer'"
+                [class.bg-purple-100]="examData.exam_type === 'Short Answer'"
                 class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
                 <div class="bg-purple-100 text-purple-500 rounded-full p-2">
                   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -98,6 +97,7 @@
                 <span class="text-sm font-medium text-gray-700">Subjective</span>
               </button>
               <button (click)="examData.exam_type = 'Mixed'" [class.border-purple-500]="examData.exam_type === 'Mixed'"
+                [class.bg-purple-100]="examData.exam_type === 'Mixed'"
                 class="border-2 border-purple-300 rounded-xl py-4 flex flex-col items-center justify-center gap-2 hover:shadow-md transition">
                 <div class="bg-purple-100 text-green-500 rounded-full p-2">
                   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">

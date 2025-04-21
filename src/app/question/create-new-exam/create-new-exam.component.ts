@@ -66,20 +66,20 @@ export class CreateNewExamComponent {
   ) { }
   isExpanded: boolean = true;
   isMobile: boolean = true;
-  
+
   ngOnInit(): void {
-    this.sidebarStateService.setSidebarState(true); 
-    
+    this.sidebarStateService.setSidebarState(true);
+
     this.sidebarStateService.isExpanded$.subscribe(value => {
       this.isExpanded = value;
     });
-  
+
     this.sidebarStateService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
   }
-  
-  
+
+
 
   generatedExamCode: string = '';
   currentStep: number = 1;
@@ -106,6 +106,29 @@ export class CreateNewExamComponent {
     if (!this.examData.time) missingFields.push('• Time');
     if (!this.examData.duration) missingFields.push('• Duration');
     if (!this.examData.exam_type) missingFields.push('• Exam Type');
+
+    if (this.examData.duration && this.examData.duration < 0) {
+      missingFields.push('• Duration must be a positive number');
+    }
+
+    const now = new Date();
+    const examDateStr = this.examData.date; // بصيغة '2025-05-01'
+    const examTimeStr = this.examData.time; // بصيغة '14:24'
+
+    if (examDateStr && examTimeStr) {
+      const [year, month, day] = examDateStr.split('-').map(Number);
+      const [hours, minutes] = examTimeStr.split(':').map(Number);
+
+      const examDateTime = new Date(year, month - 1, day, hours, minutes);
+
+      if (examDateTime.getTime() <= now.getTime()) {
+        if (examDateTime.toDateString() === now.toDateString()) {
+          missingFields.push('• Time must be later than the current time');
+        } else {
+          missingFields.push('• Date must be a future date');
+        }
+      }
+    }
 
     if (missingFields.length === 0) {
       this.currentStep = 2;
@@ -139,57 +162,81 @@ export class CreateNewExamComponent {
 
   // next بتاعت شاشة اضافة الاسئلة
   navigateToReviewStep() {
+
     if (
       this.questionsList.length > 0 &&
       this.questionsList.every(
         (q) =>
           q.q.trim() &&
-          q.points !== undefined &&
+          q.points !== undefined && q.points > 0 &&
+          q.options!.every(opt => opt && opt.trim()) &&
           (q.type === 'Multiple Choice' || q.type === 'True/False'
             ? q.correctOptionId !== undefined && q.correctOptionId !== null
             : q.correctAnswer && q.correctAnswer.trim() !== ''),
       )
     ) {
+
       this.currentStep = 3;
     } else {
-      alert(
-        (!this.questionsList.length ? '- No questions added\n' : '') +
-        (this.questionsList.some((q) => !q.q.trim())
-          ? `- Question text #${this.questionsList.findIndex((q) => !q.q.trim()) + 1
-          } is required\n`
-          : '') +
-        (this.questionsList.some(
-          (q) =>
-            (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-            (q.correctOptionId === undefined || q.correctOptionId === null),
-        )
-          ? `- Question #${this.questionsList.findIndex(
-            (q) =>
-              (q.type === 'Multiple Choice' || q.type === 'True/False') &&
-              (q.correctOptionId === undefined ||
-                q.correctOptionId === null),
-          ) + 1
-          }'s correct option is required\n`
-          : '') +
-        (this.questionsList.some(
-          (q) =>
-            q.type !== 'Multiple Choice' &&
-            q.type !== 'True/False' &&
-            (!q.correctAnswer || q.correctAnswer.trim() === ''),
-        )
-          ? `- Question #${this.questionsList.findIndex(
-            (q) =>
-              q.type !== 'Multiple Choice' &&
-              q.type !== 'True/False' &&
-              (!q.correctAnswer || q.correctAnswer.trim() === ''),
-          ) + 1
-          }'s correct answer is required\n`
-          : '') +
-        (this.questionsList.some((q) => q.points === undefined)
-          ? `- Question #${this.questionsList.findIndex((q) => q.points === undefined) + 1
-          }'s points is required\n`
-          : ''),
-      );
+      this.checkInputsQuetionsData();
+    }
+  }
+
+
+  checkInputsQuetionsData() {
+    const errors: string[] = [];
+
+    if (!this.questionsList.length) {
+      errors.push('- No questions added');
+    }
+
+    const questionIndexMissingText = this.questionsList.findIndex(q => !q.q || q.q.trim() === '');
+    if (questionIndexMissingText !== -1) {
+      errors.push(`- Question text #${questionIndexMissingText + 1} is required`);
+    }
+
+    const questionIndexEmptyOption = this.questionsList.findIndex(q =>
+      (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+      q.options?.some(opt => !opt || opt.trim() === '')
+    );
+    if (questionIndexEmptyOption !== -1) {
+      errors.push(`- Question #${questionIndexEmptyOption + 1} has empty options`);
+    }
+
+    const questionIndexMissingCorrectOption = this.questionsList.findIndex(q =>
+      (q.type === 'Multiple Choice' || q.type === 'True/False') &&
+      (q.correctOptionId === undefined || q.correctOptionId === null)
+    );
+    if (questionIndexMissingCorrectOption !== -1) {
+      errors.push(`- Question #${questionIndexMissingCorrectOption + 1} is missing a correct option`);
+    }
+
+    const questionIndexMissingCorrectAnswer = this.questionsList.findIndex(q =>
+      q.type !== 'Multiple Choice' &&
+      q.type !== 'True/False' &&
+      (!q.correctAnswer || q.correctAnswer.trim() === '')
+    );
+    if (questionIndexMissingCorrectAnswer !== -1) {
+      errors.push(`- Question #${questionIndexMissingCorrectAnswer + 1} is missing a correct answer`);
+    }
+
+    const questionIndexMissingPoints = this.questionsList.findIndex(q => q.points === undefined);
+    if (questionIndexMissingPoints !== -1) {
+      errors.push(`- Question #${questionIndexMissingPoints + 1} is missing points`);
+    }
+
+    const questionIndexNegativePoints = this.questionsList.findIndex(q => q.points !== undefined && q.points < 0);
+    if (questionIndexNegativePoints !== -1) {
+      errors.push(`- Question #${questionIndexNegativePoints + 1} must have points greater than 0`);
+    }
+
+    if (errors.length > 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Errors',
+        html: errors.join('<br>'),
+        confirmButtonText: 'OK',
+      });
     }
   }
 
