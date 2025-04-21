@@ -42,9 +42,23 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
+
+      // Show loading animation
+      import('sweetalert2').then((Swal) => {
+        Swal.default.fire({
+          title: 'Logging in...',
+          text: 'Please wait while we process your request.',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.default.showLoading();
+          },
+        });
+      });
+
       this.authService.login({ email, password }).subscribe({
         next: (response) => {
           import('sweetalert2').then((Swal) => {
+            Swal.default.close(); // Close the loading animation
             Swal.default.fire({
               icon: 'success',
               title: 'Login Successful',
