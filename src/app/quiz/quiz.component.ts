@@ -11,6 +11,7 @@ import { CustomSnackbarComponent } from '../shared/components/snackbar/custom-sn
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 interface QuizMetadata {
   quizId: string;
@@ -90,6 +91,17 @@ interface QuizData extends QuizMetadata {
   styleUrl: './quiz.component.css',
 })
 export class QuizComponent {
+  // ----------------sidebar state--------------------------------
+    isExpanded: boolean = true;
+  
+    ngOnInit(): void {
+      this.sidebarStateService.setSidebarState(true); 
+    
+      this.sidebarStateService.isExpanded$.subscribe(value => {
+        this.isExpanded = value;
+      });
+    }
+  // ----------------------------------------------------------------------------
   shortcode: string = '';
   quizMetadata: QuizMetadata | null = null;
   baseLink = 'https://api.theknight.tech';
@@ -103,6 +115,8 @@ export class QuizComponent {
     public authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private sidebarStateService: SidebarStateService
+
   ) { }
 
   async getQuizMetadata() {
