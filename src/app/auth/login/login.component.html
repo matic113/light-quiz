@@ -73,12 +73,15 @@
 
           <!-- Signin buttom-->
           <button
-            type="submit"
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
-            [disabled]="!loginForm.valid"
-          >
-            Sign in
-          </button>
+  type="submit"
+  class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+  [disabled]="!loginForm.valid || isSubmitting"
+>
+  <mat-icon *ngIf="isSubmitting" class="animate-spin">autorenew</mat-icon>
+  <span *ngIf="!isSubmitting">Sign In</span>
+  <span *ngIf="isSubmitting">Signing In...</span>
+</button>
+
         </form>
       </div>
     </div>

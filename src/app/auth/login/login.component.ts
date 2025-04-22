@@ -11,6 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     RouterLink,
+    MatIconModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -38,63 +40,56 @@ export class LoginComponent {
       password: ['', Validators.required],
     });
   }
+  isSubmitting = false;
 
-  onSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
+onSubmit() {
+  if (this.loginForm.valid) {
+    const { email, password } = this.loginForm.value;
+    this.isSubmitting = true; // تفعيل حالة اللودينج
 
-      // Show loading animation
-      import('sweetalert2').then((Swal) => {
-        Swal.default.fire({
-          title: 'Logging in...',
-          text: 'Please wait while we process your request.',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.default.showLoading();
-          },
-        });
-      });
-
-      this.authService.login({ email, password }).subscribe({
-        next: (response) => {
-          import('sweetalert2').then((Swal) => {
-            Swal.default.close(); // Close the loading animation
-            Swal.default.fire({
-              icon: 'success',
-              title: 'Login Successful',
-              text: 'Welcome back!',
-              toast: true,
-              position: 'bottom-end',
-              showConfirmButton: false,
-              timer: 1000,
-              timerProgressBar: true,
-            }).then(() => {
-              this.router.navigate(['/create']).then(() => {
-                window.location.reload();
-              });
+    this.authService.login({ email, password }).subscribe({
+      next: (response) => {
+        import('sweetalert2').then((Swal) => {
+          Swal.default.fire({
+            icon: 'success',
+            title: 'Login Successful',
+            text: 'Welcome back!',
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true,
+          }).then(() => {
+            this.router.navigate(['/create']).then(() => {
+              window.location.reload();
             });
           });
-        },
-        error: (err) => {
-          import('sweetalert2').then((Swal) => {
-            Swal.default.fire({
-              icon: 'error',
-              title: 'Login Failed',
-              text: 'Email or password is incorrect.',
-              confirmButtonText: 'Try Again',
-            });
-          });
-        },
-      });
-    } else {
-      import('sweetalert2').then((Swal) => {
-        Swal.default.fire({
-          icon: 'warning',
-          title: 'Invalid Input',
-          text: 'Please fill in all fields correctly.',
-          confirmButtonText: 'OK',
         });
+      },
+      error: (err) => {
+        import('sweetalert2').then((Swal) => {
+          Swal.default.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: 'Email or password is incorrect.',
+            confirmButtonText: 'Try Again',
+          });
+        });
+      },
+      complete: () => {
+        this.isSubmitting = false; // إنهاء حالة اللودينج بعد الاستجابة
+      }
+    });
+  } else {
+    import('sweetalert2').then((Swal) => {
+      Swal.default.fire({
+        icon: 'warning',
+        title: 'Invalid Input',
+        text: 'Please fill in all fields correctly.',
+        confirmButtonText: 'OK',
       });
-    }
+    });
   }
+}
+
 }
