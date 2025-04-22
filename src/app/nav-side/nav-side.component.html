@@ -78,16 +78,16 @@
       </a>
 
       <!-- Teacher Links -->
-      <a *ngIf="role === 'teacher'" [routerLink]="'/reports'"
+      <a *ngIf="role === 'teacher'" [routerLink]="'/quizzes'"
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative" [ngClass]="{
           'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
-            router.url === '/reports',
+        router.url === '/quizzes',
           'text-white/80 hover:text-white hover:bg-white/10':
-            router.url !== '/reports',
+        router.url !== '/quizzes',
           'justify-center px-0': !isExpanded
         }">
-        <mat-icon class="w-5 h-5">bar_chart</mat-icon>
-        <span *ngIf="isExpanded">Reports</span>
+        <mat-icon class="w-5 h-5">collections_bookmark</mat-icon>
+        <span *ngIf="isExpanded">quizzes</span>
       </a>
 
       <a *ngIf="role === 'teacher'" [routerLink]="'/users'"
@@ -158,7 +158,7 @@
   </a>
   <a *ngIf="role === 'teacher'" [routerLink]="'/create'"
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
-    <mat-icon>help</mat-icon>
+    <mat-icon>create</mat-icon>
   </a>
   <a *ngIf="role === 'student'" [routerLink]="'/quiz'"
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">

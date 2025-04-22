@@ -12,6 +12,7 @@ import { QuizComponent } from './quiz/quiz.component';
 import { TakeQuizComponent } from './take-quiz/take-quiz.component';
 import { ResultsComponent } from './results/results.component';
 import { roleGuard } from './guards/role.guard';
+import { QuizzesComponent } from './quizzes/quizzes.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -73,6 +74,12 @@ export const routes: Routes = [
         component: ResultsComponent,
         canActivate: [roleGuard],
         data: { role: 'student' },
+      },
+      {
+        path: 'quizzes',
+        component: QuizzesComponent,
+        canActivate: [roleGuard],
+        data: { role: 'teacher' },
       },
 
       // Not found

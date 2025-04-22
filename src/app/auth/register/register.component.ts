@@ -7,6 +7,7 @@ import {
   FormsModule,
   NgForm,
   ReactiveFormsModule,
+  ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
@@ -18,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -31,6 +32,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     RouterLink,
     MatRadioModule,
     MatButtonToggleModule,
+    MatIconModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'], // ✅ Corrected to "styleUrls"
@@ -51,13 +53,38 @@ export class RegisterComponent {
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
         Validators.required,
-        Validators.minLength(6),
+        this.passwordComplexityValidator,
       ]),
       confirmPassword: new FormControl('', [Validators.required]),
-      userType: new FormControl('', [Validators.required]), // ✅ Fixed comma issue
+      userType: new FormControl('', [Validators.required]),
     },
     { validators: this.passwordMatchValidator },
   );
+  passwordComplexityValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+  
+    const errors: string[] = [];
+  
+    if (value.length < 8) {
+      errors.push('at least 8 characters');
+    }
+  
+    if (!/[A-Z]/.test(value)) {
+      errors.push('one uppercase letter (A–Z)');
+    }
+  
+    if (!/\d/.test(value)) {
+      errors.push('one digit (0–9)');
+    }
+  
+    if (!/[^a-zA-Z0-9]/.test(value)) {
+      errors.push('one special character (e.g. !, @, #)');
+    }
+  
+    return errors.length ? { passwordComplexity: errors } : null;
+  }
+    
 
   constructor(
     private authService: AuthService,
@@ -65,40 +92,62 @@ export class RegisterComponent {
   ) {}
 
   // Form submission
+  isLoading = false;
+
   onSubmit() {
     if (this.signupForm.valid) {
+      this.isLoading = true;
+  
       const formData = {
         fullname: this.signupForm.value.fullName,
         email: this.signupForm.value.email,
         password: this.signupForm.value.password,
-        userType: this.signupForm.value.userType, // ✅ Send userType to the backend
+        userType: this.signupForm.value.userType,
       };
-
+  
       this.authService.onSignup(formData).subscribe({
         next: (res) => {
-          this.router.navigate(['/create']).then(() => {
-            window.location.reload(); // ✅ Refresh after navigation
+          import('sweetalert2').then((Swal) => {
+            Swal.default.fire({
+              toast: true,
+              position: 'bottom-end',
+              icon: 'success',
+              title: 'Registration Successful',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            }).then(() => {
+              this.router.navigate(['/create']).then(() => {
+                window.location.reload();
+              });
+            });
           });
+          this.isLoading = false;
         },
         error: (err) => {
-          console.error('Registration error:', err); // ✅ Error logging
+          this.isLoading = false;
+  
+          import('sweetalert2').then((Swal) => {
+            if (err.error?.errors?.Email) {
+              Swal.default.fire({
+                icon: 'error',
+                title: 'Email Already in Use',
+                text: 'The email is already in use. Please use a different email.',
+              });
+            } else {
+              Swal.default.fire({
+                icon: 'error',
+                title: 'Registration Error',
+                text: 'An error occurred during registration. Please try again later.',
+              });
+              console.error('Registration error:', err);
+            }
+          });
         },
       });
     }
   }
+  
 }
 
-// Custom ErrorStateMatcher for Material inputs
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: FormControl | null,
-    form: FormGroupDirective | NgForm | null,
-  ): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
-    );
-  }
-}
+
