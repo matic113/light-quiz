@@ -75,9 +75,10 @@ onSubmit() {
             confirmButtonText: 'Try Again',
           });
         });
+        this.isSubmitting = false; 
       },
       complete: () => {
-        this.isSubmitting = false; // إنهاء حالة اللودينج بعد الاستجابة
+        this.isSubmitting = false; 
       }
     });
   } else {
