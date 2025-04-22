@@ -1,12 +1,10 @@
 <div
-  class="bg-white bg-opacity-90 backdrop-blur-sm shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row max-w-4xl w-full"
+  class="bg-white bg-opacity-90 backdrop-blur-sm shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row max-w-6xl w-full "
 >
   <!-- Side Image for Large Screens -->
   <div
     class="hidden md:block md:w-1/2 bg-cover bg-center"
-    style="
-      background-image: url(&quot;../../../assets/images/ChatGPT Image 14 أبريل 2025، 02_04_38 م.png&quot;);
-    "
+    style="background-image: url('../../../assets/images/ChatGPT Image 14 أبريل 2025، 02_04_38 م.png');"
   ></div>
 
   <!-- Signup Form -->
@@ -18,115 +16,168 @@
       Create your account to get started
     </p>
 
-    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <!-- User Type Toggle -->
-      <div class="mb-6 flex flex-col items-center">
+      <div class="flex flex-col items-center">
         <mat-button-toggle-group
           formControlName="userType"
           name="userType"
+          subscriptSizing="dynamic"
           class="bg-gray-100 rounded-full p-1 shadow-md"
           [vertical]="false"
           exclusive
         >
           <mat-button-toggle
             value="Student"
-            class="px-6 py-2 rounded-full font-medium text-gray-600 transition-all duration-300 mat-button-toggle-appearance-standard custom-toggle"
+            class="px-6 py-2 rounded-full font-medium text-gray-600 transition-all duration-300 custom-toggle"
           >
             <span class="flex items-center gap-2">🎓 <span>Student</span></span>
           </mat-button-toggle>
 
           <mat-button-toggle
             value="Teacher"
-            class="px-6 py-2 rounded-full font-medium text-gray-600 transition-all duration-300 mat-button-toggle-appearance-standard custom-toggle"
+            class="px-6 py-2 rounded-full font-medium text-gray-600 transition-all duration-300 custom-toggle"
           >
             <span class="flex items-center gap-2">👩‍🏫 <span>Teacher</span></span>
           </mat-button-toggle>
         </mat-button-toggle-group>
         <mat-error
           *ngIf="signupForm.get('userType')?.hasError('required')"
-          class="text-center mt-2 text-red-500"
+          class="block text-center mt-1 text-red-500 text-sm"
         >
+
+        <span class="flex items-center gap-1 text-red-500">
+          <mat-icon  class="!text-base">report_problem</mat-icon>
           User type is <strong>required</strong>
+        </span>
         </mat-error>
       </div>
 
       <!-- Full Name -->
-      <div class="mb-4">
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Full Name</mat-label>
-          <input
-            type="text"
-            matInput
-            formControlName="fullName"
-            placeholder="Enter your full name"
-          />
-          <mat-error *ngIf="signupForm.get('fullName')?.hasError('required')">
-            Full name is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
+        <mat-label>Full Name</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="fullName"
+          placeholder="Enter your full name"
+        />
+        <mat-error
+          *ngIf="signupForm.get('fullName')?.hasError('required')"
+          class="block mt-1 text-red-500 text-sm"
+        >
+        <span class="  gap-1 text-red-500">
+          <mat-icon  class="text-base pt-0.75">report_problem</mat-icon>
+          Full name is <strong>required</strong>
+        </span>
+        </mat-error>
+      </mat-form-field>
 
       <!-- Email -->
-      <div class="mb-4">
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Email</mat-label>
-          <input
-            type="email"
-            matInput
-            formControlName="email"
-            placeholder="Enter your email"
-          />
-          <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
-            Email is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="signupForm.get('email')?.hasError('email')">
-            Invalid email format
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
+        <mat-label>Email</mat-label>
+        <input
+          type="email"
+          matInput
+          formControlName="email"
+          placeholder="Enter your email"
+        />
+        <mat-error
+          *ngIf="signupForm.get('email')?.hasError('required')"
+          class="block mt-1 text-red-500 text-sm"
+        >
+          <span class="  gap-1 text-red-500">
+        <mat-icon class="pt-0.75 text-base">report_problem</mat-icon>
+        Email is <strong>required</strong>
+          </span>
+        </mat-error>
+        <mat-error
+          *ngIf="signupForm.get('email')?.hasError('email')"
+          class="block mt-1 text-red-500 text-sm"
+        >
+          <span class="gap-1 text-red-500">
+        <mat-icon class="pt-0.75 text-base">report_problem</mat-icon>
+        Invalid email <strong>format</strong>
+          </span>
+        </mat-error>
+      </mat-form-field>
 
       <!-- Password -->
-      <div class="mb-4">
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Password</mat-label>
-          <input
-            type="password"
-            matInput
-            formControlName="password"
-            placeholder="Enter your password"
-          />
-          <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
-            Password is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">
-            Minimum 6 characters required
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
+        <mat-label>Password</mat-label>
+        <input
+          type="password"
+          matInput
+          formControlName="password"
+          placeholder="Enter your password"
+        />
+        <mat-error
+          *ngIf="signupForm.get('password')?.hasError('required')"
+          class="block text-red-500 text-sm"
+        >
+          <span class=" gap-1 text-red-500">
+        <mat-icon class="text-base pt-0.75">report_problem</mat-icon>
+        Password is <strong>required</strong>
+          </span>
+        </mat-error>
+        <mat-error
+          *ngIf="signupForm.get('password')?.hasError('minlength')"
+          class="block text-red-500 text-sm"
+        >
+          <span class=" text-red-500">
+        <mat-icon class="text-base pt-0">report_problem</mat-icon>
+        Password must be at least <strong>6 characters</strong>
+          </span>
+        </mat-error>
+        <mat-error
+          *ngIf="signupForm.get('password')?.hasError('passwordComplexity')"
+          class="block text-red-500 text-sm"
+        >
+          <span class=" gap-1 text-red-500">
+        <mat-icon class="text-base pt-0.5">report_problem</mat-icon>
+        Password must meet the following requirements:
+          </span>
+          <ul class="ml-6 mt-1 list-disc text-xs text-red-500">
+        <li
+          *ngFor="let err of signupForm.get('password')?.errors?.['passwordComplexity']"
+        >
+          {{ err }}
+        </li>
+          </ul>
+        </mat-error>
+      </mat-form-field>
 
       <!-- Confirm Password -->
-      <div class="mb-4">
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Confirm Password</mat-label>
-          <input
-            type="password"
-            matInput
-            formControlName="confirmPassword"
-            placeholder="Confirm your password"
-          />
-          <mat-error
-            *ngIf="signupForm.get('confirmPassword')?.hasError('required')"
-          >
+      <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
+        <mat-label>Confirm Password</mat-label>
+        <input
+          type="password"
+          matInput
+          formControlName="confirmPassword"
+          placeholder="Confirm your password"
+        />
+        <mat-error
+          *ngIf="signupForm.get('confirmPassword')?.hasError('required')"
+          class="block mt-1 text-red-500 text-sm"
+        >
+          <span class="gap-1 text-red-500">
+            <mat-icon class="pt-0.75 text-base">report_problem</mat-icon>
             Confirm password is <strong>required</strong>
-          </mat-error>
-          <mat-error *ngIf="signupForm.hasError('mismatch')">
-            Passwords do not match
-          </mat-error>
-        </mat-form-field>
-      </div>
+          </span>
+        </mat-error>
+        <mat-error
+          *ngIf="signupForm.hasError('mismatch')"
+          class="block mt-1 text-red-500 text-sm"
+        >
+          <span class="gap-1 text-red-500">
+        <mat-icon class="pt-0.75 text-base">report_problem</mat-icon>
+        Passwords do <strong>not match</strong>
+          </span>
+        </mat-error>
+      </mat-form-field>
 
       <!-- Login Link -->
-      <div class="text-left mb-4">
+      <div class="text-left">
         <a routerLink="/login" class="text-sm text-green-600 hover:underline"
           >Already have an account? Login</a
         >
@@ -134,12 +185,15 @@
 
       <!-- Sign Up Button -->
       <button
-        type="submit"
-        class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition disabled:opacity-50"
-        [disabled]="!signupForm.valid"
-      >
-        Sign Up
-      </button>
+      type="submit"
+      class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+      [disabled]="!signupForm.valid || isLoading"
+    >
+      <mat-icon *ngIf="isLoading" class="animate-spin">autorenew</mat-icon>
+      <span *ngIf="!isLoading">Sign Up</span>
+      <span *ngIf="isLoading">Signing Up...</span>
+    </button>
+    
     </form>
   </div>
 </div>
