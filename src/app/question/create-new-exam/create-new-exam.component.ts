@@ -288,15 +288,14 @@ export class CreateNewExamComponent {
             this.generatedExamCode = examCode;
             this.currentStep = 4;
 
-            this.snackBar.openFromComponent(CustomSnackbarComponent, {
-              data: {
-                message: 'Exam created successfully',
-                action: 'Close',
-                panelClass: ['bg-green-100', 'text-green-800'],
-              },
-              duration: 5000,
-              horizontalPosition: 'right',
-              verticalPosition: 'bottom',
+            Swal.fire({
+              toast: true,
+              position: 'bottom-end',
+              icon: 'success',
+              title: 'Exam created successfully',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
             });
           },
           error: (err) => {
@@ -445,26 +444,24 @@ export class CreateNewExamComponent {
   copyExamLink() {
     const examLink = `${this.generatedExamCode}`;
     navigator.clipboard.writeText(examLink).then(() => {
-      this.snackBar.openFromComponent(CustomSnackbarComponent, {
-        data: {
-          message: 'Exam link copied to clipboard!',
-          action: 'Close',
-          panelClass: ['bg-green-100', 'text-green-800'],
-        },
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'bottom',
+      Swal.fire({
+        toast: true,
+        position: 'bottom-end',
+        icon: 'success',
+        title: 'Exam link copied to clipboard!',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
       });
-    }, (err) => {
-      this.snackBar.openFromComponent(CustomSnackbarComponent, {
-        data: {
-          message: 'Failed to copy the link.',
-          action: 'Close',
-          panelClass: ['bg-red-100', 'text-red-800'],
-        },
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'bottom',
+    }, () => {
+      Swal.fire({
+        toast: true,
+        position: 'bottom-end',
+        icon: 'error',
+        title: 'Failed to copy the link.',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
       });
     });
   }
