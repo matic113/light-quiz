@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../auth/auth.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SidebarStateService } from '../services/sidebar-state.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-nav-side',
@@ -65,9 +66,29 @@ export class NavSideComponent {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-    this.sub = null;
-    this.token = null;
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+        this.sub = null;
+        this.token = null;
+        Swal.fire({
+          toast: true,
+          position: 'bottom-end',
+          icon: 'info',
+          title: 'Logged out successfully',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }
+    });
   }
 }
