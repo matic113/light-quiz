@@ -76,6 +76,17 @@
         <mat-icon class="w-5 h-5">insert_chart</mat-icon>
         <span *ngIf="isExpanded">Results</span>
       </a>
+      <a *ngIf="role === 'student'" [routerLink]="'/s-groups'"
+        class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative" [ngClass]="{
+          'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
+            router.url === '/s-groups',
+          'text-white/80 hover:text-white hover:bg-white/10':
+            router.url !== '/s-groups',
+          'justify-center px-0': !isExpanded
+        }">
+        <mat-icon class="w-5 h-5">group</mat-icon>
+        <span *ngIf="isExpanded">Groups</span>
+      </a>
 
       <!-- Teacher Links -->
       <a *ngIf="role === 'teacher'" [routerLink]="'/quizzes'"
@@ -90,16 +101,16 @@
         <span *ngIf="isExpanded">quizzes</span>
       </a>
 
-      <a *ngIf="role === 'teacher'" [routerLink]="'/users'"
+      <a *ngIf="role === 'teacher'" [routerLink]="'/t-groups'"
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative" [ngClass]="{
           'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
-            router.url === '/users',
+            router.url === '/t-groups',
           'text-white/80 hover:text-white hover:bg-white/10':
-            router.url !== '/users',
+            router.url !== '/t-groups',
           'justify-center px-0': !isExpanded
         }">
         <mat-icon class="w-5 h-5">group</mat-icon>
-        <span *ngIf="isExpanded">Users</span>
+        <span *ngIf="isExpanded">Groups</span>
       </a>
 
       <a *ngIf="role === 'teacher'" [routerLink]="'/notifications'"
@@ -168,11 +179,15 @@
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
     <mat-icon>insert_chart</mat-icon>
   </a>
-  <a *ngIf="role === 'teacher'" [routerLink]="'/reports'"
+  <a *ngIf="role === 'student'" [routerLink]="'/s-groups'"
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
-    <mat-icon>bar_chart</mat-icon>
+    <mat-icon class="w-5 h-5">group</mat-icon>
   </a>
-  <a *ngIf="role === 'teacher'" [routerLink]="'/users'"
+  <a *ngIf="role === 'teacher'" [routerLink]="'/quizzes'"
+    class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
+    <mat-icon>collections_bookmark</mat-icon>
+  </a>
+  <a *ngIf="role === 'teacher'" [routerLink]="'/t-groups'"
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
     <mat-icon>group</mat-icon>
   </a>

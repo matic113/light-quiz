@@ -1,3 +1,4 @@
+import { TeacherComponent } from './groups/teacher/teacher.component';
 import { LoginComponent } from './auth/login/login.component';
 import { Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -13,6 +14,7 @@ import { TakeQuizComponent } from './take-quiz/take-quiz.component';
 import { ResultsComponent } from './results/results.component';
 import { roleGuard } from './guards/role.guard';
 import { QuizzesComponent } from './quizzes/quizzes.component';
+import { StudentComponent } from './groups/student/student.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -55,6 +57,18 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { role: 'teacher' },
       },
+      {
+        path: 'quizzes',
+        component: QuizzesComponent,
+        canActivate: [roleGuard],
+        data: { role: 'teacher' },
+      },
+      {
+        path: 't-groups',
+        component: TeacherComponent,
+        canActivate: [roleGuard],
+        data: { role: 'teacher' },
+      },
 
       // Routes خاصة بالطالب فقط
       {
@@ -75,11 +89,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { role: 'student' },
       },
+      
       {
-        path: 'quizzes',
-        component: QuizzesComponent,
+        path: 's-groups',
+        component: StudentComponent,
         canActivate: [roleGuard],
-        data: { role: 'teacher' },
+        data: { role: 'student' },
       },
 
       // Not found
