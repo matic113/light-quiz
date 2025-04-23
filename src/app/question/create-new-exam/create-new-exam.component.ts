@@ -16,6 +16,18 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
 import { SidebarStateService } from '../../services/sidebar-state.service';
 
+interface GroupMember {
+  memberName: string;
+  memberEmail: string;
+}
+
+interface Group {
+  groupId: string;
+  shortCode: string;
+  name: string;
+  members: GroupMember[];
+}
+
 type Question = {
   type: 'Multiple Choice' | 'True/False' | 'Short Answer' | 'Text';
   q: string;
@@ -35,6 +47,8 @@ type Exam = {
   duration?: number;
   questions: Question[];
   randomize: boolean;
+  anonymous: boolean;
+  groupId: string | "";
 };
 
 const questionTypeNameToId: { [key: string]: number } = {
@@ -43,6 +57,24 @@ const questionTypeNameToId: { [key: string]: number } = {
   'Short Answer': 3,
   Text: 4,
 };
+
+interface ExamPayload {
+  title: string;
+  description: string;
+  startsAtUTC: string;
+  durationMinutes: number;
+  anonymous: boolean;
+  randomize: boolean;
+  questions: {
+    questionNumber: number;
+    questionText: string;
+    questionTypeId: number;
+    points: number;
+    correctAnswer?: string;
+    options: any[];
+  }[];
+  groupId?: string;
+}
 
 @Component({
   selector: 'app-create-new-exam',
@@ -57,6 +89,7 @@ const questionTypeNameToId: { [key: string]: number } = {
   ],
   standalone: true,
 })
+
 export class CreateNewExamComponent {
   constructor(
     private http: HttpClient,
@@ -67,6 +100,7 @@ export class CreateNewExamComponent {
   ) { }
   isExpanded: boolean = true;
   isMobile: boolean = true;
+  userGroups: Group[] = [];
 
   ngOnInit(): void {
     this.sidebarStateService.setSidebarState(true);
@@ -78,9 +112,25 @@ export class CreateNewExamComponent {
     this.sidebarStateService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
+
+    this.loadUserGroups();
   }
 
+  loadUserGroups() {
+    const token = this.authService.getToken();
+    if (!token) return;
 
+    this.http.get<Group[]>('https://api.theknight.tech/api/group/created', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (groups) => {
+        this.userGroups = groups;
+      },
+      error: (error) => {
+        console.error('Error fetching groups:', error);
+      }
+    });
+  }
 
   generatedExamCode: string = '';
   currentStep: number = 1;
@@ -96,6 +146,8 @@ export class CreateNewExamComponent {
     duration: undefined,
     questions: this.questionsList,
     randomize: false,
+    anonymous: false,
+    groupId : ""
   };
 
   // next بتاعت اول شاشة
@@ -392,7 +444,7 @@ export class CreateNewExamComponent {
     );
   }
 
-  mapExamToBackendPayload(): any {
+  mapExamToBackendPayload(): ExamPayload {
     const startsAtUTC = new Date(
       `${this.examData.date}T${this.examData.time}:00Z`,
     ).toISOString();
@@ -424,15 +476,21 @@ export class CreateNewExamComponent {
       };
     });
 
-    return {
+    const payload: ExamPayload = {
       title: this.examData.title,
       description: this.examData.description,
       startsAtUTC: startsAtUTC,
       durationMinutes: this.examData.duration || 0,
-      anonymous: true,
+      anonymous: this.examData.anonymous,
       randomize: this.examData.randomize,
       questions: mappedQuestions,
     };
+
+    if (!this.examData.anonymous && this.examData.groupId) {
+      payload.groupId = this.examData.groupId;
+    }
+
+    return payload;
   }
 
   calculateTotalPoints() {
