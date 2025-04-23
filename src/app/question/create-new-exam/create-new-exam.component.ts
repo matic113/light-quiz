@@ -125,9 +125,18 @@ export class CreateNewExamComponent {
     }).subscribe({
       next: (groups) => {
         this.userGroups = groups;
+        if (groups.length === 0) {
+          // Reset group selection if no groups exist
+          this.examData.groupId = "";
+        }
       },
       error: (error) => {
         console.error('Error fetching groups:', error);
+        this.snackBar.open(
+          'Failed to load groups. Please try again.',
+          'Close',
+          { duration: 5000 }
+        );
       }
     });
   }
