@@ -1,0 +1,69 @@
+/* Calendar Styles */
+.calendar .grid div {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stacked Bar Styles (Exam Performance Breakdown) */
+.h-8.bg-gray-200 {
+    display: flex;
+    align-items: center;
+}
+
+/* Grouped Bar Chart Styles (Group Performance Trends) */
+.h-24.bg-gray-200 {
+    position: relative;
+}
+
+/* Linear Progress Bar Styles (Average Completion Rate) */
+.w-full.h-6.bg-gray-200 {
+    display: flex;
+    align-items: center;
+}
+
+/* Heatmap Table Styles (Grade Distribution, Group Performance Comparison) */
+table {
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 0.5rem;
+}
+
+table thead tr {
+    border-bottom: 2px solid #e5e7eb;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Bullet Chart Styles (Question Type Analysis) */
+.h-6.bg-gray-200 {
+    position: relative;
+}
+
+/* Timeline Styles */
+.relative .flex>div {
+    position: relative;
+}
+
+/* Heatmap Grid Styles */
+.grid.grid-cols-4 div {
+    padding: 0.5rem;
+}
+
+/* Card Styles */
+.bg-gray-50.p-3 {
+    border: 1px solid #e5e7eb;
+}
+
+/* General Styles for Lists */
+ul li {
+    display: flex;
+    justify-content: space-between;
+}
