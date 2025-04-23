@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth/auth.service';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 interface QuizResult {
   quizTitle: string;
@@ -20,13 +21,16 @@ interface QuizResult {
   styleUrl: './results.component.css',
 })
 export class ResultsComponent {
+  isExpanded: boolean = true;
+
   results: QuizResult[] = [];
   isLoading = true;
   private baseUrl = 'https://api.theknight.tech';
 
 
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient, private authService: AuthService,    private sidebarStateService: SidebarStateService
+  ) { }
 
 
   ngOnInit(): void {
@@ -49,8 +53,12 @@ export class ResultsComponent {
           // تقدر تعرض رسالة خطأ لو حبيت
         }
       });
+      this.sidebarStateService.setSidebarState(true); 
 
-
+      this.sidebarStateService.isExpanded$.subscribe(value => {
+        this.isExpanded = value;
+      
+      });
   }
 
 

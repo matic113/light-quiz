@@ -1,4 +1,9 @@
-<div class="min-h-screen bg-gray-100 p-6">
+<div 
+[ngClass]="{
+  'translate-x-32': isExpanded,
+  'translate-x-10': !isExpanded
+}"
+class="min-h-screen bg-gray-100 p-6">
   <div *ngIf="isLoading" class="text-gray-500 text-xl text-center">Loading...</div>
 
   <ng-container *ngIf="!isLoading && results.length">
