@@ -10,7 +10,7 @@ import { SidebarStateService } from '../services/sidebar-state.service';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
-// ----------------sidebar stste--------------------------------
+// ----------------sidebar state--------------------------------
   isExpanded: boolean = true;
 
   ngOnInit(): void {

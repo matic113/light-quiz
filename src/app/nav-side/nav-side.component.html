@@ -133,7 +133,7 @@
   'mt-[150px]': role === 'teacher'
 }">
       <div class="px-3 py-2 flex items-center text-white">
-        <mat-icon class="h-5">person</mat-icon>
+        <img [src]="avatarUrl" class="w-8 h-8 rounded-full object-cover" alt="User avatar">
         <span class="ml-2">{{ sub }}</span>
       </div>
       <span class="text-sm text-gray-300">{{ role }}</span>
@@ -154,7 +154,7 @@
   <div *ngIf="!isExpanded && token && !isMobile" class="fixed left-2 bottom-4 z-50 flex flex-col gap-2 mb-7">
     <a [routerLink]="'/profile'" class="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
       matTooltip="{{ sub }}">
-      <mat-icon>person</mat-icon>
+      <img [src]="avatarUrl" class="w-8 h-8 rounded-full object-cover" alt="User avatar">
     </a>
     <button mat-icon-button class="text-white hover:bg-white/10 rounded-full" (click)="logout()" matTooltip="Logout">
       <mat-icon>logout</mat-icon>

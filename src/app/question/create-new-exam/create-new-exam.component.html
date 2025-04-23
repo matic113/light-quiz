@@ -70,6 +70,34 @@
                   Randomize Questions
                 </label>
               </div>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center">
+                  <input type="checkbox" id="anonymous" [(ngModel)]="examData.anonymous" name="anonymous"
+                    class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
+                  <label for="anonymous" class="ml-2 text-sm font-medium text-gray-700">
+                    Anonymous Submissions
+                  </label>
+                </div>
+
+                <div *ngIf="!examData.anonymous" class="flex flex-col gap-2">
+                  <label for="groupId" class="text-sm font-medium text-gray-700">Select Group</label>
+                  <select id="groupId" [(ngModel)]="examData.groupId" name="groupId"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none text-gray-700 bg-white disabled:bg-gray-50 disabled:text-gray-500">
+                    <option value="" class="text-gray-500">
+                      {{ userGroups.length === 0 ? 'No groups created by you' : 'Select a group' }}
+                    </option>
+                    <ng-container *ngIf="userGroups.length > 0">
+                      <option *ngFor="let group of userGroups" [value]="group.groupId" class="text-gray-700">
+                        {{group.name}} ({{group.shortCode}})
+                      </option>
+                    </ng-container>
+                  </select>
+                  <p *ngIf="userGroups.length === 0" class="text-sm text-gray-500 mt-1 italic">
+                    Create a group first to assign this exam to a specific group
+                  </p>
+                </div>
+              </div>
             </form>
           </div>
 
