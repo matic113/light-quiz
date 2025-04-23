@@ -19,9 +19,12 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@ng-icons/core": "^29.10.0",
+    "@ng-icons/lucide": ">=29.0.0",
     "@spartan-ng/brain": "^0.0.1-alpha.445",
     "@tailwindcss/postcss": "^4.0.15",
     "chart.js": "^4.4.9",
+    "clsx": "^2.1.1",
     "jwt-decode": "^4.0.0",
     "ng2-charts": "^8.0.0",
     "postcss": "^8.5.3",
@@ -44,6 +47,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss-animate": "^1.0.6",
     "typescript": "~5.7.2"
   }
 }

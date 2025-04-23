@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
 import { SidebarStateService } from '../../services/sidebar-state.service';
+import { HlmCheckboxComponent } from '@spartan-ng/ui-checkbox-helm';
 
 interface GroupMember {
   memberName: string;
@@ -86,6 +87,7 @@ interface ExamPayload {
     FormsModule,
     MatDialogModule,
     MatSnackBarModule,
+    HlmCheckboxComponent
   ],
   standalone: true,
 })

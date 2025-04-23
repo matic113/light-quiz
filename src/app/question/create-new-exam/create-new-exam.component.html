@@ -64,18 +64,16 @@
               </div>
 
               <div class="flex items-center">
-                <input type="checkbox" id="randomize" [(ngModel)]="examData.randomize" name="randomize"
-                  class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
-                <label for="randomize" class="ml-2 text-sm font-medium text-gray-700">
+                <hlm-checkbox id="randomize" [(ngModel)]="examData.randomize" name="randomize"></hlm-checkbox>
+                <label for="randomize" class="ml-2 text-l font-medium text-gray-700">
                   Randomize Questions
                 </label>
               </div>
 
               <div class="flex flex-col gap-4">
                 <div class="flex items-center">
-                  <input type="checkbox" id="anonymous" [(ngModel)]="examData.anonymous" name="anonymous"
-                    class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
-                  <label for="anonymous" class="ml-2 text-sm font-medium text-gray-700">
+                  <hlm-checkbox id="anonymous" [(ngModel)]="examData.anonymous" name="anonymous"></hlm-checkbox>
+                  <label for="anonymous" class="ml-2 text-l font-medium text-gray-700">
                     Anonymous Submissions
                   </label>
                 </div>
