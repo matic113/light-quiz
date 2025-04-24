@@ -1,4 +1,8 @@
-<div class="ml-55">
+<div [ngClass]="{
+  'translate-x-5': isExpanded && !isMobile,
+  '-translate-x-15': !isExpanded && !isMobile
+}" class="ml-55">
+
   <!-- العنوان والأزرار -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-5xl mx-auto w-full mb-10 mt-5">
     <h1 class="text-2xl font-semibold text-gray-800">Student Groups</h1>

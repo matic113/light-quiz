@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { SidebarStateService } from '../../services/sidebar-state.service';
 
 interface Teacher {
   id: string;
@@ -41,11 +42,21 @@ export class TeacherComponent implements OnInit {
   userGroups: Group[] = [];
   private baseUrl1 = 'https://api.theknight.tech';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
-
+  constructor(private http: HttpClient, private authService: AuthService,    private sidebarStateService: SidebarStateService
+  ) {}
+  isExpanded: boolean = true;
+  isMobile: boolean = true;
   ngOnInit(): void {
     this.loadUserGroups();
-  }
+    this.sidebarStateService.setSidebarState(true);
+
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
+
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });}
 
   createGroup() {
     const token = this.authService.getToken();
