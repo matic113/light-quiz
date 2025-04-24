@@ -15,6 +15,7 @@ import { ResultsComponent } from './results/results.component';
 import { roleGuard } from './guards/role.guard';
 import { QuizzesComponent } from './quizzes/quizzes.component';
 import { StudentComponent } from './groups/student/student.component';
+import { PushNotificationComponent } from './push-notifications/push-notifications.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -69,6 +70,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { role: 'teacher' },
       },
+      {
+        path: 'push-notifications',
+        component: PushNotificationComponent,
+        canActivate: [roleGuard],
+        data: { role: 'teacher' },
+      },
 
       // Routes خاصة بالطالب فقط
       {
@@ -89,7 +96,7 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { role: 'student' },
       },
-      
+
       {
         path: 's-groups',
         component: StudentComponent,
