@@ -9,11 +9,10 @@
     }">
 
     <!-- Logo -->
-    <div class="flex items-center justify-center h-16 p-2">
-      <div class="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center">
-        <mat-icon class="text-white">description</mat-icon>
-      </div>
-      <span *ngIf="isExpanded" class="ml-2 text-lg font-semibold text-white">Light Quiz</span>
+    <div class="flex items-center justify-center h-16 p-2 flex-col mt-4">
+
+      <img src="../../../assets/images/logo_c.png" class="w-22 h-22 object-contain" alt="Light Quiz Logo">
+
     </div>
 
     <!-- Collapse button (for desktop only) -->
@@ -113,16 +112,16 @@
         <span *ngIf="isExpanded">Groups</span>
       </a>
 
-      <a *ngIf="role === 'teacher'" [routerLink]="'/notifications'"
+      <a *ngIf="role === 'teacher'" [routerLink]="'/push-notifications'"
         class="flex items-center gap-3 h-12 px-3 rounded transition-colors relative" [ngClass]="{
           'text-white bg-cyan-950/25 hover:bg-pink-500/25 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-pink-500':
-            router.url === '/notifications',
+            router.url === '/push-notifications',
           'text-white/80 hover:text-white hover:bg-white/10':
-            router.url !== '/notifications',
+            router.url !== '/push-notifications',
           'justify-center px-0': !isExpanded
         }">
         <mat-icon class="w-5 h-5">notifications</mat-icon>
-        <span *ngIf="isExpanded">Notifications</span>
+        <span *ngIf="isExpanded">Push Notifications</span>
       </a>
     </div>
 
@@ -191,7 +190,7 @@
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
     <mat-icon>group</mat-icon>
   </a>
-  <a *ngIf="role === 'teacher'" [routerLink]="'/notifications'"
+  <a *ngIf="role === 'teacher'" [routerLink]="'/push-notifications'"
     class="flex flex-col items-center space-y-1 hover:text-emerald-200 transition duration-300">
     <mat-icon>notifications</mat-icon>
   </a>

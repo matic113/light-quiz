@@ -13,10 +13,14 @@ import { CommonModule } from '@angular/common';
 export class AppComponent {
   title = 'light-quiz';
   showSidebar: boolean = true;
-
+  showSplash = true;
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    setTimeout(() => {
+      this.showSplash = false;
+    }, 4000);
+
     // Listen to route changes
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
