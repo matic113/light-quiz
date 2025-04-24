@@ -35,7 +35,7 @@ type Question = {
   correctAnswer?: string;
   correctOptionId?: number;
   options?: string[];
-  questionNumber : number;
+  questionNumber: number;
 };
 
 type Exam = {
@@ -156,7 +156,7 @@ export class CreateNewExamComponent {
     questions: this.questionsList,
     randomize: false,
     anonymous: false,
-    groupId : ""
+    groupId: ""
   };
 
   // next بتاعت اول شاشة
@@ -234,10 +234,10 @@ export class CreateNewExamComponent {
 
         // Specific validations based on question type
         if (q.type === 'Multiple Choice' || q.type === 'True/False') {
-          return q.options && 
-                 q.options.every(opt => opt && opt.trim()) &&
-                 q.correctOptionId !== undefined && 
-                 q.correctOptionId !== null;
+          return q.options &&
+            q.options.every(opt => opt && opt.trim()) &&
+            q.correctOptionId !== undefined &&
+            q.correctOptionId !== null;
         } else {
           // Short Answer or Text questions
           return q.correctAnswer && q.correctAnswer.trim() !== '';
