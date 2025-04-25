@@ -1,5 +1,4 @@
-/* Add custom animations here */
-@keyframes slide-in-left {
+/* @keyframes slide-in-left {
 
   from {
     transform: translateX(-100%);
@@ -42,4 +41,4 @@
   100% {
     opacity: 1;
   }
-}
+} */
