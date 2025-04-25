@@ -32,4 +32,7 @@ export class AppComponent {
         }
       });
   }
+  isExcludedPage(): boolean {
+    return this.router.url === '/t-groups'; 
+  }
 }
