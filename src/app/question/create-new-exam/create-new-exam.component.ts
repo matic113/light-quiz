@@ -36,6 +36,9 @@ type Question = {
   correctOptionId?: number;
   options?: string[];
   questionNumber: number;
+  fileName?: string;
+  imagePreview?: string;
+  needImage?: boolean;
 };
 
 type Exam = {
@@ -158,6 +161,57 @@ export class CreateNewExamComponent {
     anonymous: false,
     groupId: ""
   };
+
+  onFileSelected(event: any, index: number) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.questionsList[index].imagePreview = reader.result as string;
+        this.questionsList[index].fileName = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+  }
+
+
+  onDrop(event: DragEvent, index: number) {
+    event.preventDefault();
+    const file = event.dataTransfer?.files[0];
+    if (file) {
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          console.log(reader.result);
+          this.questionsList[index].imagePreview = reader.result as string;
+          this.questionsList[index].fileName = file.name;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid file type',
+          text: 'Please upload only image files',
+          timer: 2000,
+          timerProgressBar: true
+        });
+      }
+    }
+  }
+
+  removeImage(index: number) {
+    this.questionsList[index].imagePreview = undefined;
+    this.questionsList[index].fileName = undefined;
+  }
 
   // next بتاعت اول شاشة
   navigateToAddQuestionsStep() {

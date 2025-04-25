@@ -64,11 +64,12 @@
         <!-- True/False Questions (Type 2) -->
         <div *ngIf="question.typeId === 2" class="space-y-3">
           <div *ngFor="let option of question.options"
-            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            (click)="answers[question.questionId] = option.optionLetter; onAnswerChange()">
             <input [id]="option.optionId" type="radio" [name]="question.questionId"
-              [(ngModel)]="answers[question.questionId]" (ngModelChange)="onAnswerChange()"
-              [value]="option.optionLetter" class="w-4 h-4 text-blue-600 focus:ring-blue-500" required />
-            <label [for]="option.optionId" class="text-gray-700 cursor-pointer select-none">
+              [(ngModel)]="answers[question.questionId]" [value]="option.optionLetter"
+              class="w-4 h-4 text-blue-600 focus:ring-blue-500" required />
+            <label [for]="option.optionId" class="text-gray-700 cursor-pointer select-none w-full">
               {{ option.optionText }}
             </label>
           </div>
