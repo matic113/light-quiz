@@ -14,62 +14,28 @@
         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
     </div>
 
-    <div class="flex items-center space-x-2">
-      <label class="relative inline-flex items-center cursor-pointer">
-      <input type="checkbox" [(ngModel)]="sendToGroup" (ngModelChange)="onSendToGroupChange($event)" class="sr-only peer">
-      <div
-        class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
-      </div>
-      <span class="ml-3 text-gray-700">Send to group</span>
-      </label>
-    </div>
-
 
     <!-- Group Mode -->
-    <div *ngIf="sendToGroup">
+    <div>
       <label class="block text-gray-600 mb-1">Select Group</label>
       <select [(ngModel)]="selectedGroup"
         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="" disabled>Select group</option>
-        <option *ngFor="let group of groups" [value]="group.groupId">{{ group.name }}</option>
+        <option value="" disabled [selected]="!selectedGroup">Please select a group</option>
+        <option *ngFor="let group of groups" [ngValue]="group">{{ group.name }}</option>
       </select>
-    </div>
-
-    <!-- Student Search Mode -->
-    <div *ngIf="!sendToGroup">
-      <label class="block text-gray-600 mb-1">Search Student</label>
-      <input type="text" [(ngModel)]="searchQuery" (input)="search(searchQuery)" placeholder="Enter student name..."
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-
-      <ul *ngIf="searchResults.length"
-        class="mt-2 bg-white border border-gray-300 rounded-lg shadow-sm max-h-48 overflow-auto">
-        <li *ngFor="let student of searchResults" (click)="selectStudent(student)"
-          class="px-4 py-2 hover:bg-blue-100 cursor-pointer">
-          {{ student.name }}
-        </li>
-      </ul>
-
-      <div *ngIf="selectedStudent"
-        class="mt-2 flex items-center justify-between bg-blue-100 text-blue-800 px-4 py-2 rounded-lg">
-        <span>{{ selectedStudent.name }}</span>
-        <button (click)="clearStudent()" class="text-red-500 text-xl font-bold leading-none">×</button>
+      <div *ngIf="!selectedGroup" class="text-sm text-gray-500 mt-1">
+        Please select a group to send the notification to.
       </div>
     </div>
 
+
+
     <div>
-      <button (click)="sendNotification()" [disabled]="isSending"
+      <button (click)="sendNotification(selectedGroup?.shortCode ?? null)" [disabled]="isSending"
         class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
         {{ isSending ? 'Sending...' : 'Send Notification' }}
       </button>
     </div>
 
-    <div *ngIf="message" class="mt-4 text-center">
-      <span [ngClass]="{
-        'text-green-600': messageType === 'success',
-        'text-red-600': messageType === 'error'
-      }">
-        {{ message }}
-      </span>
-    </div>
   </div>
 </div>
