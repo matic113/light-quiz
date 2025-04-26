@@ -33,6 +33,6 @@ export class AppComponent {
       });
   }
   isExcludedPage(): boolean {
-    return this.router.url === '/t-groups'; 
+    return this.router.url === '/t-groups' || this.router.url === '/s-groups';
   }
 }
