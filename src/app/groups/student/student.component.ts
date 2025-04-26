@@ -28,6 +28,19 @@ interface Group {
   teacher: Teacher;
   members: Member[];
 }
+interface Quiz {
+  quizId: string;
+  shortCode: string;
+  title: string;
+  description: string;
+  timeAllowed: number;
+  startsAt: string;
+  numberOfQuestions: number;
+  possiblePoints: number;
+  didStartQuiz: boolean;
+  groupId: string;
+  anonymous: boolean;
+}
 
 @Component({
   selector: 'app-student',
@@ -125,6 +138,8 @@ export class StudentComponent implements OnInit {
   /** Select a group to view its members */
   selectGroup(group: Group): void {
     this.selectedGroup = group;
+     this.selectedGroup = group;
+     this.getGroupQuizzes(group.shortCode)
   }
 
   /** Return to the groups list view */
@@ -228,6 +243,27 @@ leaveGroup(shortCode: string): void {
     }
   });
 }
+
+groupQuizzes: Quiz[] = [];
+
+getGroupQuizzes(shortCode: string): void {
+  const token = this.authService.getToken();
+  if (!token) return;
+
+  this.http.get<Quiz[]>(`${this.baseUrl}/api/quiz/metadata/group/${shortCode}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).subscribe({
+    next: quizzes => {
+      this.groupQuizzes = quizzes;
+    },
+    error: err => {
+      console.error('Error fetching quizzes:', err);
+      this.showToast('❌ Failed to load quizzes.', 'error');
+    }
+  });
+}
+
+
 
 
   // ===========================
