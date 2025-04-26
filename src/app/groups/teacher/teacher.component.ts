@@ -29,7 +29,19 @@ interface Group {
   teacher: Teacher;
   members: Member[];
 }
-
+interface Quiz {
+  quizId: string;
+  shortCode: string;
+  title: string;
+  description: string;
+  timeAllowed: number;
+  startsAt: string;
+  numberOfQuestions: number;
+  possiblePoints: number;
+  didStartQuiz: boolean;
+  groupId: string;
+  anonymous: boolean;
+}
 @Component({
   selector: 'app-teacher',
   standalone: true,
@@ -142,6 +154,8 @@ export class TeacherComponent implements OnInit {
   // Select a group for detail view
   selectGroup(group: Group) {
     this.selectedGroup = group;
+    this.getGroupQuizzes(group.shortCode)
+
   }
 
   // Return to group list view
@@ -357,6 +371,39 @@ export class TeacherComponent implements OnInit {
           }
         });
       }
+    });
+  }
+groupQuizzes: Quiz[] = [];
+
+getGroupQuizzes(shortCode: string): void {
+  const token = this.authService.getToken();
+  if (!token) return;
+
+  this.http.get<Quiz[]>(`${this.baseUrl1}/api/quiz/metadata/group/${shortCode}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).subscribe({
+    next: quizzes => {
+      this.groupQuizzes = quizzes;
+    },
+    error: err => {
+      console.error('Error fetching quizzes:', err);
+      this.showToast('❌ Failed to load quizzes.', 'error');
+    }
+  });
+}
+// ===========================
+  // Helper Methods
+  // ===========================
+
+  /** Show a toast message */
+  private showToast(message: string, icon: 'success' | 'error'): void {
+    Swal.fire({
+      toast: true,
+      position: 'bottom-end',
+      icon,
+      title: message,
+      showConfirmButton: false,
+      timer: 1500
     });
   }
 }
