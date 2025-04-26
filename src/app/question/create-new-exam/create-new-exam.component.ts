@@ -509,7 +509,7 @@ export class CreateNewExamComponent {
 
   mapExamToBackendPayload(): ExamPayload {
     const startsAtUTC = new Date(
-      `${this.examData.date}T${this.examData.time}:00Z`,
+      `${this.examData.date}T${this.examData.time}`,
     ).toISOString();
 
     const mappedQuestions = this.examData.questions.map((question, index) => {
