@@ -405,7 +405,7 @@ export class CreateNewExamComponent {
 
             Swal.fire({
               toast: true,
-              position: 'bottom-end',
+              position: 'top-end',
               icon: 'success',
               title: 'Exam created successfully',
               showConfirmButton: false,
@@ -567,7 +567,7 @@ export class CreateNewExamComponent {
     navigator.clipboard.writeText(examLink).then(() => {
       Swal.fire({
         toast: true,
-        position: 'bottom-end',
+        position: 'top-end',
         icon: 'success',
         title: 'Exam link copied to clipboard!',
         showConfirmButton: false,
@@ -577,7 +577,7 @@ export class CreateNewExamComponent {
     }, () => {
       Swal.fire({
         toast: true,
-        position: 'bottom-end',
+        position: 'top-end',
         icon: 'error',
         title: 'Failed to copy the link.',
         showConfirmButton: false,

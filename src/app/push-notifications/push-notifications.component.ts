@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
+
+
 
 
 @Component({
@@ -24,117 +27,134 @@ export class PushNotificationComponent {
   message = '';
   messageType: 'success' | 'error' | '' = '';
 
-  sendToGroup = false;
+  // sendToGroup = false;
   searchQuery = '';
   searchResults: { id: string, name: string }[] = [];
   selectedStudent: { id: string, name: string } | null = null;
-  selectedGroup: string = '';
-  groups: { groupId: string, name: string }[] = [];
+  selectedGroup: { shortCode: string, name: string } | null = null;
+  groups: { shortCode: string, name: string }[] = [];
 
   private baseUrl = "https://api.theknight.tech";
 
 
 
-  async ngOnInit() {
-
-  }
-
-  onSendToGroupChange(event: boolean) {
-    if (event && this.groups.length === 0) {
-      const token = this.authService.getToken();
-      if (!token) return;
-      this.http.get<{ groupId: string, name: string }[]>(`${this.baseUrl}/api/group/created`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).subscribe({
-        next: (groups) => {
-          this.groups = groups;
-          if (groups.length === 0) {
-            this.selectedGroup = '';
-          }
-        },
-        error: (error) => {
-          this.showMessage('Failed to load groups. Please try again.', 'error');
+  ngOnInit() {
+    const token = this.authService.getToken();
+    if (!token) return;
+    this.http.get<{ shortCode: string, name: string }[]>(`${this.baseUrl}/api/group/created`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (groups) => {
+        this.groups = groups;
+        if (groups.length === 0) {
+          this.selectedGroup = null;
         }
+      },
+      error: (error) => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'Failed to load groups. Please try again.',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
+    });
+  }
+
+  async sendNotification(groupShortCode: string | null) {
+    if (!this.title || !this.body || !this.selectedGroup || !groupShortCode) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Please fill all fields and select a group',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
       });
-    }
-
-  }
-
-  async search(query: string) {
-    this.searchQuery = query;
-    if (!query.trim()) {
-      this.searchResults = [];
-      return;
-    }
-
-    const students = await fetch(`https://your-api.com/students?query=${query}`).then(res => res.json());
-    this.searchResults = students.map((s: any) => ({ id: s.id, name: s.name }));
-  }
-
-  selectStudent(student: any) {
-    this.selectedStudent = student;
-    this.searchQuery = student.name;
-    this.searchResults = [];
-  }
-
-  clearStudent() {
-    this.selectedStudent = null;
-    this.searchQuery = '';
-  }
-
-  async sendNotification() {
-    if (!this.title || !this.body || (!this.selectedStudent && !this.selectedGroup)) {
-      this.showMessage('Please fill all fields including a recipient.', 'error');
       return;
     }
 
     this.isSending = true;
+
     const token = this.authService.getToken();
-    if (!token) return;
+    if (!token) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Authentication token is missing.',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+      this.isSending = false;
+      return;
+    }
 
+    const payload = {
+      notificationTitle: this.title,
+      notificationBody: this.body,
+    };
 
-    // todo: change device token
     try {
-      const payload = {
-        title: this.title,
-        body: this.body,
-        deviceToken: "adsvadsvad"
-      };
-
-      this.http.post(`${this.baseUrl}/api/Gemini/notify`, payload, {
+      this.http.post(`${this.baseUrl}/api/notifications/group/${groupShortCode}`, payload, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Authorization': `Bearer ${token}`
+        },
+        responseType: 'text' as 'json'
       }).subscribe({
-        next: (response: any) => {
-          this.showMessage('Notification sent successfully!', 'success');
-          this.title = '';
-          this.body = '';
-          this.clearStudent();
-          this.selectedGroup = '';
+        next: (response) => {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Notification sent successfully!',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          this.resetForm();
         },
         error: (error) => {
-          this.showMessage(error.error?.message || 'Failed to send notification.', 'error');
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: error.error?.message || 'Failed to send notification',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          this.isSending = false;
         },
         complete: () => {
           this.isSending = false;
         }
       });
-
     } catch (err) {
-      this.showMessage('Error sending notification.', 'error');
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Error sending notification.',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
       this.isSending = false;
     }
   }
 
-  showMessage(message: string, type: 'success' | 'error') {
-    this.message = message;
-    this.messageType = type;
-    setTimeout(() => {
-      this.message = '';
-      this.messageType = '';
-    }, 3000);
+  private resetForm() {
+    this.title = '';
+    this.body = '';
+    this.selectedGroup = null;
   }
+
+
 }
 

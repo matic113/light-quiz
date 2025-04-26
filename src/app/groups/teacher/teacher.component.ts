@@ -38,10 +38,10 @@ interface Group {
   styleUrls: ['./teacher.component.css']
 })
 export class TeacherComponent implements OnInit {
-  
 
 
-  
+
+
   // Group creation form state
   groupName = '';
   showAddGroupBox = false;
@@ -64,7 +64,7 @@ export class TeacherComponent implements OnInit {
     private http: HttpClient,
     private authService: AuthService,
     private sidebarStateService: SidebarStateService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUserGroups();
@@ -95,16 +95,20 @@ export class TeacherComponent implements OnInit {
 
     this.http.post(`${this.baseUrl1}/api/group`, body, headers).subscribe({
       next: () => {
-        Swal.fire({ toast: true, position: 'bottom-end', icon: 'success',
-                    title: '✅ Group created successfully',
-                    showConfirmButton: false, timer: 1500, timerProgressBar: true });
+        Swal.fire({
+          toast: true, position: 'top-end', icon: 'success',
+          title: '✅ Group created successfully',
+          showConfirmButton: false, timer: 1500, timerProgressBar: true
+        });
         this.groupName = '';
         this.showAddGroupBox = false;
         this.loadUserGroups();
       },
-      error: () => Swal.fire({ toast: true, position: 'bottom-end', icon: 'error',
-                              title: '❌ Error creating group',
-                              showConfirmButton: false, timer: 1500, timerProgressBar: true })
+      error: () => Swal.fire({
+        toast: true, position: 'top-end', icon: 'error',
+        title: '❌ Error creating group',
+        showConfirmButton: false, timer: 1500, timerProgressBar: true
+      })
     });
   }
 
@@ -116,12 +120,16 @@ export class TeacherComponent implements OnInit {
   // Copy short code to clipboard
   copyCode(code: string) {
     navigator.clipboard.writeText(code)
-      .then(() => Swal.fire({ toast: true, position: 'bottom-end', icon: 'success',
-                              title: 'Code copied!', showConfirmButton: false,
-                              timer: 1500, timerProgressBar: true }))
-      .catch(() => Swal.fire({ toast: true, position: 'top-end', icon: 'error',
-                               title: 'Failed to copy!', showConfirmButton: false,
-                               timer: 1500, timerProgressBar: true }));
+      .then(() => Swal.fire({
+        toast: true, position: 'top-end', icon: 'success',
+        title: 'Code copied!', showConfirmButton: false,
+        timer: 1500, timerProgressBar: true
+      }))
+      .catch(() => Swal.fire({
+        toast: true, position: 'top-end', icon: 'error',
+        title: 'Failed to copy!', showConfirmButton: false,
+        timer: 1500, timerProgressBar: true
+      }));
   }
 
   // Filter groups by search input
@@ -147,7 +155,7 @@ export class TeacherComponent implements OnInit {
       console.error('No group selected!');
       return;
     }
-  
+
     // طلب البريد الإلكتروني من المستخدم
     Swal.fire({
       title: 'Enter the email of the student to delete',
@@ -165,10 +173,10 @@ export class TeacherComponent implements OnInit {
       }
     }).then(res => {
       if (!res.isConfirmed || !res.value) return;
-  
+
       const email = res.value.trim();
       console.log('Searching for student with email:', email);
-  
+
       // البحث عن الطالب باستخدام البريد الإلكتروني
       const member = this.selectedGroup!.members.find(m => m.memberEmail === email);
       if (!member) {
@@ -176,9 +184,9 @@ export class TeacherComponent implements OnInit {
         Swal.fire('Not found', 'No student with that email in this group.', 'warning');
         return;
       }
-  
+
       console.log('📌 Student found:', member);
-  
+
       // تأكيد الحذف
       Swal.fire({
         title: `Are you sure you want to delete ${member.memberName}?`,
@@ -189,21 +197,21 @@ export class TeacherComponent implements OnInit {
         cancelButtonText: 'Cancel'
       }).then(confirmRes => {
         if (!confirmRes.isConfirmed) return;
-  
+
         const token = this.authService.getToken();
         if (!token) {
           Swal.fire('Error', 'Not authenticated', 'error');
           return;
         }
-  
+
         // تجهيز البيانات المرسلة إلى السيرفر
         const body = {
           memberIds: [member.memberId], // ارسال ID الطالب
           quizShortCode: this.selectedGroup!.shortCode // ارسال كود المجموعة
         };
-  
+
         console.log('📦 Request body:', body);
-  
+
         // إرسال الطلب إلى السيرفر
         this.http.post<void>(
           `${this.baseUrl1}/api/group/remove`,
@@ -212,7 +220,7 @@ export class TeacherComponent implements OnInit {
         ).subscribe({
           next: () => {
             Swal.fire({
-              toast: true, position: 'bottom-end', icon: 'success',
+              toast: true, position: 'top-end', icon: 'success',
               title: 'Student deleted successfully', showConfirmButton: false, timer: 1500
             });
             this.getGroupDetails(this.selectedGroup!.shortCode);
@@ -225,8 +233,8 @@ export class TeacherComponent implements OnInit {
       });
     });
   }
-  
-  
+
+
 
   // Add a new student to the selected group
   addPerson(): void {
@@ -264,7 +272,7 @@ export class TeacherComponent implements OnInit {
         }).subscribe({
           next: () => {
             Swal.fire({
-              toast: true, position: 'bottom-end', icon: 'success',
+              toast: true, position: 'top-end', icon: 'success',
               title: 'Student added successfully', showConfirmButton: false,
               timer: 1500
             });
@@ -326,7 +334,7 @@ export class TeacherComponent implements OnInit {
           next: () => {
             Swal.fire({
               toast: true,
-              position: 'bottom-end',
+              position: 'top-end',
               icon: 'success',
               title: '✅ Group deleted successfully',
               showConfirmButton: false,
@@ -339,7 +347,7 @@ export class TeacherComponent implements OnInit {
           error: () => {
             Swal.fire({
               toast: true,
-              position: 'bottom-end',
+              position: 'top-end',
               icon: 'error',
               title: '❌ Error deleting group',
               showConfirmButton: false,
