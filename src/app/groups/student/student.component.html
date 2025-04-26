@@ -144,7 +144,11 @@
   <!-- 2) Display selected group details -->
   <!-- -------------------------------------------------- -->
   
-  <div *ngIf="selectedGroup" class="ml-40 min-h-screen">
+  <div [ngClass]="{
+    'translate-x-10': isExpanded && !isMobile,
+    '-translate-x-10': !isExpanded && !isMobile
+  }"
+  *ngIf="selectedGroup" class="ml-40 min-h-screen">
     <div class="flex flex-col w-full mt-5 mb-10">
   
       <!-- Top toolbar -->
