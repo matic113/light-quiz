@@ -55,7 +55,7 @@ export class LoginComponent {
               title: 'Login Successful',
               text: 'Welcome back!',
               toast: true,
-              position: 'bottom-end',
+              position: 'top-end',
               showConfirmButton: false,
               timer: 1000,
               timerProgressBar: true,

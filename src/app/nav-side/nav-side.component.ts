@@ -17,10 +17,10 @@ import { SidebarStateService } from '../services/sidebar-state.service';
 import Swal from 'sweetalert2';
 import { HttpClient } from '@angular/common/http';
 
-interface UserInfo{
+interface UserInfo {
   userId: string;
   fullName: string;
-  avatarUrl : string;
+  avatarUrl: string;
   email: string;
 }
 @Component({
@@ -42,7 +42,7 @@ export class NavSideComponent {
   token: string | null = null;
   sub: string | null = null;
   role: string | null = null;
-  avatarUrl : string | null = null;
+  avatarUrl: string | null = null;
   isMobile = false;
 
   constructor(
@@ -67,8 +67,8 @@ export class NavSideComponent {
         this.sidebarStateService.setIsMobile(this.isMobile);
       });
   }
-  
-  
+
+
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
     this.sidebarStateService.setSidebarState(this.isExpanded);
@@ -107,7 +107,7 @@ export class NavSideComponent {
         this.token = null;
         Swal.fire({
           toast: true,
-          position: 'bottom-end',
+          position: 'top-end',
           icon: 'info',
           title: 'Logged out successfully',
           showConfirmButton: false,

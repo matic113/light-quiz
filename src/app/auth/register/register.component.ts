@@ -63,33 +63,33 @@ export class RegisterComponent {
   passwordComplexityValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
-  
+
     const errors: string[] = [];
-  
+
     if (value.length < 8) {
       errors.push('at least 8 characters');
     }
-  
+
     if (!/[A-Z]/.test(value)) {
       errors.push('one uppercase letter (A–Z)');
     }
-  
+
     if (!/\d/.test(value)) {
       errors.push('one digit (0–9)');
     }
-  
+
     if (!/[^a-zA-Z0-9]/.test(value)) {
       errors.push('one special character (e.g. !, @, #)');
     }
-  
+
     return errors.length ? { passwordComplexity: errors } : null;
   }
-    
+
 
   constructor(
     private authService: AuthService,
     private router: Router,
-  ) {}
+  ) { }
 
   // Form submission
   isLoading = false;
@@ -97,20 +97,20 @@ export class RegisterComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       this.isLoading = true;
-  
+
       const formData = {
         fullname: this.signupForm.value.fullName,
         email: this.signupForm.value.email,
         password: this.signupForm.value.password,
         userType: this.signupForm.value.userType,
       };
-  
+
       this.authService.onSignup(formData).subscribe({
         next: (res) => {
           import('sweetalert2').then((Swal) => {
             Swal.default.fire({
               toast: true,
-              position: 'bottom-end',
+              position: 'top-end',
               icon: 'success',
               title: 'Registration Successful',
               showConfirmButton: false,
@@ -126,7 +126,7 @@ export class RegisterComponent {
         },
         error: (err) => {
           this.isLoading = false;
-  
+
           import('sweetalert2').then((Swal) => {
             if (err.error?.errors?.Email) {
               Swal.default.fire({
@@ -147,7 +147,7 @@ export class RegisterComponent {
       });
     }
   }
-  
+
 }
 
 
