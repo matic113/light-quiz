@@ -2,31 +2,48 @@ import { inject } from '@angular/core';
 import { CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
+type UserRole = 'teacher' | 'student';
+
 export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const expectedRole = route.data['role'];
-  const userRole = authService.getRole();
+  // Get required role from route data with type safety
+  const requiredRole = route.data['role'] as UserRole;
+  
+  // Get current user role with type assertion
+  const currentRole = authService.getRole() as UserRole | undefined;
 
-  // Check if role exists
-  if (!userRole) {
+  // Handle missing role data in route
+  if (!requiredRole) {
+    console.warn('Route is missing required role data');
     router.navigate(['/login']);
     return false;
   }
 
-  if (userRole === expectedRole) {
+  // Handle unauthenticated users
+  if (!currentRole) {
+    router.navigate(['/login']);
+    return false;
+  }
+
+  // Check authorization
+  if (currentRole === requiredRole) {
     return true;
   }
 
-  // Redirect based on actual user role
-  if (userRole === 'teacher') {
-    router.navigate(['/create']);  // Redirect teachers to create exam page
-  } else if (userRole === 'student') {
-    router.navigate(['/quiz']);    // Redirect students to quiz page
-  } else {
-    router.navigate(['/login']);   // Redirect unknown roles to login
+  // Handle unauthorized access with role-specific redirection
+  switch(currentRole) {
+    case 'teacher':
+      router.navigate(['/create']);
+      break;
+    case 'student':
+      router.navigate(['/quiz']);
+      break;
+    default:
+      console.warn(`Unknown user role: ${currentRole}`);
+      router.navigate(['/login']);
   }
-  
+
   return false;
-}
+};
