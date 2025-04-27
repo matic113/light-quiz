@@ -1,10 +1,107 @@
-<div 
-[ngClass]="{
+<!-- المودال لعرض الإجابات -->
+<div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
+  <div class="absolute inset-0 bg-black opacity-50" (click)="closeModal()"></div>
+  <div
+    class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg mx-4 max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
+    <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400" (click)="closeModal()">
+      &times;
+    </button>
+
+    <!-- Quiz Info -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ selectedQuiz.title }}</h2>
+      <div class="flex items-center mt-2 text-gray-600 dark:text-gray-400">
+        <svg class="w-5 h-5 mr-1 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            d="M6 2a1 1 0 011 1v1h6V3a1 1 0 112 0v1h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 011-1z" />
+        </svg>
+        <span>Submitted at: {{ selectedQuiz.submissionDate | date:'yyyy-MM-dd' }} | {{ selectedQuiz.submissionDate |
+          date:'HH:mm:ss' }}</span>
+      </div>
+      <div class="flex items-center mt-2">
+        <svg
+          *ngIf="selectedQuiz?.grade !== undefined && selectedQuiz?.possiblePoints !== undefined && selectedQuiz.grade <= selectedQuiz.possiblePoints/2"
+          class="w-5 h-5 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+            clip-rule="evenodd" />
+        </svg>
+        <svg
+          *ngIf="selectedQuiz?.grade !== undefined && selectedQuiz?.possiblePoints !== undefined && selectedQuiz.grade > selectedQuiz.possiblePoints/2"
+          class="w-5 h-5 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414L9 13.414l4.707-4.707z"
+            clip-rule="evenodd" />
+        </svg>
+        <span class="font-medium text-lg text-gray-800 dark:text-gray-200">Your Score:</span>
+        <span class="ml-1 text-lg font-semibold"
+          *ngIf="selectedQuiz && selectedQuiz.grade !== undefined && selectedQuiz.possiblePoints !== undefined"
+          [ngClass]="selectedQuiz.grade <= selectedQuiz.possiblePoints/2 ? 'text-red-500' : 'text-green-500'">
+          {{ selectedQuiz.grade }} / {{ selectedQuiz.possiblePoints }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Questions List -->
+    <div *ngFor="let question of selectedQuiz?.questions; index as i">
+      <div class="rounded-xl shadow-sm p-4 mb-4"
+        [ngClass]="question.isCorrect ? 'border-2 border-green-500' : 'border-2 border-red-500'">
+        <div class="flex justify-between items-start">
+          <p class="font-bold text-base text-gray-800 dark:text-gray-200">Q{{ i + 1 }}: {{ question.questionText }}
+          </p>
+          <span class="text-sm font-medium px-2 py-1 rounded border"
+            [ngClass]="question.isCorrect ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500'">
+            {{ question.isCorrect ? question.points : 0 }} / {{ question.points }} pts
+          </span>
+        </div>
+
+        <!-- MCQ Options -->
+        <div *ngIf="question.options && question.options.length > 0" class="mt-4"></div>
+        <div *ngFor="let opt of question.options" [ngClass]="{
+                'flex items-center space-x-2 p-3 mb-2 rounded-lg border': true,
+                'border-green-500 bg-green-100/20': opt.optionLetter === question.correctOption,
+                'border-red-500 bg-red-100/20': opt.optionLetter === question.studentAnsweredOption && opt.optionLetter !== question.correctOption,
+                'border-gray-200': opt.optionLetter !== question.studentAnsweredOption && opt.optionLetter !== question.correctOption
+              }">
+          <label class="flex items-center space-x-2 w-full cursor-default">
+            <input type="radio" [checked]="opt.optionLetter === question.studentAnsweredOption" disabled
+              class="form-radio" />
+            <span class="flex-1 text-gray-700 dark:text-gray-300">{{ opt.optionText }}</span>
+          </label>
+        </div>
+
+        <!-- Essay Answer -->
+        <div *ngIf="question.options.length <= 0" class="mt-4">
+          <p class="font-semibold text-gray-800 dark:text-gray-200">Your Answer:</p>
+          <p class="mt-1 text-base" [ngClass]="question.isCorrect ? 'text-green-600' : 'text-red-600'">
+            {{ question.studentAnsweredText }}
+          </p>
+          <!-- Feedback -->
+          <div *ngIf="question.feedbackMessage && question.options.length <= 0" class="mt-4 flex">
+            <p class="font-medium italic text-gray-600 dark:text-gray-400">Feedback:</p>
+            <p class="ml-2 italic text-gray-800 dark:text-gray-200">{{ question.feedbackMessage }}</p>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>
+
+</div>
+
+
+<div [ngClass]="{
   'translate-x-32': isExpanded,
   'translate-x-10': !isExpanded
-}"
-class="min-h-screen bg-gray-100 p-6">
+}" class="min-h-screen bg-gray-50 p-6">
   <div *ngIf="isLoading" class="text-gray-500 text-xl text-center">Loading...</div>
+
+
+
+  <!-- نهاية المودال لعرض الإجابات  -->
+
 
   <ng-container *ngIf="!isLoading && results.length">
     <div class="flex flex-col gap-4 items-center">
@@ -12,7 +109,7 @@ class="min-h-screen bg-gray-100 p-6">
           'bg-white': result.grade >= (result.possiblePoints/2),
           'bg-red-50': result.grade < (result.possiblePoints/2)
         }"
-        class="rounded-xl shadow-lg p-4 w-full max-w-4xl flex items-center space-x-6 animate-fade-in border border-gray-200">
+        class="rounded-xl shadow-lg p-4 w-full max-w-4xl flex flex-col sm:flex-row items-center sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 animate-fade-in border border-gray-200">
 
         <!-- Icon -->
         <div [ngClass]="{
@@ -23,7 +120,7 @@ class="min-h-screen bg-gray-100 p-6">
         </div>
 
         <!-- Info Grid -->
-        <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm sm:text-base">
+        <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm sm:text-base w-full">
           <div class="text-gray-700 font-medium">
             <span class="block text-gray-400 text-xs">Quiz</span>
             {{ result.quizTitle }}
@@ -41,6 +138,22 @@ class="min-h-screen bg-gray-100 p-6">
             {{ result.possiblePoints }}
           </div>
         </div>
+        <!-- Button: on small screens, full width below info; on sm+, right side -->
+        <button
+          class="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition flex items-center justify-center"
+          [disabled]="isAnswersLoadingMap[result.quizShortCode]" (click)="showAnswers(result.quizShortCode)">
+          <ng-container *ngIf="isAnswersLoadingMap[result.quizShortCode]; else showText">
+            <svg class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Loading...
+          </ng-container>
+          <ng-template #showText>
+            Show Answers
+          </ng-template>
+        </button>
       </div>
     </div>
   </ng-container>

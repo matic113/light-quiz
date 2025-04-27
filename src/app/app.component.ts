@@ -13,7 +13,6 @@ import { CommonModule } from '@angular/common';
 export class AppComponent {
   title = 'light-quiz';
   showSidebar: boolean = true;
-
   constructor(private router: Router) { }
 
   ngOnInit(): void {
@@ -32,5 +31,8 @@ export class AppComponent {
           this.showSidebar = true;
         }
       });
+  }
+  isExcludedPage(): boolean {
+    return this.router.url === '/t-groups' || this.router.url === '/s-groups';
   }
 }

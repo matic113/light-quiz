@@ -1,1 +1,323 @@
-<p>teacher works!</p>
+<!-- -------------------------------------------------- -->
+<!-- 1) Display group list or show message when none -->
+<!-- -------------------------------------------------- -->
+<div *ngIf="!selectedGroup">
+  <div
+    [ngClass]="{
+      'translate-x-5': isExpanded && !isMobile,
+      '-translate-x-15': !isExpanded && !isMobile
+    }"
+    class="pl-55"
+  >
+
+    <!-- Header and action buttons -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto w-full mb-10 mt-5">
+      <h1 class="text-2xl font-semibold text-gray-800">Student Groups</h1>
+      <div class="flex space-x-2 pl-27">
+
+        <!-- Search input -->
+        <div class="relative">
+          <input
+            [(ngModel)]="searchTerm"
+            (input)="0"
+            type="text"
+            placeholder="🔍 Search by group name"
+            class="border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none"
+          />
+          <span class="absolute left-3 top-2 text-gray-400">🔍</span>
+        </div>
+
+        <!-- Add Group button and dropdown -->
+        <div class="relative">
+          <button
+            (click)="toggleAddGroup()"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+          >
+            + Add Group
+          </button>
+          <div
+            *ngIf="showAddGroupBox"
+            class="absolute mt-2 right-0 bg-white border rounded-lg shadow-lg p-4 w-64 z-50"
+          >
+            <h3 class="text-sm font-semibold mb-2 text-gray-700">Create New Group</h3>
+            <input
+              [(ngModel)]="groupName"
+              type="text"
+              placeholder="Group Name"
+              class="border rounded-lg px-3 py-2 mb-3 w-full text-sm focus:outline-none focus:ring"
+            />
+            <div class="flex justify-end space-x-2">
+              <button
+                (click)="toggleAddGroup()"
+                class="text-gray-500 text-sm hover:text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                (click)="createGroup()"
+                class="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Export button -->
+        <button
+          class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-100"
+        >
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Show group cards if any, otherwise show message -->
+    <ng-container *ngIf="filteredGroups.length > 0; else noGroups">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto w-full">
+        <div
+          *ngFor="let group of filteredGroups"
+          class="bg-white rounded-lg shadow-md p-4 flex space-x-6 min-w-[400px]
+                 hover:shadow-lg transition-shadow"
+        >
+          <!-- Group info -->
+          <div class="flex-1 min-w-[250px]">
+            <h2 class="text-lg font-semibold text-gray-800">{{ group.name }}</h2>
+            <div class="text-sm text-gray-500 mt-2">
+              <span>1 teacher, </span><span>{{ group.members.length }} students</span>
+            </div>
+            <div class="mt-2">
+              <label class="block text-xs text-gray-500 mb-1">Group Code:</label>
+              <div class="relative w-full max-w-[150px]">
+                <div
+                  class="bg-gray-100 rounded px-4 py-2 text-sm font-mono break-all w-full pr-10"
+                >
+                  {{ group.shortCode }}
+                </div>
+                <button
+                  (click)="copyCode(group.shortCode)"
+                  class="absolute top-1/2 right-2 -translate-y-1/2 text-green-800"
+                >
+                  <img
+                    src="../../assets/images/Copy.png"
+                    alt="Copy icon"
+                    class="w-5 h-5 object-contain"
+                  />
+                </button>
+              </div>
+            </div>
+            <!-- View Details button -->
+            <button
+              (click)="selectGroup(group)"
+              class="mt-4 bg-blue-500 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-600"
+            >
+              View Details
+            </button>
+          </div>
+
+          <!-- Teacher and top students -->
+          <div class="flex-none w-1/3 flex items-center justify-between">
+            <!-- Teacher -->
+            <div>
+              <h3 class="text-xs text-gray-500 mb-2">Teacher</h3>
+              <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                <img
+                  *ngIf="group.teacher.avatarUrl; else teacherInit"
+                  [src]="group.teacher.avatarUrl"
+                  class="w-8 h-8 rounded-full"
+                />
+                <ng-template #teacherInit>
+                  {{ group.teacher.name[0] }}
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Top Students -->
+            <div>
+              <h3 class="text-xs text-gray-500 mb-2">Top Students</h3>
+              <div class="flex">
+                <ng-container *ngIf="group.members.length > 0; else noStudent">
+                  <div
+                    *ngFor="let m of group.members.slice(0,2)"
+                    class="w-8 h-8 ml-1 bg-purple-500 rounded-full flex items-center justify-center
+                           text-white font-semibold overflow-hidden"
+                  >
+                    <img
+                      *ngIf="m.memberAvatarUrl; else noAvatar"
+                      [src]="m.memberAvatarUrl"
+                      class="w-8 h-8 rounded-full object-cover"
+                    />
+                    <ng-template #noAvatar>
+                      {{ m.memberName[0] }}
+                    </ng-template>
+                  </div>
+                  <span *ngIf="group.members.length > 2" class="text-gray-400">...</span>
+                </ng-container>
+                <ng-template #noStudent>
+                  <span class="text-gray-400 italic">No student</span>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Message when there are no groups -->
+    <ng-template #noGroups>
+      <p class="text-center text-gray-500 mt-8">
+        No groups available.
+      </p>
+    </ng-template>
+
+  </div>
+</div>
+
+<!-- -------------------------------------------------- -->
+<!-- 2) Display selected group details -->
+<!-- -------------------------------------------------- -->
+
+<div [ngClass]="{
+  'translate-x-10': isExpanded && !isMobile,
+  '-translate-x-10': !isExpanded && !isMobile
+}"
+*ngIf="selectedGroup" class="ml-40 min-h-screen">
+  <div class="flex flex-col w-full mt-5 mb-10">
+
+    <!-- Top toolbar -->
+    <div class="flex justify-start items-center space-x-3 mb-6">
+      <button (click)="backToList()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+        Back to Groups
+      </button>
+      <div class=" flex space-x-2 ml-150 ">
+        <button (click)="addPerson()" class="bg-green-600 text-white px-3 py-1.5 rounded text-sm hover:bg-green-700">
+          Add Person
+        </button>
+        <button (click)="deleteGroup(selectedGroup.shortCode)" class="bg-red-600 text-white px-3 py-1.5 rounded text-sm hover:bg-red-700">
+          Delete Group
+        </button>
+        <button (click)="deletePerson()" class="bg-yellow-500 text-white px-3 py-1.5 rounded text-sm hover:bg-yellow-600">
+          Delete Person
+        </button>
+      </div>
+    </div>
+
+
+    <div class="flex gap-0 min-h-screen overflow-hidden shadow-md">
+
+      <div class="w-1/4 p-6 bg-white flex-1">
+                <!-- Group name -->
+
+          <h1 class="text-2xl font-semibold text-gray-800 mb-6">{{ selectedGroup.name }}</h1>
+
+        <!-- Search students -->
+        <div class="mb-6" *ngIf="selectedGroup?.members && selectedGroup.members.length > 0">
+          <input
+            type="text"
+            [(ngModel)]="studentSearchTerm"
+            placeholder="🔍 Search by student name or email"
+            class="search-input p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-120"
+          />
+        </div>
+
+        <!-- Teacher section -->
+        <section class="mb-8 pb-4">
+          <h2 class="text-lg font-medium text-gray-700 mb-2">Teacher</h2>
+          <div *ngIf="selectedGroup.teacher; else noTeacherDetail" class="flex items-center space-x-3">
+            <img
+              *ngIf="selectedGroup.teacher.avatarUrl; else teacherInitialDetail"
+              [src]="selectedGroup.teacher.avatarUrl"
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <ng-template #teacherInitialDetail>
+              <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
+                {{ selectedGroup.teacher.name[0] }}
+              </div>
+            </ng-template>
+            <div class="flex flex-col">
+              <span class="text-sm text-gray-800">{{ selectedGroup.teacher.name }}</span>
+              <span class="text-xs text-gray-500">{{ selectedGroup.teacher.email }}</span>
+            </div>
+          </div>
+          <ng-template #noTeacherDetail>
+            <p class="italic text-sm text-gray-500">No teacher assigned.</p>
+          </ng-template>
+        </section>
+
+        <!-- Students section -->
+        <section>
+          <h2 class="text-lg font-medium text-gray-700 mb-2">
+            Students ({{ filteredStudents.length }})
+          </h2>
+
+          <ng-container *ngIf="selectedGroup.members?.length === 0">
+            <p class="italic text-sm text-gray-500">No students in this group.</p>
+          </ng-container>
+
+          <ul class="space-y-2" *ngIf="selectedGroup.members.length > 0">
+            <li *ngFor="let student of filteredStudents" class="flex items-center space-x-3">
+              <img
+                *ngIf="student.memberAvatarUrl; else studentInitialDetail"
+                [src]="student.memberAvatarUrl"
+                class="w-8 h-8 rounded-full object-cover"
+              />
+              <ng-template #studentInitialDetail>
+                <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-semibold">
+                  {{ student.memberName[0] }}
+                </div>
+              </ng-template>
+              <div class="flex flex-col text-sm text-gray-800">
+                <span>{{ student.memberName }}</span>
+                <span class="text-xs text-gray-500">{{ student.memberEmail }}</span>
+              </div>
+            </li>
+          </ul>
+
+          <!-- No matching students -->
+          <li  *ngIf="filteredStudents.length === 0 && studentSearchTerm.trim() !== ''" class="italic text-sm text-gray-500 mt-4">
+            No students match your search.
+          </li>
+
+        </section>
+
+      </div>
+
+      <div class="w-0.5 bg-transparent"></div>
+
+      <div class="w-3/4 p-6  bg-gray-50 flex-1">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 ">Group Quizzes</h2>
+
+        <div class="grid grid-cols-1 gap-4" *ngIf="groupQuizzes.length > 0">
+          <div *ngFor="let quiz of groupQuizzes" class="bg-white shadow rounded-2xl p-5 hover:shadow-lg transition duration-300 flex flex-col justify-between">
+            
+            <div>
+              <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ quiz.title }}</h2>
+              <p class="text-sm text-gray-600 mb-4">{{ quiz.description || 'No description provided.' }}</p>
+
+              <div class="text-xs text-gray-500 mb-2">
+                🕑 Starts At: {{ quiz.startsAt | date:'medium' }}
+              </div>
+
+              <div class="flex justify-between items-center text-sm text-gray-700 mt-2">
+                <span>Questions: {{ quiz.numberOfQuestions }}</span>
+                <span>Points: {{ quiz.possiblePoints }}</span>
+              </div>
+            </div>
+
+            <div class="flex justify-end mt-4">
+              <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-4 rounded-lg">
+                View Quiz
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="groupQuizzes.length === 0" class="text-center text-gray-500 mt-10">
+          No quizzes available for this group.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

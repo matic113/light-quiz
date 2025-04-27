@@ -1,0 +1,44 @@
+/* @keyframes slide-in-left {
+
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+
+
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 1s linear alternate;
+}
+
+
+
+.animated-logo {
+  opacity: 0;
+  animation: fadeIn 1s linear forwards;
+  animation-delay: 1.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: .7;
+  }
+
+  50% {
+    opacity: .9;
+  }
+
+  100% {
+    opacity: 1;
+  }
+} */
