@@ -37,6 +37,7 @@ export interface QuestionResult {
   studentAnsweredOption: string | null;
   correctOption: string | null;
   isCorrect: boolean;
+  imageUrl?: string;
   feedbackMessage: string;
 }
 

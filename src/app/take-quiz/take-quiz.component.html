@@ -47,6 +47,12 @@
           </span>
         </div>
 
+        <!-- Check if Question Image Exists -->
+        <div *ngIf="question.imageUrl" class="mb-4 flex items-center justify-center">
+          <img [src]="question.imageUrl" alt="Question Image" class="max-w-md  h-auto rounded-lg shadow">
+        </div>
+
+
         <!-- Multiple Choice Questions (Type 1) -->
         <div *ngIf="question.typeId === 1" class="space-y-3">
           <div *ngFor="let option of question.options"

@@ -21,6 +21,7 @@ interface QuizQuestion {
   text: string;
   typeId: number;
   points: number;
+  imageUrl?: string;
   options: QuizOption[];
 }
 
@@ -124,7 +125,7 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
       // we should fetch the latest progress
       const navigation = this.router.getCurrentNavigation();
       const isFromNavigation = navigation && navigation.extras.state;
-      
+
       if (!isFromNavigation) {
         // Only fetch progress if we're not coming directly from navigation
         // (i.e., page was refreshed)
@@ -154,7 +155,7 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
 
   private fetchLatestProgress(): void {
     if (!this.quiz) return;
-    
+
     const token = this.authService.getToken();
     if (!token) {
       console.error('Cannot fetch progress: Authentication token not found.');
@@ -162,20 +163,20 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     }
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    
+
     this.http.get<QuizProgress>(`${this.baseUrl}/api/student/progress/${this.quiz.quizId}`, { headers })
       .subscribe({
         next: (latestProgress) => {
           if (latestProgress && latestProgress.questionsAnswers?.length > 0) {
             // Update the progress object
             this.progress = latestProgress;
-            
+
             // Clear existing answers
             this.answers = {};
-            
+
             // Load the latest answers using the shared function
             this.applySavedAnswers(latestProgress.questionsAnswers);
-            
+
             // Update timer if needed
             if (latestProgress.attemptEndTimeUTC) {
               this.stopTimer();
@@ -198,7 +199,7 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     questionsAnswers.forEach(qa => {
       const questionId = qa.questionId;
       const correspondingQuestion = this.quiz?.questions.find(q => q.questionId === questionId);
-      
+
       if (correspondingQuestion) {
         let savedValue: string | null = null;
         if (correspondingQuestion.typeId === 1 || correspondingQuestion.typeId === 2) {
@@ -225,7 +226,7 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
   // Called from template on answer change
   onAnswerChange(): void {
     if (!this.isSubmitted) { // Only save if not submitted
-        this.saveSubject.next();
+      this.saveSubject.next();
     }
   }
 
@@ -242,9 +243,9 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     this.saving = true;
     const attemptId = this.progress?.attemptId ?? this.quiz.attemptId;
     if (!attemptId) {
-        console.error('Cannot save progress: Attempt ID not found.');
-        this.saving = false;
-        return;
+      console.error('Cannot save progress: Attempt ID not found.');
+      this.saving = false;
+      return;
     }
 
     const questionsAnswers: SaveQuestionAnswer[] = this.quiz.questions.map(question => {
@@ -316,13 +317,13 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     let totalSeconds = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
 
     if (totalSeconds <= 0) {
-        console.warn('Quiz time has already expired based on attemptEndTimeUTC.');
-        // Optionally auto-submit or show a message
-        this.minutes = 0;
-        this.seconds = 0;
-        // Consider calling submitQuiz() here if expired
-        // this.submitQuiz();
-        return; // Don't start the interval if time is up
+      console.warn('Quiz time has already expired based on attemptEndTimeUTC.');
+      // Optionally auto-submit or show a message
+      this.minutes = 0;
+      this.seconds = 0;
+      // Consider calling submitQuiz() here if expired
+      // this.submitQuiz();
+      return; // Don't start the interval if time is up
     }
 
     this.updateTimerDisplay(totalSeconds);
@@ -363,12 +364,12 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
 
     // If resuming, calculate total duration based on start/end times if possible
     if (this.progress?.attemptStartTimeUTC && this.progress?.attemptEndTimeUTC) {
-        const startTime = new Date(this.progress.attemptStartTimeUTC);
-        const endTime = new Date(this.progress.attemptEndTimeUTC);
-        totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
+      const startTime = new Date(this.progress.attemptStartTimeUTC);
+      const endTime = new Date(this.progress.attemptEndTimeUTC);
+      totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
     } else {
-        // Fallback to durationMinutes if start/end times aren't available
-        totalDurationSeconds = this.quiz.durationMinutes * 60;
+      // Fallback to durationMinutes if start/end times aren't available
+      totalDurationSeconds = this.quiz.durationMinutes * 60;
     }
 
     if (totalDurationSeconds <= 0) return 100; // Avoid division by zero, assume completed if duration is zero or negative
@@ -411,9 +412,9 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
 
     const token = this.authService.getToken();
     if (!token) {
-        this.error = 'Authentication token not found. Please log in again.';
-        this.isSubmitted = false; // Revert submitted status if auth fails
-        return;
+      this.error = 'Authentication token not found. Please log in again.';
+      this.isSubmitted = false; // Revert submitted status if auth fails
+      return;
     }
     this.loading = true; // Show loading for submission
     this.saving = false; // Ensure saving indicator is off

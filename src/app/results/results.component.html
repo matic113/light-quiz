@@ -55,6 +55,11 @@
           </span>
         </div>
 
+        <div *ngIf="question.imageUrl" class="mb-4 flex items-center justify-center">
+          <img [src]="question.imageUrl" alt="Question Image" class="max-w-md  h-auto rounded-lg shadow">
+        </div>
+
+
         <!-- MCQ Options -->
         <div *ngIf="question.options && question.options.length > 0" class="mt-4"></div>
         <div *ngFor="let opt of question.options" [ngClass]="{
