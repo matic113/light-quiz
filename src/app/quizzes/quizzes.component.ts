@@ -15,6 +15,11 @@ import {
   Legend
 } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { AuthService } from '../auth/auth.service';
+import { QuizzesService } from '../services/quizzes.service';
+import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 // Register Chart.js components
 Chart.register(
@@ -28,7 +33,7 @@ Chart.register(
   Tooltip,
   Legend
 );
-
+// -------------------------------------------------
 interface Quiz {
   title: string;
   type: string;
@@ -37,8 +42,15 @@ interface Quiz {
   time: string;
   code?: string;
   reportData?: ReportData;
-}
+  groupName: string;
+  isStarted: boolean;
 
+}
+interface Group {
+  groupId: string;
+  name: string;
+}
+// ---------------------------------------------------------
 interface ReportData {
   examName: string;
   course: string;
@@ -59,6 +71,8 @@ interface ReportData {
   timeUtilization: TimeUtilization;
   questionPerformance: QuestionPerformance;
 }
+ 
+
 
 interface Student {
   name: string;
@@ -68,6 +82,7 @@ interface Student {
   grade: string;
   timeSpent: string;
   submittedTime: string;
+  
 }
 
 interface GradeDistribution {
@@ -90,32 +105,153 @@ interface QuestionPerformance {
 @Component({
   selector: 'app-quizzes',
   standalone: true,
-  imports: [CommonModule, DatePipe, FormsModule, BaseChartDirective],
+  imports: [CommonModule, FormsModule, BaseChartDirective],
   templateUrl: './quizzes.component.html',
   styleUrls: ['./quizzes.component.css']
 })
-export class QuizzesComponent implements OnInit {
-  upcomingQuizzes: Quiz[] = [
-    { title: 'Mathematics Midterm', type: 'Multiple Choice', points: 50, date: '2025-04-28', time: '10:00', code: 'MATH-MID-20250428' },
-    { title: 'Physics Chapter 3 Quiz', type: 'Short Answer', points: 30, date: '2025-05-05', time: '14:30', code: 'PHYS-CH3-20250505' },
-    { title: 'History Final Exam', type: 'Essay', points: 100, date: '2025-06-15', time: '09:00', code: 'HIST-FIN-20250615' }
-  ];
+export class QuizzesComponent  {
+  // -----------------------------------------------------------------------
+  groups: Group[] = [];
+  upcomingQuizzes: Quiz[] = [];
+  completedQuizzes: Quiz[] = [];
+  isLoadingGroups = false;
+  isLoadingQuizzes = false;
+  private baseUrl = 'https://api.theknight.tech';
+  ngOnInit(): void {
+    this.fetchGroups();
+    this.sidebarStateService.setSidebarState(true);
 
-  completedQuizzes: Quiz[] = [
-    { title: 'English Literature Quiz', type: 'Mixed', points: 50, date: '2025-03-10', time: '14:00', reportData: this.getReportData('English Literature Quiz', 'English Literature', '2025-03-10 14:00 - 15:00') },
-    { title: 'Algebra Unit 1 Test', type: 'Multiple Choice', points: 40, date: '2025-02-25', time: '10:30', reportData: this.getReportData('Algebra Unit 1 Test', 'Mathematics', '2025-02-25 10:30 - 11:30') },
-    { title: 'World Geography Exam', type: 'Essay', points: 80, date: '2025-01-15', time: '09:00', reportData: this.getReportData('World Geography Exam', 'Geography', '2025-01-15 09:00 - 11:00') }
-  ];
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
 
-  calendarDays: { day: number | string; isHighlighted: boolean }[] = [];
-  currentMonth: string = 'April 2025';
-  currentDate: Date = new Date(2025, 3, 1); // Start at April 2025 (month 3, 0-based)
-  notificationCount: number = 3;
-  user = {
-    name: 'Dr. Sarah Johnson',
-    initials: 'SJ'
-  };
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });
+  }
 
+  fetchGroups(): void {
+    const token = this.authService.getToken();
+    if (!token) return;
+
+    this.isLoadingGroups = true;
+    this.http.get<any[]>(`${this.baseUrl}/api/group/created`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: groupsData => {
+        this.groups = groupsData.map(g => ({ groupId: g.groupId, name: g.name }));
+        this.isLoadingGroups = false;
+        this.fetchQuizzes();
+      },
+      error: err => {
+        console.error('Error fetching groups:', err);
+        this.isLoadingGroups = false;
+      }
+    });
+  }
+
+  fetchQuizzes(): void {
+    const token = this.authService.getToken();
+    if (!token) return;
+
+    this.isLoadingQuizzes = true;
+    this.http.get<any[]>(`${this.baseUrl}/api/quiz/all`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: data => {
+        const now = new Date();
+        const mapToQuiz = (q: any): Quiz => ({
+          title: q.title,
+          type: q.type || 'standard',
+          points: q.possiblePoints,
+          date: this.formatDate(q.startsAt),
+          time: this.formatTime(q.startsAt),
+          code: q.shortCode,
+          groupName: this.getGroupName(q.groupId),
+          isStarted: q.didStartQuiz,
+          reportData: this.getReportData(
+            q.title,
+            q.course || '—',
+            `${this.formatDate(q.startsAt)} ${this.formatTime(q.startsAt)}`
+          )
+        });
+
+        this.upcomingQuizzes = data.filter(q => new Date(q.startsAt) > now).map(mapToQuiz);
+        this.completedQuizzes = data.filter(q => new Date(q.startsAt) <= now).map(mapToQuiz);
+
+        this.cdr.detectChanges();
+        this.isLoadingQuizzes = false;
+      },
+      error: err => {
+        console.error('Error fetching quizzes:', err);
+        this.isLoadingQuizzes = false;
+      }
+    });
+  }
+  getGroupName(groupId: string): string {
+    const group = this.groups.find(g => g.groupId === groupId);
+    return group ? group.name : '';
+  }
+
+  formatDate(dateTimeString: string): string {
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString(); 
+  }
+
+  formatTime(dateTimeString: string): string {
+    const date = new Date(dateTimeString);
+    return date.toLocaleTimeString(); 
+  }
+  copyExamLink(code: string): void {
+    navigator.clipboard.writeText(code).then(() => {
+      // Sweet alert toast notification
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true
+      });
+
+      Toast.fire({
+        icon: 'success',
+        title: 'Exam code copied successfully!'
+      });
+    });
+  }
+  downloadReport(code: string): void {
+    this.quizService.downloadReport(code).subscribe({
+      next: (response) => {
+        if (response) {
+          window.open(response);
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No report URL returned.',
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'There was an issue with downloading the report.',
+        });
+      }
+    });
+  }
+  constructor(private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private quizService: QuizzesService,
+    private http: HttpClient,
+    private sidebarStateService: SidebarStateService
+    
+  ) {}
+  isExpanded: boolean = true;
+  isMobile: boolean = true;
+// -----------------------------------------------------------------------
   showReportPopup: boolean = false;
   selectedReport: ReportData | null = null;
   filteredStudents: Student[] = [];
@@ -181,85 +317,24 @@ export class QuizzesComponent implements OnInit {
       }
     }
   };
-
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngOnInit(): void {
-    this.loadCalendar();
-  }
-
-  loadCalendar(): void {
-    const year = this.currentDate.getFullYear();
-    const month = this.currentDate.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
-
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    this.currentMonth = `${monthNames[month]} ${year}`;
-
-    this.calendarDays = [];
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      this.calendarDays.push({ day: '', isHighlighted: false });
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-      const isHighlighted = this.upcomingQuizzes.some((quiz: Quiz) => {
-        const quizDate = new Date(quiz.date);
-        return quizDate.getDate() === i && quizDate.getMonth() === month && quizDate.getFullYear() === year;
-      });
-      this.calendarDays.push({ day: i, isHighlighted });
-    }
-  }
-
-  previousMonth(): void {
-    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
-    this.loadCalendar();
-  }
-
-  nextMonth(): void {
-    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
-    this.loadCalendar();
-  }
-
-  previousYear(): void {
-    this.currentDate.setFullYear(this.currentDate.getFullYear() - 1);
-    this.loadCalendar();
-  }
-
-  nextYear(): void {
-    this.currentDate.setFullYear(this.currentDate.getFullYear() + 1);
-    this.loadCalendar();
-  }
-
-  copyCode(quiz: Quiz): void {
-    if (quiz.code) {
-      navigator.clipboard.writeText(quiz.code).then(() => {
-        alert('Code copied to clipboard: ' + quiz.code);
-      });
-    }
-  }
-
-  createQuiz(): void {
-    alert('Create Quiz button clicked! Navigating to quiz creation form...');
-  }
-
   showReport(quiz: Quiz): void {
-    if (quiz.reportData) {
-      this.selectedReport = quiz.reportData;
-      this.filteredStudents = [...this.selectedReport.students];
-
-      // Update Grade Distribution Chart
-      this.gradePieChartData.datasets[0].data = [
-        this.selectedReport.gradeDistribution.excellent,
-        this.selectedReport.gradeDistribution.average,
-        this.selectedReport.gradeDistribution.poor
-      ];
-
-      // Update Time Utilization Chart
-      this.timeBarChartData.datasets[0].data = [this.selectedReport.timeUtilization.timePercentage];
-
-      this.showReportPopup = true;
-      this.cdr.detectChanges();
-    }
+    if (!quiz.reportData) return;              // نضمن وجود البيانات
+    this.selectedReport = quiz.reportData;
+    this.filteredStudents = [...quiz.reportData.students];
+  
+    // تحديث رسم التوزيع
+    this.gradePieChartData.datasets[0].data = [
+      quiz.reportData.gradeDistribution.excellent,
+      quiz.reportData.gradeDistribution.average,
+      quiz.reportData.gradeDistribution.poor
+    ];
+    // تحديث رسم استغلال الوقت
+    this.timeBarChartData.datasets[0].data = [
+      quiz.reportData.timeUtilization.timePercentage
+    ];
+  
+    this.showReportPopup = true;               // فتح البوب-أب
+    this.cdr.detectChanges();
   }
 
   closeReport(): void {
@@ -267,35 +342,6 @@ export class QuizzesComponent implements OnInit {
     this.selectedReport = null;
     this.searchQuery = '';
     this.filteredStudents = [];
-  }
-
-  downloadReport(): void {
-    if (!this.selectedReport) return;
-    const reportContent = `
-      Exam Results: ${this.selectedReport.examName}
-      Course: ${this.selectedReport.course}
-      Date: ${this.selectedReport.dateTime}
-      Total Students: ${this.selectedReport.totalStudents}
-      Average Score: ${this.selectedReport.averageScore}
-      Total Absent: ${this.selectedReport.totalAbsent}
-      Total Passed: ${this.selectedReport.totalPassed}
-      Total Failed: ${this.selectedReport.totalFailed}
-
-      Grade Distribution:
-      Excellent: ${this.selectedReport.gradeDistribution.excellent}%
-      Average: ${this.selectedReport.gradeDistribution.average}%
-      Poor: ${this.selectedReport.gradeDistribution.poor}%
-
-      Students:
-      ${this.selectedReport.students.map((student: Student) => `${student.name}: ${student.score}/${this.selectedReport!.totalMarks} (${student.grade})`).join('\n')}
-    `;
-    const blob = new Blob([reportContent], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${this.selectedReport.examName}_Report.txt`;
-    a.click();
-    window.URL.revokeObjectURL(url);
   }
 
   filterStudents(): void {
@@ -307,12 +353,6 @@ export class QuizzesComponent implements OnInit {
         student.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     }
-  }
-
-  viewNotifications(): void {
-    alert(`You have ${this.notificationCount} new notifications!`);
-    this.notificationCount = 0;
-    this.cdr.detectChanges();
   }
 
   getReportData(examName: string, course: string, dateTime: string): ReportData {

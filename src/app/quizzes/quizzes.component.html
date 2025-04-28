@@ -1,130 +1,81 @@
 <div class="min-h-screen bg-gray-50 p-6">
-    <!-- Header -->
-    <header class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-2xl font-semibold text-gray-800">Quizzes</h1>
-        </div>
-        <div class="flex items-center space-x-4">
-            <button (click)="viewNotifications()" class="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-                🔔
-                <span *ngIf="notificationCount > 0"
-                    class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {{ notificationCount }}
-                </span>
-            </button>
-            <div
-                class="bg-blue-500 text-white rounded-full h-10 w-10 flex items-center justify-center text-sm font-semibold">
-                {{ user.initials }}
-            </div>
-        </div>
-    </header>
 
-    <!-- Upcoming Quizzes and Calendar -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <!-- Upcoming Quizzes -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">Upcoming Exams</h2>
-                <button (click)="createQuiz()"
-                    class="bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600">
-                    Create Quiz
-                </button>
-            </div>
+    <div [ngClass]="{
+        'translate-x-30': isExpanded &&!isMobile ,
+        'translate-x-11': !isExpanded &&!isMobile
+      }" 
+    class="min-h-screen bg-gray-50 p-6">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-6">Quizzes</h1>
+      
+        <!-- Loading Indicator -->
+        <div *ngIf="isLoadingGroups || isLoadingQuizzes" class="text-center p-4">
+          <p class="text-lg text-gray-600">Loading… please wait</p>
+        </div>
+      
+        <!-- No groups message -->
+        <ng-container *ngIf="!isLoadingGroups && groups.length === 0">
+          <p class="text-center text-gray-600 text-lg">No quizzes to display</p>
+        </ng-container>
+      
+        <!-- Main content when groups exist -->
+        <ng-container *ngIf="!isLoadingGroups && groups.length > 0">
+          <!-- Upcoming Exams Section -->
+          <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Upcoming Exams</h2>
             <div class="space-y-4">
-                <div *ngFor="let quiz of upcomingQuizzes" class="border-b border-gray-200 pb-4">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">{{ quiz.title }}</p>
-                            <p class="text-sm text-gray-600">{{ quiz.type }}</p>
-                            <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-gray-800">{{ quiz.date | date:'dd-MM-yyyy' }}</p>
-                            <p class="text-sm text-gray-600">{{ quiz.time }}</p>
-                            <button (click)="copyCode(quiz)"
-                                class="mt-2 bg-green-600 text-white text-sm px-4 py-1 rounded-lg hover:bg-green-700">
-                                Copy Code
-                            </button>
-                        </div>
-                    </div>
+              <div *ngFor="let quiz of upcomingQuizzes" class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                <div>
+                  <h3 class="font-semibold">{{ quiz.title }}</h3>
+                  <p class="text-sm text-gray-600">{{ quiz.type }}</p>
+                  <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
+                  <p *ngIf="quiz.groupName" class="text-sm text-gray-600">Group: {{ quiz.groupName }}</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Calendar -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">Upcoming Quiz Dates - {{ currentMonth }}</h2>
-                <div class="flex space-x-2">
-                    <button (click)="previousYear()" class="text-gray-600 hover:text-gray-800 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                        </svg>
+                <div class="text-right">
+                  <p class="font-semibold">{{ quiz.date }}</p>
+                  <p class="text-sm text-gray-600">{{ quiz.time }}</p>
+                  <p *ngIf="!quiz.isStarted" class="text-red-500 text-sm">Not Started</p>
+                  <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md mt-2">
+                    <button class="text-green-800" (click)="quiz.code && copyExamLink(quiz.code)">
+                      <img src="../../assets/images/Copy.png" alt="Copy" class="w-18 h-6 object-contain" />
                     </button>
-                    <button (click)="previousMonth()" class="text-gray-600 hover:text-gray-800 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <button (click)="nextMonth()" class="text-gray-600 hover:text-gray-800 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                    <button (click)="nextYear()" class="text-gray-600 hover:text-gray-800 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 5l7 7-7 7m-8-14l7 7-7 7" />
-                        </svg>
-                    </button>
+                    <span class="text-sm text-gray-900">{{ quiz.code }}</span>
+                  </div>
                 </div>
+              </div>
             </div>
-            <div class="calendar">
-                <div class="grid grid-cols-7 gap-1 text-center text-sm">
-                    <div class="font-semibold text-gray-600">S</div>
-                    <div class="font-semibold text-gray-600">M</div>
-                    <div class="font-semibold text-gray-600">T</div>
-                    <div class="font-semibold text-gray-600">W</div>
-                    <div class="font-semibold text-gray-600">T</div>
-                    <div class="font-semibold text-gray-600">F</div>
-                    <div class="font-semibold text-gray-600">S</div>
-                    <div *ngFor="let day of calendarDays" class="p-2 rounded-full"
-                        [ngClass]="{'bg-blue-200 text-blue-800': day.isHighlighted}">
-                        {{ day.day }}
-                    </div>
+          </div>
+      
+          <!-- Completed Exams Section -->
+          <div>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Completed Exams</h2>
+            <div class="space-y-4">
+              <div *ngFor="let quiz of completedQuizzes" class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                <div>
+                  <h3 class="font-semibold">{{ quiz.title }}</h3>
+                  <p class="text-sm text-gray-600">{{ quiz.type }}</p>
+                  <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
+                  <p *ngIf="quiz.groupName" class="text-sm text-gray-600">Group: {{ quiz.groupName }}</p>
                 </div>
+                <div class="text-right">
+                  <p class="font-semibold">{{ quiz.date }}</p>
+                  <p class="text-sm text-gray-600">{{ quiz.time }}</p>
+                  <button (click)="showReport(quiz)" class="mt-2 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded-lg hover:bg-yellow-300">
+                    Show Report
+                  </button>
+                  <button (click)="quiz.code && downloadReport(quiz.code)" class="mt-2 ml-4 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded hover:bg-yellow-300">
+                    Download Report
+                  </button>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
+        </ng-container>
+  
     </div>
 
-    <!-- Completed Quizzes -->
-    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow mb-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Completed Exams</h2>
-        <div class="space-y-4">
-            <div *ngFor="let quiz of completedQuizzes" class="border-b border-gray-200 pb-4">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm font-semibold text-gray-800">{{ quiz.title }}</p>
-                        <p class="text-sm text-gray-600">{{ quiz.type }}</p>
-                        <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm font-semibold text-gray-800">{{ quiz.date | date:'dd-MM-yyyy' }}</p>
-                        <p class="text-sm text-gray-600">{{ quiz.time }}</p>
-                        <button (click)="showReport(quiz)"
-                            class="mt-2 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded-lg hover:bg-yellow-300">
-                            Show Report
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Report Popup -->
+    <!-- Report Popup  -->
     <div *ngIf="showReportPopup"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        class="fixed inset-0 bg-emerald-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
@@ -260,15 +211,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Download Report Button -->
-            <div class="flex justify-end mb-4">
-                <button (click)="downloadReport()"
-                    class="bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600">
-                    Download Report
-                </button>
-            </div>
-
             <!-- Search by Name Filter -->
             <div class="mb-4">
                 <div class="relative w-64">
@@ -319,4 +261,3 @@
             </div>
         </div>
     </div>
-</div>
