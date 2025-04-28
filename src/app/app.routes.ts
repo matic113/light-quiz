@@ -3,9 +3,6 @@ import { LoginComponent } from './auth/login/login.component';
 import { Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { CreateNewExamComponent } from './question/create-new-exam/create-new-exam.component';
-import { EnterQuestionsComponent } from './question/enter-questions/enter-questions.component';
-import { ReviewComponent } from './question/review/review.component';
-import { ExamInformationComponent } from './question/exam-information/exam-information.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { authGuard } from './guards/auth.guard';
@@ -40,24 +37,7 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { role: 'teacher' },
       },
-      {
-        path: 'enter',
-        component: EnterQuestionsComponent,
-        canActivate: [roleGuard],
-        data: { role: 'teacher' },
-      },
-      {
-        path: 'review',
-        component: ReviewComponent,
-        canActivate: [roleGuard],
-        data: { role: 'teacher' },
-      },
-      {
-        path: 'info',
-        component: ExamInformationComponent,
-        canActivate: [roleGuard],
-        data: { role: 'teacher' },
-      },
+      
       {
         path: 'quizzes',
         component: QuizzesComponent,
