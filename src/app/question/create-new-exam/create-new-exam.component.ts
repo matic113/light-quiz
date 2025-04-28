@@ -15,6 +15,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
 import { SidebarStateService } from '../../services/sidebar-state.service';
+import { ImageUploadService } from '../../services/upload-image.service';
+
 
 interface GroupMember {
   memberName: string;
@@ -39,6 +41,7 @@ type Question = {
   fileName?: string;
   imagePreview?: string;
   needImage?: boolean;
+  imageUrl?: string;
 };
 
 type Exam = {
@@ -99,7 +102,8 @@ export class CreateNewExamComponent {
     public authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private sidebarStateService: SidebarStateService
+    private sidebarStateService: SidebarStateService,
+    private imageUploadService: ImageUploadService
   ) { }
   isExpanded: boolean = true;
   isMobile: boolean = true;
@@ -165,15 +169,54 @@ export class CreateNewExamComponent {
   onFileSelected(event: any, index: number) {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.questionsList[index].imagePreview = reader.result as string;
-        this.questionsList[index].fileName = file.name;
-      };
-      reader.readAsDataURL(file);
+      this.uploadImage(file, index);
     }
   }
 
+  onDrop(event: DragEvent, index: number) {
+    event.preventDefault();
+    const file = event.dataTransfer?.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.uploadImage(file, index);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid file type',
+        text: 'Please upload only image files',
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }
+  }
+
+  uploadImage(file: File, index: number) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.questionsList[index].imagePreview = reader.result as string;
+      this.questionsList[index].fileName = file.name;
+    };
+    reader.readAsDataURL(file);
+
+    // تبدأ تجهز للرفع
+    this.imageUploadService.getUploadUri().subscribe({
+      next: (res) => {
+        const uploadUri = res.uploadUri;
+        console.log(uploadUri);
+        this.imageUploadService.uploadFileToSasUrl(file, uploadUri).subscribe({
+          next: () => {
+            const imageUrlWithoutParams = uploadUri.split('?')[0];
+            this.questionsList[index].imageUrl = imageUrlWithoutParams;
+          },
+          error: (err) => {
+            Swal.fire('Upload Failed', 'Failed to upload image.', 'error');
+          }
+        });
+      },
+      error: (err) => {
+        Swal.fire('Error', 'Could not get upload URL.', 'error');
+      }
+    });
+  }
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -184,33 +227,11 @@ export class CreateNewExamComponent {
   }
 
 
-  onDrop(event: DragEvent, index: number) {
-    event.preventDefault();
-    const file = event.dataTransfer?.files[0];
-    if (file) {
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          console.log(reader.result);
-          this.questionsList[index].imagePreview = reader.result as string;
-          this.questionsList[index].fileName = file.name;
-        };
-        reader.readAsDataURL(file);
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Invalid file type',
-          text: 'Please upload only image files',
-          timer: 2000,
-          timerProgressBar: true
-        });
-      }
-    }
-  }
 
   removeImage(index: number) {
     this.questionsList[index].imagePreview = undefined;
     this.questionsList[index].fileName = undefined;
+    this.questionsList[index].imageUrl = undefined;
   }
 
   // next بتاعت اول شاشة
@@ -282,7 +303,7 @@ export class CreateNewExamComponent {
     if (this.questionsList.length > 0 &&
       this.questionsList.every((q) => {
         // Basic validations for all question types
-        if (!q.q.trim() || q.points === undefined || q.points <= 0) {
+        if (!q.q.trim() || q.points === undefined || q.points <= 0 || (q.needImage && !q.imageUrl)) {
           return false;
         }
 
@@ -303,7 +324,6 @@ export class CreateNewExamComponent {
       this.checkInputsQuetionsData();
     }
   }
-
 
   checkInputsQuetionsData() {
     const errors: string[] = [];
@@ -350,6 +370,14 @@ export class CreateNewExamComponent {
     const questionIndexNegativePoints = this.questionsList.findIndex(q => q.points !== undefined && q.points < 0);
     if (questionIndexNegativePoints !== -1) {
       errors.push(`- Question #${questionIndexNegativePoints + 1} must have points greater than 0`);
+    }
+
+    // Check for questions that require an image but have no imageUrl
+    const questionIndexMissingImage = this.questionsList.findIndex(q =>
+      q.needImage && (!q.imageUrl || q.imageUrl.trim() === '')
+    );
+    if (questionIndexMissingImage !== -1) {
+      errors.push(`- Question #${questionIndexMissingImage + 1} requires an image but no image was provided`);
     }
 
     if (errors.length > 0) {
@@ -536,6 +564,7 @@ export class CreateNewExamComponent {
         points: points,
         correctAnswer: question.correctAnswer,
         options: options,
+        imageUrl: question.imageUrl
       };
     });
 
