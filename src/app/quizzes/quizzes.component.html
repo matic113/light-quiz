@@ -1,263 +1,323 @@
-<div class="min-h-screen bg-gray-50 p-6">
-
-    <div [ngClass]="{
+<div [ngClass]="{
         'translate-x-30': isExpanded &&!isMobile ,
         'translate-x-11': !isExpanded &&!isMobile
-      }" 
-    class="min-h-screen bg-gray-50 p-6">
-        <h1 class="text-2xl font-semibold text-gray-800 mb-6">Quizzes</h1>
-      
-        <!-- Loading Indicator -->
-        <div *ngIf="isLoadingGroups || isLoadingQuizzes" class="text-center p-4">
-          <p class="text-lg text-gray-600">Loading… please wait</p>
-        </div>
-      
-        <!-- No groups message -->
-        <ng-container *ngIf="!isLoadingQuizzes && upcomingQuizzes.length === 0 && completedQuizzes.length === 0">
-          <p class="text-center text-gray-600 text-lg">No quizzes to display</p>
-        </ng-container>
-      
-        <!-- Main content when groups exist -->
-        <ng-container *ngIf="!isLoadingQuizzes">
-          <!-- Upcoming Exams Section -->
-          <div *ngIf="upcomingQuizzes.length > 0" class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Upcoming Exams</h2>
-            <div class="space-y-4">
-              <div *ngFor="let quiz of upcomingQuizzes" class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
-                <div>
-                  <h3 class="font-semibold">{{ quiz.title }}</h3>
-                  <p class="text-sm text-gray-600">{{ quiz.type }}</p>
-                  <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
-                  <p *ngIf="quiz.groupName" class="text-sm text-gray-600">Group: {{ quiz.groupName }}</p>
-                </div>
-                <div class="text-right">
-                  <p class="font-semibold">{{ quiz.date }}</p>
-                  <p class="text-sm text-gray-600">{{ quiz.time }}</p>
-                  <p *ngIf="!quiz.isStarted" class="text-red-500 text-sm">Not Started</p>
-                  <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md mt-2">
-                    <button class="text-green-800" (click)="quiz.code && copyExamLink(quiz.code)">
-                      <img src="../../assets/images/Copy.png" alt="Copy" class="w-18 h-6 object-contain" />
-                    </button>
-                    <span class="text-sm text-gray-900">{{ quiz.code }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-      
-          <!-- Completed Exams Section -->
-          <div *ngIf="completedQuizzes.length > 0">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Completed Exams</h2>
-            <div class="space-y-4">
-              <div *ngFor="let quiz of completedQuizzes" class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
-                <div>
-                  <h3 class="font-semibold">{{ quiz.title }}</h3>
-                  <p class="text-sm text-gray-600">{{ quiz.type }}</p>
-                  <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
-                  <p *ngIf="quiz.groupName" class="text-sm text-gray-600">Group: {{ quiz.groupName }}</p>
-                </div>
-                <div class="text-right">
-                  <p class="font-semibold">{{ quiz.date }}</p>
-                  <p class="text-sm text-gray-600">{{ quiz.time }}</p>
-                  <button (click)="showReport(quiz)" class="mt-2 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded-lg hover:bg-yellow-300">
-                    Show Report
-                  </button>
-                  <button (click)="quiz.code && downloadReport(quiz.code)" class="mt-2 ml-4 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded hover:bg-yellow-300">
-                    Download Report
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-  
+      }" class="min-h-screen bg-gray-50 p-6">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Quizzes</h1>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoadingGroups || isLoadingQuizzes" class="text-center p-4">
+        <p class="text-lg text-gray-600">Loading… please wait</p>
     </div>
 
-    <!-- Report Popup  -->
-    <div *ngIf="showReportPopup"
-        class="fixed inset-0 bg-emerald-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
-                <button (click)="closeReport()" class="text-gray-600 hover:text-gray-800">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
+    <!-- No groups message -->
+    <ng-container *ngIf="!isLoadingQuizzes && upcomingQuizzes.length === 0 && completedQuizzes.length === 0">
+        <p class="text-center text-gray-600 text-lg">No quizzes to display</p>
+    </ng-container>
 
-            <!-- Report Header -->
-            <div class="mb-4">
-                <p class="text-lg font-semibold text-gray-800">Exam: {{ selectedReport?.examName }}</p>
-                <p class="text-sm text-gray-600">Course: {{ selectedReport?.course }}</p>
-                <p class="text-sm text-gray-600">{{ selectedReport?.totalQuestions }} Q | {{ selectedReport?.examType }}
-                </p>
-                <p class="text-sm text-gray-600">{{ selectedReport?.dateTime }}</p>
-                <p class="text-sm text-gray-600">{{ selectedReport?.duration }} <span class="ml-2">{{
-                        selectedReport?.totalMarks }} Marks (Pass marks: {{ selectedReport?.passMarks }})</span></p>
+    <!-- Main content when groups exist -->
+    <ng-container *ngIf="!isLoadingQuizzes">
+        <!-- Upcoming Exams Section -->
+        <div *ngIf="upcomingQuizzes.length > 0" class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Upcoming Exams</h2>
+            <div class="space-y-4">
+                <div *ngFor="let quiz of upcomingQuizzes"
+                    class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                    <div>
+                        <h3 class="font-semibold">{{ quiz.title }}</h3>
+                        <p class="text-sm text-gray-600">{{ quiz.type }}</p>
+                        <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
+                        <p *ngIf="quiz.groupName" class="text-sm text-gray-600">Group: {{ quiz.groupName }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold">{{ quiz.date }}</p>
+                        <p class="text-sm text-gray-600">{{ quiz.time }}</p>
+                        <p *ngIf="!quiz.isStarted" class="text-red-500 text-sm">Not Started</p>
+                        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md mt-2">
+                            <button class="text-green-800" (click)="quiz.code && copyExamLink(quiz.code)">
+                                <img src="../../assets/images/Copy.png" alt="Copy" class="w-18 h-6 object-contain" />
+                            </button>
+                            <span class="text-sm text-gray-900">{{ quiz.code }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <!-- Metrics Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
-                <div class="bg-gray-50 p-4 rounded-lg text-center">
-                    <div class="flex justify-center mb-2">
-                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
+        <!-- Completed Exams Section -->
+        <div *ngIf="completedQuizzes.length > 0">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Completed Exams</h2>
+            <div class="space-y-4">
+                <div *ngFor="let quiz of completedQuizzes"
+                    class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                    <div>
+                        <h3 class="font-semibold">{{ quiz.title }}</h3>
+                        <p class="text-sm text-gray-600">{{ quiz.type }}</p>
+                        <p class="text-sm text-gray-600">{{ quiz.points }} Points</p>
+                        <p *ngIf="quiz.groupName" class="text-sm text-gray-600">Group: {{ quiz.groupName }}</p>
                     </div>
-                    <p class="text-sm text-gray-600">Total Students</p>
-                    <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalStudents }}</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg text-center">
-                    <div class="flex justify-center mb-2">
-                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                    <div class="text-right">
+                        <p class="font-semibold">{{ quiz.date }}</p>
+                        <p class="text-sm text-gray-600">{{ quiz.time }}</p>
+                        <button (click)="quiz.code && showReport({ code: quiz.code })"
+                            class="mt-2 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded-lg hover:bg-yellow-300">
+                            Show Report
+                        </button>
+                        <button (click)="quiz.code && downloadReport(quiz.code)"
+                            class="mt-2 ml-4 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded hover:bg-yellow-300">
+                            Download Report
+                        </button>
                     </div>
-                    <p class="text-sm text-gray-600">Average Score</p>
-                    <p class="text-xl font-bold text-gray-800">{{ selectedReport?.averageScore }}</p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg text-center">
-                    <div class="flex justify-center mb-2">
-                        <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <p class="text-sm text-gray-600">Total Absent</p>
-                    <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalAbsent }}</p>
+            </div>
+        </div>
+    </ng-container>
+
+</div>
+
+<!-- Report Popup  -->
+<div *ngIf="showReportPopup " class="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
+            <button (click)="closeReport()" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+        </div>
+
+
+        <!-- Report Header -->
+        <!-- Report Popup -->
+        <div *ngIf="showReportPopup" class="fixed inset-0 flex items-center justify-center z-50 p-4">
+
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+
+            <div class="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="mb-4">
+                    <p class="text-lg font-semibold text-gray-800">Exam: {{ selectedReport?.examName }}</p>
+                    <p class="text-sm text-gray-600">Course: {{ selectedReport?.course }}</p>
+                    <p class="text-sm text-gray-600">{{ selectedReport?.totalQuestions }} Q | {{
+                        selectedReport?.examType }}
+                    </p>
+                    <p class="text-sm text-gray-600">{{ selectedReport?.dateTime }}</p>
+                    <p class="text-sm text-gray-600">{{ selectedReport?.duration }} <span class="ml-2">{{
+                            selectedReport?.totalMarks }} Marks (Pass marks: {{ selectedReport?.passMarks }})</span></p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg text-center">
-                    <div class="flex justify-center mb-2">
-                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <p class="text-sm text-gray-600">Total Passed</p>
-                    <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalPassed }}</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg text-center">
-                    <div class="flex justify-center mb-2">
-                        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Popup Header -->
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
+                    <button (click)="closeReport()" class="text-gray-600 hover:text-gray-800 fixed left-290 top-15">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12" />
                         </svg>
+                    </button>
+                </div>
+
+                <!-- Report Header -->
+                <div class="flex justify-center mb-4">
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 justify-items-center items-center">
+
+                        <ng-container *ngIf="currentQuiz?.groupId">
+                            <!-- Total Group Students -->
+                            <div class="bg-gray-50 p-4 rounded-lg text-center w-full max-w-xs">
+                                <div class="flex justify-center mb-2">
+                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm text-gray-600">Total Group Students</p>
+                                <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalStudents }}</p>
+                            </div>
+
+                            <!-- Total Absent -->
+                            <div class="bg-gray-50 p-4 rounded-lg text-center w-full max-w-xs">
+                                <div class="flex justify-center mb-2">
+                                    <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm text-gray-600">Total Absent</p>
+                                <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalAbsent }}</p>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="!currentQuiz?.groupId">
+                            <div class="bg-gray-50 p-4 rounded-lg text-center w-full max-w-xs col-span-2 md:col-span-2">
+                                <div class="flex justify-center mb-2">
+                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm text-gray-600">Attended Students</p>
+                                <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalFinished }}</p>
+                            </div>
+                        </ng-container>
+
+                        <!-- Total Passed -->
+                        <div class="bg-gray-50 p-4 rounded-lg text-center w-full max-w-xs">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <p class="text-sm text-gray-600">Total Passed</p>
+                            <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalPassed }}</p>
+                        </div>
+
+                        <!-- Average Score -->
+                        <div class="bg-gray-50 p-4 rounded-lg text-center w-full max-w-xs">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <p class="text-sm text-gray-600">Average Score</p>
+                            <p class="text-xl font-bold text-gray-800">{{ selectedReport?.averageScore }}</p>
+                        </div>
+
+                        <!-- Total Failed -->
+                        <div class="bg-gray-50 p-4 rounded-lg text-center w-full max-w-xs">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <p class="text-sm text-gray-600">Total Failed</p>
+                            <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalFailed }}</p>
+                        </div>
+
                     </div>
-                    <p class="text-sm text-gray-600">Total Failed</p>
-                    <p class="text-xl font-bold text-gray-800">{{ selectedReport?.totalFailed }}</p>
                 </div>
-            </div>
 
-            <!-- Grade Distribution -->
-            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                <h3 class="text-md font-semibold text-gray-800 mb-2">Grade Distribution</h3>
-                <div class="chart-container h-64 mx-auto max-w-md">
-                    <canvas baseChart [data]="gradePieChartData" [options]="gradePieChartOptions"
-                        [type]="gradePieChartType"></canvas>
-                </div>
-            </div>
-
-            <!-- Time Utilization -->
-            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                <h3 class="text-md font-semibold text-gray-800 mb-2">Time Utilization</h3>
-                <p class="text-sm text-gray-600 mb-2">
-                    Average Time Spent: {{ selectedReport?.timeUtilization?.avgTimeSpent ?? 'N/A' }} / {{
-                    selectedReport?.timeUtilization?.allocatedTime ?? 'N/A' }} mins
-                </p>
-                <div class="chart-container h-16">
-                    <canvas baseChart [data]="timeBarChartData" [options]="timeBarChartOptions"
-                        [type]="timeBarChartType"></canvas>
-                </div>
-            </div>
-
-            <!-- Question Performance Analysis -->
-            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                <h3 class="text-md font-semibold text-gray-800 mb-2">Question Performance Analysis</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <h4 class="text-sm font-semibold text-gray-800 mb-2">Top Correctly Answered Questions</h4>
-                        <ul class="list-disc list-inside text-gray-600">
-                            <ng-container
-                                *ngIf="selectedReport?.questionPerformance?.topCorrect; else noCorrectQuestions">
-                                <li *ngFor="let question of selectedReport?.questionPerformance?.topCorrect"
-                                    class="py-2 border-b border-gray-200">
-                                    {{ question.text }} (<span class="text-green-500">{{ question.correctRate }}%</span>
-                                    correct)
-                                </li>
-                            </ng-container>
-                            <ng-template #noCorrectQuestions>
-                                <li class="py-2 text-gray-600">No data available</li>
-                            </ng-template>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-semibold text-gray-800 mb-2">Top Incorrectly Answered Questions</h4>
-                        <ul class="list-disc list-inside text-gray-600">
-                            <ng-container
-                                *ngIf="selectedReport?.questionPerformance?.topIncorrect; else noIncorrectQuestions">
-                                <li *ngFor="let question of selectedReport?.questionPerformance?.topIncorrect"
-                                    class="py-2 border-b border-gray-200">
-                                    {{ question.text }} (<span class="text-red-500">{{ question.incorrectRate }}%</span>
-                                    incorrect)
-                                </li>
-                            </ng-container>
-                            <ng-template #noIncorrectQuestions>
-                                <li class="py-2 text-gray-600">No data available</li>
-                            </ng-template>
-                        </ul>
+                <!-- Grade Distribution -->
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-md font-semibold text-gray-800 mb-2">Grade Distribution</h3>
+                    <div class="chart-container h-64 mx-auto max-w-md">
+                        <canvas baseChart [data]="gradePieChartData" [options]="gradePieChartOptions"
+                            [type]="gradePieChartType"></canvas>
                     </div>
                 </div>
-            </div>
-            <!-- Search by Name Filter -->
-            <div class="mb-4">
-                <div class="relative w-64">
-                    <input type="text" placeholder="Search by name..." [(ngModel)]="searchQuery"
-                        (ngModelChange)="filterStudents()"
-                        class="border rounded-lg p-2 text-sm w-full focus:ring-2 focus:ring-blue-500">
-                    <svg class="w-5 h-5 text-gray-500 absolute right-2 top-2.5" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-            </div>
 
-            <!-- Student Results Table -->
-            <div class="overflow-x-auto">
-                <table class="w-full table-auto">
-                    <thead>
-                        <tr class="border-b-2 border-gray-200">
-                            <th class="p-3 text-left text-gray-600">Student Name</th>
-                            <th class="p-3 text-left text-gray-600">Passed / Failed</th>
-                            <th class="p-3 text-left text-gray-600">Score</th>
-                            <th class="p-3 text-left text-gray-600">Grade</th>
-                            <th class="p-3 text-left text-gray-600">Time Spent</th>
-                            <th class="p-3 text-left text-gray-600">Submitted / Timeout</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let student of filteredStudents" class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="p-3 flex items-center">
-                                <div class="w-8 h-8 rounded-full bg-gray-200 mr-2"></div>
-                                <span class="text-sm text-gray-800">{{ student.name }}</span>
-                            </td>
-                            <td class="p-3">
-                                <span class="text-sm"
-                                    [ngClass]="{'text-green-500': student.status === 'Passed', 'text-red-500': student.status === 'Failed'}">
-                                    {{ student.status }}
-                                </span>
-                            </td>
-                            <td class="p-3 text-sm text-gray-800">{{ student.score }}/{{ selectedReport?.totalMarks }}
-                                ({{ student.scorePercentage }}%)</td>
-                            <td class="p-3 text-sm text-gray-800">{{ student.grade }}</td>
-                            <td class="p-3 text-sm text-gray-800">{{ student.timeSpent }}</td>
-                            <td class="p-3 text-sm text-gray-800">{{ student.submittedTime }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!-- Time Utilization -->
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-md font-semibold text-gray-800 mb-2">Time Utilization</h3>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Average Time Spent: {{ selectedReport?.timeUtilization?.avgTimeSpent ?? 'N/A' }} / {{
+                        selectedReport?.timeUtilization?.allocatedTime ?? 'N/A' }} mins
+                    </p>
+                    <div class="chart-container h-16">
+                        <canvas baseChart [data]="timeBarChartData" [options]="timeBarChartOptions"
+                            [type]="timeBarChartType"></canvas>
+                    </div>
+                </div>
+
+                <!-- Question Performance Analysis -->
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-md font-semibold text-gray-800 mb-2">Question Performance Analysis</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-800 mb-2">Top Correctly Answered Questions</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <ng-container
+                                    *ngIf="selectedReport?.questionPerformance?.topCorrect; else noCorrectQuestions">
+                                    <li *ngFor="let question of selectedReport?.questionPerformance?.topCorrect"
+                                        class="py-2 border-b border-gray-200">
+                                        {{ question.text }} (<span class="text-green-500">{{ question.correctRate
+                                            }}%</span>
+                                        correct)
+                                    </li>
+                                </ng-container>
+                                <ng-template #noCorrectQuestions>
+                                    <li class="py-2 text-gray-600">No data available</li>
+                                </ng-template>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-800 mb-2">Top Incorrectly Answered Questions</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <ng-container
+                                    *ngIf="selectedReport?.questionPerformance?.topIncorrect; else noIncorrectQuestions">
+                                    <li *ngFor="let question of selectedReport?.questionPerformance?.topIncorrect"
+                                        class="py-2 border-b border-gray-200">
+                                        {{ question.text }} (<span class="text-red-500">{{ question.incorrectRate
+                                            }}%</span>
+                                        incorrect)
+                                    </li>
+                                </ng-container>
+                                <ng-template #noIncorrectQuestions>
+                                    <li class="py-2 text-gray-600">No data available</li>
+                                </ng-template>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Search by Name Filter -->
+                <div class="mb-4">
+                    <div class="relative w-64">
+                        <input type="text" placeholder="Search by name..." [(ngModel)]="searchQuery"
+                            (ngModelChange)="filterStudents()"
+                            class="border rounded-lg p-2 text-sm w-full focus:ring-2 focus:ring-blue-500">
+                        <svg class="w-5 h-5 text-gray-500 absolute right-2 top-2.5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Student Results Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="p-3 text-left text-gray-600">Student Name</th>
+                                <th class="p-3 text-left text-gray-600">Passed / Failed</th>
+                                <th class="p-3 text-left text-gray-600">Score</th>
+                                <th class="p-3 text-left text-gray-600">Grade</th>
+                                <th class="p-3 text-left text-gray-600">Time Spent</th>
+                                <th class="p-3 text-left text-gray-600">Submitted / Timeout</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let student of filteredStudents"
+                                class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="p-3 flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 mr-2"></div>
+                                    <span class="text-sm text-gray-800">{{ student.name }}</span>
+                                </td>
+                                <td class="p-3">
+                                    <span class="text-sm"
+                                        [ngClass]="{'text-green-500': student.status === 'Passed', 'text-red-500': student.status === 'Failed'}">
+                                        {{ student.status }}
+                                    </span>
+                                </td>
+                                <td class="p-3 text-sm text-gray-800">{{ student.score }}/{{ selectedReport?.totalMarks
+                                    }}
+                                    ({{ student.scorePercentage }}%)</td>
+                                <td class="p-3 text-sm text-gray-800">{{ student.grade }}</td>
+                                <td class="p-3 text-sm text-gray-800">{{ student.timeSpent }}</td>
+                                <td class="p-3 text-sm text-gray-800">{{ student.submittedTime }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
     </div>
