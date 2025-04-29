@@ -32,12 +32,25 @@
                         <p class="font-semibold">{{ quiz.date }}</p>
                         <p class="text-sm text-gray-600">{{ quiz.time }}</p>
                         <p *ngIf="!quiz.isStarted" class="text-red-500 text-sm">Not Started</p>
-                        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md mt-2">
-                            <button class="text-green-800" (click)="quiz.code && copyExamLink(quiz.code)">
-                                <img src="../../assets/images/Copy.png" alt="Copy" class="w-18 h-6 object-contain" />
+                        <div class="flex items-center mt-2">
+                            <!-- صندوق الكود -->
+                            <div class="flex items-center bg-gray-50 p-3 rounded-md">
+                                <!-- زر النسخ -->
+                                <button class="text-green-800" (click)="quiz.code && copyExamLink(quiz.code)">
+                                    <img src="../../assets/images/Copy.png" alt="Copy"
+                                        class="w-18 h-6 object-contain" />
+                                </button>
+                                <!-- الكود -->
+                                <span class="ml-2 text-sm text-gray-900">{{ quiz.code }}</span>
+                            </div>
+
+                            <button mat-icon-button (click)="deleteQuiz(quiz)" matTooltip="Delete Quiz"
+                                class="ml-2 !text-red-600 -translate-y-1">
+                                
+                                <mat-icon class="!text-red-600">delete</mat-icon>
                             </button>
-                            <span class="text-sm text-gray-900">{{ quiz.code }}</span>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -66,6 +79,16 @@
                             class="mt-2 ml-4 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded hover:bg-yellow-300">
                             Download Report
                         </button>
+                        <button mat-icon-button (click)="deleteQuiz(quiz)" matTooltip="Delete Quiz"
+                            class="!text-red-600 ">
+                            <mat-icon class="!text-red-600 translate-y-1.5">delete</mat-icon>
+                        </button>
+
+
+
+
+
+
                     </div>
                 </div>
             </div>
@@ -75,19 +98,11 @@
 </div>
 
 <!-- Report Popup  -->
-<div *ngIf="showReportPopup " class="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div *ngIf="showReportPopup " class=" fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
 
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
 
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
-            <button (click)="closeReport()" class="text-gray-600 hover:text-gray-800">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-
-        </div>
+        
 
 
         <!-- Report Header -->
@@ -107,16 +122,17 @@
                     <p class="text-sm text-gray-600">{{ selectedReport?.duration }} <span class="ml-2">{{
                             selectedReport?.totalMarks }} Marks (Pass marks: {{ selectedReport?.passMarks }})</span></p>
                 </div>
-                <!-- Popup Header -->
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
-                    <button (click)="closeReport()" class="text-gray-600 hover:text-gray-800 fixed left-290 top-15">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+               <!-- Popup Header -->
+<div class="flex justify-between items-center mb-4 relative">
+    <h2 class="text-xl font-semibold text-gray-800">Exam Results</h2>
+    <button (click)="closeReport()" class=" absolute -translate-y-30 top-0  right-0 text-gray-600 hover:text-gray-800">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+  
 
                 <!-- Report Header -->
                 <div class="flex justify-center mb-4">

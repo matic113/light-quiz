@@ -10,6 +10,9 @@ import { Chart, ChartConfiguration, CategoryScale, LinearScale, BarElement, ArcE
 import { AuthService } from '../auth/auth.service';
 import { QuizzesService } from '../services/quizzes.service';
 import { SidebarStateService } from '../services/sidebar-state.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Register Chart.js components
 Chart.register(
@@ -95,7 +98,7 @@ interface QuestionPerformance {
 @Component({
   selector: 'app-quizzes',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective],
+  imports: [CommonModule, FormsModule, BaseChartDirective,MatIconModule,MatButtonModule,MatTooltipModule  ],
   templateUrl: './quizzes.component.html',
   styleUrls: ['./quizzes.component.css']
 })
@@ -454,4 +457,34 @@ export class QuizzesComponent implements OnInit {
     ];
     this.timeBarChartData.datasets[0].data = [report.timeUtilization.timePercentage];
   }
+
+  deleteQuiz(quiz: Quiz): void {
+    if (!quiz.code) {
+      Swal.fire('Error', 'No quiz code available to delete.', 'error');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you really want to delete quiz "${quiz.title}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.quizService.deleteQuizByShortCode(quiz.code!).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'The quiz has been deleted.', 'success');
+            this.fetchQuizzes();
+          },
+          error: err => {
+            console.error('Delete quiz error:', err);
+            Swal.fire('Error', 'Could not delete the quiz.', 'error');
+          }
+        });
+      }
+    });
+  }
+
 }
