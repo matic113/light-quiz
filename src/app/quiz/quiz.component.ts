@@ -124,9 +124,8 @@ export class QuizComponent {
       this.error = 'Please enter a shortcode';
       return;
     }
-
+  
     const token = this.authService.getToken();
-
     if (!token) {
       this.snackBar.openFromComponent(CustomSnackbarComponent, {
         data: {
@@ -137,43 +136,64 @@ export class QuizComponent {
         duration: 5000,
         horizontalPosition: 'right',
         verticalPosition: 'bottom',
-        panelClass: ['bg-red-100', 'text-red-800'],
       });
       return;
     }
-
+  
     this.loading = true;
     this.error = '';
-
-    const headers = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
+  
     try {
       const result = await firstValueFrom(
         this.http.get<QuizMetadata>(
           `${this.baseLink}/api/quiz/metadata/${this.shortcode}`,
-          headers,
-        ),
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
       );
       this.quizMetadata = result ?? null;
-    } catch (err: any) {
-
-      if (err.status === 404) {
-        this.error =
-          'Failed to fetch quiz metadata. Please check your shortcode.';
-      } else if (err.status === 400) {
-        this.error = "You have already attempted this quiz before.";
+  
+      if (this.quizMetadata) {
+        const now = Date.now();
+        const startTime = new Date(this.quizMetadata.startsAt).getTime();
+        // مدة الاختبار بالمللي ثانية
+        const durationMs = this.quizMetadata.timeAllowed * 60_000;
+        const endTime = startTime + durationMs;
+  
+        if (now < startTime) {
+          // لم يبدأ بعد: جدولة التفعيل عند لحظة البداية
+          this.canStartQuiz = false;
+          setTimeout(() => {
+            this.canStartQuiz = true;
+            // جدولة إيقاف التفعيل عند نهاية الوقت
+            setTimeout(() => {
+              this.canStartQuiz = false;
+            }, durationMs);
+          }, startTime - now);
+        } else if (now >= startTime && now < endTime) {
+          // داخل فترة الاختبار الآن: فعّل الزر وجدول تعطيله
+          this.canStartQuiz = true;
+          setTimeout(() => {
+            this.canStartQuiz = false;
+          }, endTime - now);
+        } else {
+          // تجاوزت الفترة
+          this.canStartQuiz = false;
+        }
       }
-
+  
+    } catch (err: any) {
+      if (err.status === 404) {
+        this.error = 'Failed to fetch quiz metadata. Please check your shortcode.';
+      } else if (err.status === 400) {
+        this.error = 'You have already attempted this quiz before.';
+      }
       this.quizMetadata = null;
     } finally {
       this.loading = false;
     }
   }
-
+  
+canStartQuiz: boolean = false; 
   async startQuiz() {
     if (!this.quizMetadata) return;
 
