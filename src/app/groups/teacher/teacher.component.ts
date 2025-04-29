@@ -81,8 +81,13 @@ export class TeacherComponent implements OnInit {
   ngOnInit(): void {
     this.loadUserGroups();
     this.sidebarStateService.setSidebarState(true);
-    this.sidebarStateService.isExpanded$.subscribe(val => this.isExpanded = val);
-    this.sidebarStateService.isMobile$.subscribe(val => this.isMobile = val);
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
+
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });
   }
 
   // Load all groups created by the logged-in user

@@ -5,33 +5,35 @@
   <div
     [ngClass]="{
       'translate-x-5': isExpanded && !isMobile,
-      '-translate-x-15': !isExpanded && !isMobile
+      'translate-x-10': !isExpanded && !isMobile,
+      'pl-55': isExpanded && !isMobile, 
     }"
-    class="pl-55"
   >
-
     <!-- Header and action buttons -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto w-full mb-10 mt-5">
-      <h1 class="text-2xl font-semibold text-gray-800">Student Groups</h1>
-      <div class="flex space-x-2 pl-27">
-
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto w-full mb-6 sm:mb-10 mt-5 px-4 sm:px-0">
+      <h1 class="text-2xl font-semibold text-gray-800 px-2 sm:px-0">Student Groups</h1>
+      <div class="flex flex-wrap gap-y-2 sm:flex-nowrap sm:space-x-2">
         <!-- Search input -->
-        <div class="relative">
+        <div class="relative w-full sm:w-auto order-1 sm:order-none">
           <input
             [(ngModel)]="searchTerm"
             (input)="0"
             type="text"
-            placeholder="🔍 Search by group name"
-            class="border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none"
+            placeholder=" 🔍Search by group name"
+            [ngClass]="{
+              'ml-53': !isMobile,
+               
+            }"
+            class="border rounded-lg py-2  text-sm focus:outline-none w-full sm:w-43 mr-2 sm:mr-0"
           />
-          <span class="absolute left-3 top-2 text-gray-400">🔍</span>
         </div>
 
+        
         <!-- Add Group button and dropdown -->
-        <div class="relative">
+        <div class="relative w-full sm:w-auto order-3 sm:order-none">
           <button
             (click)="toggleAddGroup()"
-            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 w-full sm:w-auto"
           >
             + Add Group
           </button>
@@ -44,6 +46,7 @@
               [(ngModel)]="groupName"
               type="text"
               placeholder="Group Name"
+              ngClass=""
               class="border rounded-lg px-3 py-2 mb-3 w-full text-sm focus:outline-none focus:ring"
             />
             <div class="flex justify-end space-x-2">
@@ -62,23 +65,15 @@
             </div>
           </div>
         </div>
-
-        <!-- Export button -->
-        <button
-          class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-100"
-        >
-          Export
-        </button>
       </div>
     </div>
 
     <!-- Show group cards if any, otherwise show message -->
     <ng-container *ngIf="filteredGroups.length > 0; else noGroups">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto w-full">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto w-full  sm:px-0">
         <div
           *ngFor="let group of filteredGroups"
-          class="bg-white rounded-lg shadow-md p-4 flex space-x-6 min-w-[400px]
-                 hover:shadow-lg transition-shadow"
+          class="bg-white rounded-lg shadow-md p-4 flex space-x-6 min-w-0 sm:min-w-[400px] hover:shadow-lg transition-shadow"
         >
           <!-- Group info -->
           <div class="flex-1 min-w-[250px]">
@@ -139,8 +134,7 @@
                 <ng-container *ngIf="group.members.length > 0; else noStudent">
                   <div
                     *ngFor="let m of group.members.slice(0,2)"
-                    class="w-8 h-8 ml-1 bg-purple-500 rounded-full flex items-center justify-center
-                           text-white font-semibold overflow-hidden"
+                    class="w-8 h-8 ml-1 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden"
                   >
                     <img
                       *ngIf="m.memberAvatarUrl; else noAvatar"
