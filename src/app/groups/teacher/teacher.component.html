@@ -1,12 +1,13 @@
 <!-- -------------------------------------------------- -->
 <!-- 1) Display group list or show message when none -->
 <!-- -------------------------------------------------- -->
+<!-- student-groups.component.html -->
 <div *ngIf="!selectedGroup">
   <div
     [ngClass]="{
       'translate-x-5': isExpanded && !isMobile,
       'translate-x-10': !isExpanded && !isMobile,
-      'pl-55': isExpanded && !isMobile, 
+      'pl-55': isExpanded && !isMobile
     }"
   >
     <!-- Header and action buttons -->
@@ -20,15 +21,11 @@
             (input)="0"
             type="text"
             placeholder=" 🔍Search by group name"
-            [ngClass]="{
-              'ml-53': !isMobile,
-               
-            }"
-            class="border rounded-lg py-2  text-sm focus:outline-none w-full sm:w-43 mr-2 sm:mr-0"
+            [ngClass]="{ 'ml-53': !isMobile }"
+            class="border rounded-lg py-2 text-sm focus:outline-none w-full sm:w-43 mr-2 sm:mr-0"
           />
         </div>
 
-        
         <!-- Add Group button and dropdown -->
         <div class="relative w-full sm:w-auto order-3 sm:order-none">
           <button
@@ -46,7 +43,6 @@
               [(ngModel)]="groupName"
               type="text"
               placeholder="Group Name"
-              ngClass=""
               class="border rounded-lg px-3 py-2 mb-3 w-full text-sm focus:outline-none focus:ring"
             />
             <div class="flex justify-end space-x-2">
@@ -70,13 +66,17 @@
 
     <!-- Show group cards if any, otherwise show message -->
     <ng-container *ngIf="filteredGroups.length > 0; else noGroups">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto w-full  sm:px-0">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto w-full sm:px-0">
         <div
           *ngFor="let group of filteredGroups"
-          class="bg-white rounded-lg shadow-md p-4 flex space-x-6 min-w-0 sm:min-w-[400px] hover:shadow-lg transition-shadow"
+          class="bg-white rounded-lg shadow-md p-4
+                 flex flex-col sm:flex-row
+                 space-y-4 sm:space-y-0 sm:space-x-6
+                 min-w-0 sm:min-w-[400px]
+                 hover:shadow-lg transition-shadow"
         >
           <!-- Group info -->
-          <div class="flex-1 min-w-[250px]">
+          <div class="flex-1 max-w-[250px]">
             <h2 class="text-lg font-semibold text-gray-800">{{ group.name }}</h2>
             <div class="text-sm text-gray-500 mt-2">
               <span>1 teacher, </span><span>{{ group.members.length }} students</span>
@@ -101,17 +101,23 @@
                 </button>
               </div>
             </div>
-            <!-- View Details button -->
+            <!-- View Details button for large screens -->
             <button
               (click)="selectGroup(group)"
-              class="mt-4 bg-blue-500 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-600"
+              class="mt-4 bg-blue-500 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-600 hidden sm:inline-flex"
             >
               View Details
             </button>
           </div>
 
-          <!-- Teacher and top students -->
-          <div class="flex-none w-1/3 flex items-center justify-between">
+          <!-- Teacher and Top Students -->
+          <div
+            class="w-full sm:w-1/3
+                   flex flex-row
+                   items-center
+                   justify-between
+                   space-x-4"
+          >
             <!-- Teacher -->
             <div>
               <h3 class="text-xs text-gray-500 mb-2">Teacher</h3>
@@ -130,11 +136,11 @@
             <!-- Top Students -->
             <div>
               <h3 class="text-xs text-gray-500 mb-2">Top Students</h3>
-              <div class="flex">
+              <div class="flex items-center">
                 <ng-container *ngIf="group.members.length > 0; else noStudent">
                   <div
                     *ngFor="let m of group.members.slice(0,2)"
-                    class="w-8 h-8 ml-1 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden"
+                    class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden"
                   >
                     <img
                       *ngIf="m.memberAvatarUrl; else noAvatar"
@@ -145,7 +151,7 @@
                       {{ m.memberName[0] }}
                     </ng-template>
                   </div>
-                  <span *ngIf="group.members.length > 2" class="text-gray-400">...</span>
+                  <span *ngIf="group.members.length > 2" class="text-gray-400 ml-1">...</span>
                 </ng-container>
                 <ng-template #noStudent>
                   <span class="text-gray-400 italic">No student</span>
@@ -153,6 +159,14 @@
               </div>
             </div>
           </div>
+
+          <!-- View Details button for mobile -->
+          <button
+            (click)="selectGroup(group)"
+            class="mt-4 bg-blue-500 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-600 w-full sm:hidden"
+          >
+            View Details
+          </button>
         </div>
       </div>
     </ng-container>
@@ -163,9 +177,10 @@
         No groups available.
       </p>
     </ng-template>
-
   </div>
 </div>
+
+
 
 <!-- -------------------------------------------------- -->
 <!-- 2) Display selected group details -->
