@@ -293,39 +293,73 @@
 
       <div class="w-0.5 bg-transparent"></div>
 
-      <div class="w-3/4 p-6  bg-gray-50 flex-1">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6 ">Group Quizzes</h2>
+      <!-- … -->
+<div class="w-3/4 p-6 bg-gray-50 flex-1">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-6">Group Quizzes</h2>
 
-        <div class="grid grid-cols-1 gap-4" *ngIf="groupQuizzes.length > 0">
-          <div *ngFor="let quiz of groupQuizzes" class="bg-white shadow rounded-2xl p-5 hover:shadow-lg transition duration-300 flex flex-col justify-between">
-            
-            <div>
-              <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ quiz.title }}</h2>
-              <p class="text-sm text-gray-600 mb-4">{{ quiz.description || 'No description provided.' }}</p>
-
-              <div class="text-xs text-gray-500 mb-2">
-                🕑 Starts At: {{ quiz.startsAt | date:'medium' }}
-              </div>
-
-              <div class="flex justify-between items-center text-sm text-gray-700 mt-2">
-                <span>Questions: {{ quiz.numberOfQuestions }}</span>
-                <span>Points: {{ quiz.possiblePoints }}</span>
-              </div>
-            </div>
-
-            <div class="flex justify-end mt-4">
-              <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-4 rounded-lg">
-                View Quiz
-              </button>
-            </div>
-
+  <!-- Upcoming Quizzes -->
+  <section *ngIf="upcomingQuizzes.length > 0" class="mb-8">
+    <h3 class="text-xl font-medium text-green-600 mb-4">🟢 Upcoming Quizzes</h3>
+    <div class="grid grid-cols-1 gap-4">
+      <div *ngFor="let quiz of upcomingQuizzes"
+           class="bg-white shadow rounded-2xl p-5 hover:shadow-lg transition duration-300 flex flex-col justify-between">
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ quiz.title }}</h4>
+          <p class="text-sm text-gray-600 mb-4">{{ quiz.description || 'No description provided.' }}</p>
+          <div class="text-xs text-gray-500 mb-2">
+            🕑 Starts at: {{ quiz.startsAt | date:'medium' }}
+          </div>
+          <div class="flex justify-between items-center text-sm text-gray-700 mt-2">
+            <span>Questions: {{ quiz.numberOfQuestions }}</span>
+            <span>Points: {{ quiz.possiblePoints }}</span>
           </div>
         </div>
-
-        <div *ngIf="groupQuizzes.length === 0" class="text-center text-gray-500 mt-10">
-          No quizzes available for this group.
+        <div class="flex justify-end mt-4">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-4 rounded-lg">
+            View Quiz
+          </button>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Completed Quizzes -->
+  <section *ngIf="completedQuizzes.length > 0">
+    <h3 class="text-xl font-medium text-gray-800 mb-4">✅ Completed Quizzes</h3>
+    <div class="grid grid-cols-1 gap-4">
+      <div *ngFor="let quiz of completedQuizzes"
+           class="bg-white shadow rounded-2xl p-5 hover:shadow-lg transition duration-300 flex flex-col justify-between opacity-75">
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ quiz.title }}</h4>
+          <p class="text-sm text-gray-600 mb-4">{{ quiz.description || 'No description provided.' }}</p>
+          <div class="text-xs text-gray-500 mb-2">
+            🕑 Started at: {{ quiz.startsAt | date:'medium' }}
+          </div>
+          <div class="flex justify-between items-center text-sm text-gray-700 mt-2">
+            <span>Questions: {{ quiz.numberOfQuestions }}</span>
+            <span>Points: {{ quiz.possiblePoints }}</span>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <button class="bg-gray-400 cursor-not-allowed text-white text-xs py-2 px-4 rounded-lg" disabled>
+            Quiz Ended
+          </button>
+          <!-- داخل *ngFor لكل quiz -->
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- No Quizzes Available -->
+  <div *ngIf="upcomingQuizzes.length === 0 && completedQuizzes.length === 0"
+       class="text-center text-gray-500 mt-10">
+    No quizzes available for this group.
+  </div>
+</div>
+<!-- … -->
+
 
     </div>
   </div>

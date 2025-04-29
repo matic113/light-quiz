@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { SidebarStateService } from '../../services/sidebar-state.service';
 import { Observable } from 'rxjs';
+import { QuizzesService } from '../../services/quizzes.service';
+import { QuizzesComponent } from '../../quizzes/quizzes.component';
 
 // Interfaces for Teacher, Member, and Group
 interface Teacher {
@@ -75,7 +77,9 @@ export class TeacherComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private sidebarStateService: SidebarStateService
+    private sidebarStateService: SidebarStateService,
+     private reportState: QuizzesService,
+
   ) { }
 
   ngOnInit(): void {
@@ -379,6 +383,8 @@ export class TeacherComponent implements OnInit {
     });
   }
 groupQuizzes: Quiz[] = [];
+completedQuizzes: Quiz[] = [];
+upcomingQuizzes: Quiz[] = [];
 
 getGroupQuizzes(shortCode: string): void {
   const token = this.authService.getToken();
@@ -388,7 +394,14 @@ getGroupQuizzes(shortCode: string): void {
     headers: { Authorization: `Bearer ${token}` }
   }).subscribe({
     next: quizzes => {
+      const now = new Date();
+
+      // حفظ كل الكويزات
       this.groupQuizzes = quizzes;
+
+      // تصنيف الكويزات
+      this.completedQuizzes = quizzes.filter(q => new Date(q.startsAt) <= now);
+      this.upcomingQuizzes = quizzes.filter(q => new Date(q.startsAt) > now);
     },
     error: err => {
       console.error('Error fetching quizzes:', err);
@@ -396,6 +409,9 @@ getGroupQuizzes(shortCode: string): void {
     }
   });
 }
+
+
+
 // ===========================
   // Helper Methods
   // ===========================
