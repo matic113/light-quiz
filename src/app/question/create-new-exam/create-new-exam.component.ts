@@ -240,6 +240,9 @@ export class CreateNewExamComponent {
 
     if (!this.examData.title.trim()) missingFields.push('• Title');
     if (!this.examData.description.trim()) missingFields.push('• Description');
+    if (!this.examData.anonymous && !this.examData.groupId) {
+      missingFields.push('• Select a group or enable Anonymous Submissions');
+    }
     if (!this.examData.date) missingFields.push('• Date');
     if (!this.examData.time) missingFields.push('• Time');
     if (!this.examData.duration) missingFields.push('• Duration');
