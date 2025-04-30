@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { SidebarStateService } from '../../services/sidebar-state.service';
+import { QuizzesService } from '../../services/quizzes.service';
 
 // Interfaces
 interface Teacher {
@@ -76,7 +77,9 @@ export class StudentComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private sidebarStateService: SidebarStateService
+    private sidebarStateService: SidebarStateService,
+    private quizzesService: QuizzesService
+    
   ) {}
 
   ngOnInit(): void {
@@ -105,7 +108,11 @@ export class StudentComponent implements OnInit {
   toggleAddGroup(): void {
     this.showAddGroupBox = !this.showAddGroupBox;
   }
+  showSidebar: boolean = false;
 
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
+  }
   /** Create a new group */
   createGroup(): void {
     if (!this.groupName.trim()) return;
@@ -246,6 +253,9 @@ leaveGroup(shortCode: string): void {
 
 groupQuizzes: Quiz[] = [];
 
+completedQuizzes: Quiz[] = [];
+upcomingQuizzes: Quiz[] = [];
+
 getGroupQuizzes(shortCode: string): void {
   const token = this.authService.getToken();
   if (!token) return;
@@ -254,11 +264,48 @@ getGroupQuizzes(shortCode: string): void {
     headers: { Authorization: `Bearer ${token}` }
   }).subscribe({
     next: quizzes => {
+      const now = new Date();
+
+      // حفظ كل الكويزات
       this.groupQuizzes = quizzes;
+
+      // تصنيف الكويزات
+      this.completedQuizzes = quizzes.filter(q => new Date(q.startsAt) <= now);
+      this.upcomingQuizzes = quizzes.filter(q => new Date(q.startsAt) > now);
     },
     error: err => {
       console.error('Error fetching quizzes:', err);
       this.showToast('❌ Failed to load quizzes.', 'error');
+    }
+  });
+}
+
+onDeleteQuiz(quizId: string) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You won’t be able to revert this!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel'
+  }).then(result => {
+    if (result.isConfirmed) {
+      this.quizzesService.deleteQuizById(quizId).subscribe({
+        next: () => {
+          Swal.fire('Deleted!', 'Your quiz has been deleted.', 'success');
+          if (this.selectedGroup) {
+            this.getGroupQuizzes(this.selectedGroup.shortCode);
+          }
+        },
+        error: err => {
+          console.error(err);
+          Swal.fire(
+            'Error',
+            'There was an error deleting your quiz. Please try again.',
+            'error'
+          );
+        }
+      });
     }
   });
 }
