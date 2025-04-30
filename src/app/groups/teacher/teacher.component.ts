@@ -82,8 +82,7 @@ export class TeacherComponent implements OnInit {
     private http: HttpClient,
     private authService: AuthService,
     private sidebarStateService: SidebarStateService,
-     private reportState: QuizzesService,
-
+    private quizzesService: QuizzesService
   ) { }
 
   ngOnInit(): void {
@@ -414,6 +413,35 @@ getGroupQuizzes(shortCode: string): void {
   });
 }
 
+onDeleteQuiz(quizId: string) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You won’t be able to revert this!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel'
+  }).then(result => {
+    if (result.isConfirmed) {
+      this.quizzesService.deleteQuizById(quizId).subscribe({
+        next: () => {
+          Swal.fire('Deleted!', 'Your quiz has been deleted.', 'success');
+          if (this.selectedGroup) {
+            this.getGroupQuizzes(this.selectedGroup.shortCode);
+          }
+        },
+        error: err => {
+          console.error(err);
+          Swal.fire(
+            'Error',
+            'There was an error deleting your quiz. Please try again.',
+            'error'
+          );
+        }
+      });
+    }
+  });
+}
 
 
 // ===========================
