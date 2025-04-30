@@ -256,13 +256,9 @@
                 <span>Questions: {{ quiz.numberOfQuestions }}</span>
                 <span>Points: {{ quiz.possiblePoints }}</span>
               </div>
-              <button class="mt-3 w-full bg-blue-600 text-white text-xs py-1 rounded">View Quiz</button>
-              <button
-              class="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
-              (click)="onDeleteQuiz(quiz.shortCode)"
-            >
-              Delete Quiz
-            </button>
+              <button class="mt-3 w-full bg-blue-600 text-white text-xs py-1 rounded">            Start Quiz
+              </button>
+              
             </div>
           </div>
         </section>
@@ -280,12 +276,9 @@
                 <span>Points: {{ quiz.possiblePoints }}</span>
               </div>
               <button class="mt-3 w-full bg-gray-400 text-white text-xs py-1 rounded" disabled>Quiz Ended</button>
-              <button
-              class="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
-              (click)="onDeleteQuiz(quiz.shortCode)"
-            >
-              Delete Quiz
-            </button>
+              <button (click)="showresult()" class="w-full bg-blue-600 mr-1 text-white text-xs py-2 px-4 rounded-lg" >
+                show results
+                 </button>
             </div>
           </div>
         </section>
@@ -421,14 +414,9 @@
         </div>
         <div class="flex justify-end mt-4">
           <button class="bg-blue-600 hover:bg-blue-700  mr-1 text-white text-xs py-2 px-4 rounded-lg">
-            View Quiz
+            Start Quiz
           </button>
-          <button
-          class="bg-red-600 hover:bg-red-700 text-white   py-2 px-4 text-xs rounded-lg"
-          (click)="onDeleteQuiz(quiz.shortCode)"
-        >
-          Delete Quiz
-        </button>
+         
         </div>
       </div>
     </div>
@@ -455,12 +443,10 @@
           <button class="bg-gray-400 cursor-not-allowed mr-1 text-white text-xs py-2 px-4 rounded-lg" disabled>
             Quiz Ended
           </button>
-          <button
-          class="bg-red-600 hover:bg-red-700 text-white   py-2 px-4 text-xs rounded-lg"
-          (click)="onDeleteQuiz(quiz.shortCode)"
-        >
-          Delete Quiz
-        </button>
+          <button (click)="showresult()" class="bg-blue-600 mr-1 text-white text-xs py-2 px-4 rounded-lg" >
+         show results
+          </button>
+          
 
         </div>
       </div>

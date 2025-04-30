@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { SidebarStateService } from '../../services/sidebar-state.service';
 import { QuizzesService } from '../../services/quizzes.service';
+import { Router, RouterLink } from '@angular/router';
 
 // Interfaces
 interface Teacher {
@@ -78,7 +79,9 @@ export class StudentComponent implements OnInit {
     private http: HttpClient,
     private authService: AuthService,
     private sidebarStateService: SidebarStateService,
-    private quizzesService: QuizzesService
+    private quizzesService: QuizzesService,
+    private router: Router,
+
     
   ) {}
 
@@ -265,14 +268,24 @@ getGroupQuizzes(shortCode: string): void {
   }).subscribe({
     next: quizzes => {
       const now = new Date();
-
-      // حفظ كل الكويزات
+    
       this.groupQuizzes = quizzes;
-
-      // تصنيف الكويزات
-      this.completedQuizzes = quizzes.filter(q => new Date(q.startsAt) <= now);
-      this.upcomingQuizzes = quizzes.filter(q => new Date(q.startsAt) > now);
+    
+      this.completedQuizzes = quizzes.filter(q => {
+        const start = new Date(q.startsAt);
+        const end = new Date(start.getTime() + q.timeAllowed * 60 * 1000);
+        return now >= end;
+      });
+      
+    
+      this.upcomingQuizzes = quizzes.filter(q => {
+        const start = new Date(q.startsAt);
+        const end = new Date(start.getTime() + q.timeAllowed * 60 * 1000);
+        return now < end;
+      });
+      
     },
+    
     error: err => {
       console.error('Error fetching quizzes:', err);
       this.showToast('❌ Failed to load quizzes.', 'error');
@@ -310,7 +323,9 @@ onDeleteQuiz(quizId: string) {
   });
 }
 
-
+showresult(): void {
+  this.router.navigate(['/results']);
+}
 
 
   // ===========================
