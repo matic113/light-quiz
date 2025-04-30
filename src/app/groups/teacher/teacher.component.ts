@@ -54,7 +54,11 @@ interface Quiz {
 export class TeacherComponent implements OnInit {
 
 
+  showSidebar: boolean = false;
 
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
+  }
 
   // Group creation form state
   groupName = '';
