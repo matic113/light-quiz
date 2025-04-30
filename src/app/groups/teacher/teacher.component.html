@@ -190,7 +190,7 @@
 
 
     
-<ng-container *ngIf="isMobile; else desktopView">
+ <ng-container *ngIf="isMobile && selectedGroup; else desktopView">
   <div class="flex flex-col min-h-screen w-100 bg-gray-100">
 
     <!-- Header -->
@@ -198,7 +198,7 @@
       <button (click)="backToList()" class="text-sm bg-white text-blue-600 px-3 py-1 rounded">
         Back to Groups
       </button>
-      <h1 class="text-base font-semibold truncate text-black pt-10">{{ selectedGroup?.name }}</h1>
+      <h1 class="text-base font-semibold truncate text-black pt-10">{{ selectedGroup.name }}</h1>
       <button (click)="toggleSidebar()" class="text-sm bg-white text-blue-600 px-3 py-1 rounded">
         {{ showSidebar ? 'close' : 'View Members ' }}
       </button>
@@ -208,7 +208,7 @@
     <div class="flex justify-around items-center py-2 bg-white shadow">
       <button (click)="addPerson()" class="bg-green-600 text-white px-3 py-1 rounded text-xs">Add</button>
       <button (click)="deletePerson()" class="bg-yellow-500 text-white px-3 py-1 rounded text-xs">Delete Person</button>
-      <button (click)="deleteGroup(selectedGroup?.shortCode ?? '')" class="bg-red-600 text-white px-3 py-1 rounded text-xs">Delete Group</button>
+      <button (click)="deleteGroup(selectedGroup.shortCode)" class="bg-red-600 text-white px-3 py-1 rounded text-xs">Delete Group</button>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -226,15 +226,15 @@
           <h2 class="font-semibold text-gray-700 mb-2">👩‍🏫 Teacher</h2>
           <ng-container *ngIf="selectedGroup?.teacher; else noTeacher">
             <div class="flex items-center space-x-3">
-              <img *ngIf="selectedGroup?.teacher?.avatarUrl; else teacherInit" [src]="selectedGroup?.teacher?.avatarUrl" class="w-10 h-10 rounded-full" />
+              <img *ngIf="selectedGroup.teacher.avatarUrl; else teacherInit" [src]="selectedGroup.teacher.avatarUrl" class="w-10 h-10 rounded-full" />
               <ng-template #teacherInit>
                 <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-semibold text-gray-700">
-                  {{ selectedGroup?.teacher?.name?.[0] }}
+                  {{ selectedGroup.teacher.name[0] }}
                 </div>
               </ng-template>
               <div class="text-sm">
-                <p>{{ selectedGroup?.teacher?.name }}</p>
-                <p class="text-xs text-gray-500">{{ selectedGroup?.teacher?.email }}</p>
+                <p>{{ selectedGroup.teacher.name }}</p>
+                <p class="text-xs text-gray-500">{{ selectedGroup.teacher.email }}</p>
               </div>
             </div>
           </ng-container>
