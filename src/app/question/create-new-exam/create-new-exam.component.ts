@@ -618,5 +618,23 @@ export class CreateNewExamComponent {
       });
     });
   }
-
+  resetForm(): void {
+    this.questionsList = [];
+    this.generatedExamCode = '';
+    this.currentStep = 1;
+    this.showDropdown = false;
+    this.showTypeSelector = false;
+    this.examData = {
+      title: '',
+      description: '',
+      exam_type: undefined,
+      date: '',
+      time: '',
+      duration: undefined,
+      questions: this.questionsList,
+      randomize: false,
+      anonymous: false,
+      groupId: ''
+    };
+  }
 }
