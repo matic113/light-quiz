@@ -58,7 +58,7 @@ export interface QuestionOption {
 })
 export class ResultsComponent {
   isExpanded: boolean = true;
-
+  isMobile: boolean = true;
   results: QuizResult[] = [];
   isLoading = true;
   // isAnswersLoading = false;
@@ -96,6 +96,9 @@ export class ResultsComponent {
     this.sidebarStateService.isExpanded$.subscribe(value => {
       this.isExpanded = value;
 
+    });
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
     });
   }
 

@@ -1,5 +1,6 @@
 <!-- المودال لعرض الإجابات -->
-<div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
+<div 
+*ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
   <div class="absolute inset-0 bg-black opacity-50" (click)="closeModal()"></div>
   <div
     class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg mx-4 max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
@@ -98,8 +99,8 @@
 
 
 <div [ngClass]="{
-  'translate-x-32': isExpanded,
-  'translate-x-10': !isExpanded
+  'translate-x-32': isExpanded && !isMobile,
+  'translate-x-10': !isExpanded && !isMobile
 }" class="min-h-screen bg-gray-50 p-6">
   <div *ngIf="isLoading" class="text-gray-500 text-xl text-center">Loading...</div>
 
