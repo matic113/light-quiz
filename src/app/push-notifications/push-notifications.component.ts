@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 
 
@@ -20,6 +21,8 @@ export class PushNotificationComponent {
   constructor(
     public authService: AuthService,
     private http: HttpClient,
+    private sidebarStateService: SidebarStateService,
+    
   ) { }
   title = '';
   body = '';
@@ -37,7 +40,8 @@ export class PushNotificationComponent {
   private baseUrl = "https://api.theknight.tech";
 
 
-
+  isExpanded: boolean = true;
+  isMobile: boolean = true;
   ngOnInit() {
     const token = this.authService.getToken();
     if (!token) return;
@@ -61,6 +65,16 @@ export class PushNotificationComponent {
           timerProgressBar: true,
         });
       }
+    });
+
+    this.sidebarStateService.setSidebarState(true);
+
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
+
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
     });
   }
 
