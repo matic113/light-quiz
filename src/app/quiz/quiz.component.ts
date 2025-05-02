@@ -92,22 +92,22 @@ interface QuizData extends QuizMetadata {
 })
 export class QuizComponent {
   // ----------------sidebar state--------------------------------
-    isExpanded: boolean = true;
-  
-    ngOnInit(): void {
-      this.sidebarStateService.setSidebarState(true); 
-    
-      this.sidebarStateService.isExpanded$.subscribe(value => {
-        this.isExpanded = value;
-      });
-    }
+  isExpanded: boolean = true;
+
+  ngOnInit(): void {
+    this.sidebarStateService.setSidebarState(true);
+
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
+  }
   // ----------------------------------------------------------------------------
   shortcode: string = '';
   quizMetadata: QuizMetadata | null = null;
   baseLink = 'https://api.theknight.tech';
   error: string = '';
   loading: boolean = false;
-
+  showBanner = true;
 
 
   constructor(
@@ -124,7 +124,7 @@ export class QuizComponent {
       this.error = 'Please enter a shortcode';
       return;
     }
-  
+
     const token = this.authService.getToken();
     if (!token) {
       this.snackBar.openFromComponent(CustomSnackbarComponent, {
@@ -139,10 +139,10 @@ export class QuizComponent {
       });
       return;
     }
-  
+
     this.loading = true;
     this.error = '';
-  
+
     try {
       const result = await firstValueFrom(
         this.http.get<QuizMetadata>(
@@ -151,14 +151,14 @@ export class QuizComponent {
         )
       );
       this.quizMetadata = result ?? null;
-  
+
       if (this.quizMetadata) {
         const now = Date.now();
         const startTime = new Date(this.quizMetadata.startsAt).getTime();
         // مدة الاختبار بالمللي ثانية
         const durationMs = this.quizMetadata.timeAllowed * 60_000;
         const endTime = startTime + durationMs;
-  
+
         if (now < startTime) {
           // لم يبدأ بعد: جدولة التفعيل عند لحظة البداية
           this.canStartQuiz = false;
@@ -180,7 +180,7 @@ export class QuizComponent {
           this.canStartQuiz = false;
         }
       }
-  
+
     } catch (err: any) {
       if (err.status === 404) {
         this.error = 'Failed to fetch quiz metadata. Please check your shortcode.';
@@ -192,8 +192,8 @@ export class QuizComponent {
       this.loading = false;
     }
   }
-  
-canStartQuiz: boolean = false; 
+
+  canStartQuiz: boolean = false;
   async startQuiz() {
     if (!this.quizMetadata) return;
 
