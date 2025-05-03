@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { SidebarStateService } from '../services/sidebar-state.service';
 
 
 export interface DashboardStats {
@@ -55,12 +56,15 @@ export class DashboardComponent implements OnInit {
   topStudents: TopOrBotStudents | null = null;
   botStudents: TopOrBotStudents | null = null;
   lastQuiz: LastQuiz | null = null;
-
+  isExpanded: boolean = true;
+  isMobile: boolean = true;
   quickStats: any[] = [];
 
   constructor(private cdr: ChangeDetectorRef,
     private http: HttpClient,
     public authService: AuthService,
+    private sidebarStateService: SidebarStateService,
+    
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +76,16 @@ export class DashboardComponent implements OnInit {
       this.isLoading = false;
       this.cdr.detectChanges();
     }
+    this.sidebarStateService.setSidebarState(true);
+
+    this.sidebarStateService.isExpanded$.subscribe(value => {
+      this.isExpanded = value;
+    });
+
+    this.sidebarStateService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });
+
   }
 
 
