@@ -20,10 +20,11 @@ export class AppComponent {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        // Hide the sidebar on login, register, or student pages
+        // Hide the sidebar on login, register, landing page, or student pages
         if (
           event.url === '/login' ||
           event.url === '/register' ||
+          event.url === '/' ||
           event.url.startsWith('/take-quiz/')
         ) {
           this.showSidebar = false;

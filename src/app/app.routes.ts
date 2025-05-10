@@ -13,10 +13,10 @@ import { roleGuard } from './guards/role.guard';
 import { QuizzesComponent } from './quizzes/quizzes.component';
 import { StudentComponent } from './groups/student/student.component';
 import { PushNotificationComponent } from './push-notifications/push-notifications.component';
+import { LandingComponent } from './landing/landing.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'create', pathMatch: 'full' },
-
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
