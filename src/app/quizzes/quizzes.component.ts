@@ -95,6 +95,19 @@ interface QuestionPerformance {
   topIncorrect: { text: string; incorrectRate: number }[];
 }
 
+interface StudentResponse {
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  quizId: string;
+  quizShortCode: string;
+  grade: number;
+  possiblePoints: number;
+  gradedAt: string;
+  correctQuestions: number;
+  totalQuestions: number;
+}
+
 // Component -------------------------------------------------------------
 @Component({
   selector: 'app-quizzes',
@@ -121,6 +134,10 @@ export class QuizzesComponent implements OnInit {
   filteredStudents: Student[] = [];
   searchQuery = '';
   currentQuiz: Quiz | null = null;
+
+  showResponsesPopup = false;
+  selectedResponses: StudentResponse[] = [];
+  isLoadingResponses = false;
 
   // Grade Pie Chart
   gradePieChartType = 'pie' as const;
@@ -486,6 +503,44 @@ export class QuizzesComponent implements OnInit {
           }
         });
       }
+    });
+  }
+
+  showResponses(quizShortCode: string): void {
+    this.isLoadingResponses = true;
+    this.http.get<StudentResponse[]>(`${this.baseUrl}/api/quiz/responses/${quizShortCode}`, {
+      headers: {
+        Authorization: `Bearer ${this.authService.getToken()}`,
+      },
+    }).subscribe({
+      next: (responses) => {
+        this.selectedResponses = responses;
+        this.showResponsesPopup = true;
+        this.isLoadingResponses = false;
+      },
+      error: (err) => {
+        console.error('Error fetching responses:', err);
+        this.isLoadingResponses = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch student responses'
+        });
+      }
+    });
+  }
+
+  closeResponses(): void {
+    this.showResponsesPopup = false;
+    this.selectedResponses = [];
+  }
+
+  showManualGrading(response: StudentResponse): void {
+    // This will be implemented later
+    Swal.fire({
+      icon: 'info',
+      title: 'Coming Soon',
+      text: 'Manual grading feature will be available soon!'
     });
   }
 

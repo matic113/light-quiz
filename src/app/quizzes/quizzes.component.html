@@ -86,6 +86,10 @@
                             class="mt-2 ml-4 bg-yellow-200 text-gray-800 text-sm px-4 py-1 rounded hover:bg-yellow-300">
                             Download Report
                         </button>
+                        <button (click)="quiz.code && showResponses(quiz.code)"
+                            class="mt-2 ml-4 bg-blue-200 text-gray-800 text-sm px-4 py-1 rounded hover:bg-blue-300">
+                            Show Responses
+                        </button>
                         <button mat-icon-button (click)="deleteQuiz(quiz)" matTooltip="Delete Quiz"
                             class="!text-red-600 ">
                             <mat-icon class="!text-red-600 translate-y-1.5">delete</mat-icon>
@@ -338,3 +342,68 @@
         </div>
 
     </div>
+</div>
+
+<!-- Responses Popup -->
+<div *ngIf="showResponsesPopup" class="fixed inset-0 flex items-center justify-center z-50 p-4">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    
+    <div class="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <!-- Popup Header -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Student Responses</h2>
+            <button (click)="closeResponses()" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoadingResponses" class="text-center p-4">
+            <p class="text-lg text-gray-600">Loading responses...</p>
+        </div>
+
+        <!-- Responses List -->
+        <div *ngIf="!isLoadingResponses" class="space-y-4">
+            <div *ngFor="let response of selectedResponses" 
+                [ngClass]="{
+                    'bg-green-50 border-green-200': response.correctQuestions === response.totalQuestions,
+                    'bg-orange-50 border-orange-200': response.correctQuestions !== response.totalQuestions
+                }"
+                class="p-4 rounded-lg border">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="font-semibold text-gray-800">{{ response.studentName }}</h3>
+                        <p class="text-sm text-gray-600">{{ response.studentEmail }}</p>
+                        <div class="mt-2">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-lg font-bold" 
+                                    [ngClass]="{
+                                        'text-green-600': response.correctQuestions === response.totalQuestions,
+                                        'text-orange-600': response.correctQuestions !== response.totalQuestions
+                                    }">
+                                    {{ response.grade }}/{{ response.possiblePoints }} points
+                                </span>
+                                <span class="text-sm px-2 py-1 rounded-full"
+                                    [ngClass]="{
+                                        'bg-green-100 text-green-800': response.correctQuestions === response.totalQuestions,
+                                        'bg-orange-100 text-orange-800': response.correctQuestions !== response.totalQuestions
+                                    }">
+                                    {{ response.correctQuestions }}/{{ response.totalQuestions }} questions
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Graded at: {{ response.gradedAt | date:'medium' }}
+                            </p>
+                        </div>
+                    </div>
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                            (click)="showManualGrading(response)">
+                        Manual Grade
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

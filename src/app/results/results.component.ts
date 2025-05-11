@@ -13,8 +13,6 @@ interface QuizResult {
   quizShortCode: string;
 }
 
-
-
 export interface CorrectedQuizModel {
   quizId: string;
   shortCode: string;
