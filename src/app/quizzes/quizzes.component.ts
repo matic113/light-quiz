@@ -137,7 +137,9 @@ export class QuizzesComponent implements OnInit {
 
   showResponsesPopup = false;
   selectedResponses: StudentResponse[] = [];
+  filteredResponses: StudentResponse[] = [];
   isLoadingResponses = false;
+  responseSearchQuery = '';
 
   // Grade Pie Chart
   gradePieChartType = 'pie' as const;
@@ -508,6 +510,7 @@ export class QuizzesComponent implements OnInit {
 
   showResponses(quizShortCode: string): void {
     this.isLoadingResponses = true;
+    this.responseSearchQuery = ''; // Reset search when opening popup
     this.http.get<StudentResponse[]>(`${this.baseUrl}/api/quiz/responses/${quizShortCode}`, {
       headers: {
         Authorization: `Bearer ${this.authService.getToken()}`,
@@ -515,6 +518,7 @@ export class QuizzesComponent implements OnInit {
     }).subscribe({
       next: (responses) => {
         this.selectedResponses = responses;
+        this.filteredResponses = responses;
         this.showResponsesPopup = true;
         this.isLoadingResponses = false;
       },
@@ -530,9 +534,24 @@ export class QuizzesComponent implements OnInit {
     });
   }
 
+  filterResponses(): void {
+    if (!this.responseSearchQuery.trim()) {
+      this.filteredResponses = [...this.selectedResponses];
+      return;
+    }
+
+    const query = this.responseSearchQuery.toLowerCase().trim();
+    this.filteredResponses = this.selectedResponses.filter(response => 
+      response.studentName.toLowerCase().includes(query) || 
+      response.studentEmail.toLowerCase().includes(query)
+    );
+  }
+
   closeResponses(): void {
     this.showResponsesPopup = false;
     this.selectedResponses = [];
+    this.filteredResponses = [];
+    this.responseSearchQuery = '';
   }
 
   showManualGrading(response: StudentResponse): void {
