@@ -39,6 +39,7 @@ interface Quiz {
   groupName: string;
   isStarted: boolean;
   groupId?: string;
+  timeAllowed: number;
 }
 
 interface Group {
@@ -238,6 +239,7 @@ export class QuizzesComponent implements OnInit {
           groupName: this.getGroupName(q.groupId),
           isStarted: q.didStartQuiz,
           groupId: q.groupId,
+          timeAllowed: q.timeAllowed || 0
         });
 
         this.upcomingQuizzes = data.filter(q => new Date(q.startsAt) > now).map(mapToQuiz);
