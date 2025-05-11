@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { BaseChartDirective } from 'ng2-charts';
 import { Chart, ChartConfiguration, CategoryScale, LinearScale, BarElement, ArcElement, BarController, PieController, Title, Tooltip, Legend } from 'chart.js';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
 import { QuizzesService } from '../services/quizzes.service';
@@ -204,7 +205,8 @@ export class QuizzesComponent implements OnInit {
     private authService: AuthService,
     private quizService: QuizzesService,
     private http: HttpClient,
-    private sidebarStateService: SidebarStateService
+    private sidebarStateService: SidebarStateService,
+    private router: Router
   ) {}
 
   // Life Cycle ----------------------------------------------------------
@@ -555,11 +557,11 @@ export class QuizzesComponent implements OnInit {
   }
 
   showManualGrading(response: StudentResponse): void {
-    // This will be implemented later
-    Swal.fire({
-      icon: 'info',
-      title: 'Coming Soon',
-      text: 'Manual grading feature will be available soon!'
+    this.router.navigate(['/manual-grading'], {
+      queryParams: {
+        quizShortCode: response.quizShortCode,
+        studentId: response.studentId
+      }
     });
   }
 

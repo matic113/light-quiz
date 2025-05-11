@@ -13,6 +13,7 @@ import { roleGuard } from './guards/role.guard';
 import { QuizzesComponent } from './quizzes/quizzes.component';
 import { StudentComponent } from './groups/student/student.component';
 import { PushNotificationComponent } from './push-notifications/push-notifications.component';
+import { ManualGradingComponent } from './manual-grading/manual-grading.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -41,6 +42,12 @@ export const routes: Routes = [
       {
         path: 'quizzes',
         component: QuizzesComponent,
+        canActivate: [roleGuard],
+        data: { role: 'teacher' },
+      },
+      {
+        path: 'manual-grading',
+        component: ManualGradingComponent,
         canActivate: [roleGuard],
         data: { role: 'teacher' },
       },

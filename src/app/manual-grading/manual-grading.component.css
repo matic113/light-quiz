@@ -1,0 +1,88 @@
+.question-card {
+  transition: all 0.3s ease;
+}
+
+.question-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.question-card.needs-review {
+  border-left: 4px solid #f59e0b;
+}
+
+.question-card.needs-review mat-card {
+  background-color: #fff7ed;
+}
+
+.question-card.needs-review mat-card-title {
+  color: #92400e;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.question-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.outline-green {
+  border: 2px solid #22c55e !important; /* green-500 */
+}
+
+.outline-red {
+  border: 2px solid #ef4444 !important; /* red-500 */
+}
+
+.outline-orange {
+  border: 2px solid #f59e0b !important; /* orange-500 */
+}
+
+.arrow-to-answer {
+  font-size: 1.2em;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+}

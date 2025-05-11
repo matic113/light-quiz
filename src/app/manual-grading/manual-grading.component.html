@@ -1,0 +1,151 @@
+<div [ngClass]="{
+  'translate-x-30': isExpanded && !isMobile,
+  'translate-x-11': !isExpanded && !isMobile
+}"
+class="min-h-screen bg-gray-50 p-6">
+  <div class="mb-4 flex justify-between items-center">
+    <button mat-button (click)="goBack()" class="flex items-center text-gray-600 hover:text-gray-800">
+      <mat-icon>arrow_back</mat-icon>
+      <span class="ml-1">Back to Quizzes</span>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+  </div>
+
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <strong class="font-bold">Error!</strong>
+    <span class="block sm:inline">{{ error }}</span>
+  </div>
+
+  <div *ngIf="submission && !loading" class="space-y-6">
+    <!-- Quiz and Student Info -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+      <!-- Quiz Title and Description -->
+      <div class="mb-6 pb-4 border-b border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-800">{{ submission.title }}</h2>
+        <p class="mt-2 text-gray-600">{{ submission.description }}</p>
+      </div>
+
+      <!-- Info Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Student Info -->
+        <div class="bg-gray-50 rounded-xl p-4">
+          <div class="flex items-center mb-4">
+            <div class="bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-xl w-12 h-12 flex items-center justify-center text-xl font-bold shadow mr-4">
+              <mat-icon>person</mat-icon>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800">Student Information</h3>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center">
+              <span class="text-gray-500 w-24">Name:</span>
+              <span class="font-medium text-gray-800">{{ submission.studentName }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-500 w-24">Email:</span>
+              <span class="font-medium text-gray-800">{{ submission.studentEmail }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submission Info -->
+        <div class="bg-gray-50 rounded-xl p-4">
+          <div class="flex items-center mb-4">
+            <div [ngClass]="{
+              'bg-gradient-to-tr from-indigo-500 to-purple-500': submission.grade > 0,
+              'bg-red-400': submission.grade === 0
+            }" class="text-white rounded-xl w-12 h-12 flex items-center justify-center text-xl font-bold shadow mr-4">
+              <mat-icon>assignment</mat-icon>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800">Submission Details</h3>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center">
+              <span class="text-gray-500 w-24">Submitted:</span>
+              <span class="font-medium text-gray-800">{{ submission.submissionDate | date:'medium' }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-500 w-24">Graded:</span>
+              <span class="font-medium text-gray-800">{{ submission.gradingDate | date:'medium' }}</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-500 w-24">Score:</span>
+              <span class="font-medium" [ngClass]="{
+                'text-green-600': submission.grade > 0,
+                'text-red-600': submission.grade === 0
+              }">
+                {{ submission.grade }}/{{ submission.possiblePoints }}
+              </span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-500 w-24">Correct:</span>
+              <span class="font-medium" [ngClass]="{
+                'text-green-600': submission.correctQuestions > 0,
+                'text-red-600': submission.correctQuestions === 0
+              }">
+                {{ submission.correctQuestions }}/{{ submission.totalQuestions }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="space-y-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Questions</h2>
+      <div *ngFor="let question of submission.questions; let i = index"
+           class="question-card bg-white text-gray-900 rounded-2xl p-6 mb-6 shadow border border-gray-200 relative"
+           [ngClass]="{
+             'outline-green': question.isCorrect && question.aiConfidence >= 5,
+             'outline-red': !question.isCorrect && question.aiConfidence >= 5,
+             'outline-orange': question.aiConfidence < 5
+           }"
+           [class.needs-review]="needsReview(question)">
+        <!-- Points Badge -->
+        <div class="absolute top-4 right-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold shadow border border-green-200 z-10">
+          {{ question.isCorrect ? question.points : 0 }} / {{ question.points }} pts
+        </div>
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-lg font-bold">Q{{ i + 1 }}: {{ question.questionText }}</div>
+          <span *ngIf="needsReview(question)"
+                class="ml-2 px-2 py-1 text-sm bg-orange-100 text-orange-800 rounded">
+            Needs Review
+          </span>
+        </div>
+
+        <!-- MCQ Options -->
+        <div *ngIf="question.options.length > 0" class="mt-2 space-y-2">
+          <div *ngFor="let option of question.options"
+               class="p-2 rounded flex items-center"
+               [class.bg-green-100]="option.optionLetter === question.correctOption"
+               [class.bg-red-100]="option.optionLetter === question.studentAnsweredOption && option.optionLetter !== question.correctOption">
+            <span *ngIf="option.optionLetter === question.studentAnsweredOption" class="arrow-to-answer text-blue-500 mr-2">&#8594;</span>
+            <span class="font-medium">{{ option.optionLetter }}.</span> {{ option.optionText }}
+          </div>
+        </div>
+
+        <!-- Text Answer -->
+        <div *ngIf="question.studentAnsweredText" class="mt-4">
+          <p class="font-medium flex items-center">
+            <span class="mr-2">Student's Answer:</span>
+            <span class="arrow-to-answer text-blue-500">&#8594;</span>
+          </p>
+          <p class="p-2 bg-gray-100 rounded">{{ question.studentAnsweredText }}</p>
+        </div>
+
+        <!-- AI Feedback Card -->
+        <div class="ai-card bg-blue-50 rounded-xl p-4 mt-4 border border-blue-200">
+          <div class="font-semibold text-blue-700 mb-1">AI Feedback</div>
+          <div class="text-gray-800 mb-2">{{ question.aiMessage }}</div>
+          <div class="flex flex-wrap gap-4 text-sm text-blue-700">
+            <div>AI Confidence: <span class="font-bold">{{ question.aiConfidence }}/10</span></div>
+            <div>AI Rating: <span class="font-bold">{{ question.aiRating }}/10</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
