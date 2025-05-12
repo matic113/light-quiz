@@ -141,16 +141,19 @@ class="min-h-screen bg-gray-50 p-6">
                class="p-2 rounded flex items-center"
                [class.bg-green-100]="option.optionLetter === question.correctOption"
                [class.bg-red-100]="option.optionLetter === question.studentAnsweredOption && option.optionLetter !== question.correctOption">
-            <span *ngIf="option.optionLetter === question.studentAnsweredOption" class="arrow-to-answer text-blue-500 mr-2">&#8594;</span>
             <span class="font-medium">{{ option.optionLetter }}.</span> {{ option.optionText }}
           </div>
+        </div>
+
+        <!-- Question Image -->
+        <div *ngIf="question.imageUrl" class="mt-4">
+          <img [src]="question.imageUrl" [alt]="'Question ' + (i + 1) + ' image'" class="max-w-full rounded-lg shadow-md">
         </div>
 
         <!-- Text Answer -->
         <div *ngIf="question.studentAnsweredText" class="mt-4">
           <p class="font-medium flex items-center">
             <span class="mr-2">Student's Answer:</span>
-            <span class="arrow-to-answer text-blue-500">&#8594;</span>
           </p>
           <p class="p-2 bg-gray-100 rounded">{{ question.studentAnsweredText }}</p>
         </div>
