@@ -9,6 +9,7 @@ import { AuthService } from '../auth/auth.service';
 import { SidebarStateService } from '../services/sidebar-state.service';
 
 interface Question {
+  questionId?: string;
   questionText: string;
   imageUrl: string | null;
   options: {
@@ -119,6 +120,52 @@ export class ManualGradingComponent implements OnInit {
 
   needsReview(question: Question): boolean {
     return question.aiConfidence < 5;
+  }
+
+  toggleQuestionCorrectness(question: Question) {
+    if (!this.submission) return;
+    question.isCorrect = !question.isCorrect;
+  }
+
+  saveAllChanges() {
+    if (!this.submission) return;
+    
+    // Prepare the update payload
+    const updatePayload = {
+      quizId: this.submission.quizId,
+      studentId: this.submission.studentId,
+      questions: this.submission.questions.map(q => ({
+        questionId: q.questionId,
+        newGrade: q.isCorrect ? q.points : 0,
+        isCorrect: q.isCorrect  
+      }))
+    };
+
+    // Debug: log the payload
+    console.log('Sending update payload:', updatePayload);
+
+    // Send the update to the backend
+    const token = this.authService.getToken();
+    if (!token) {
+      this.error = 'Authentication required';
+      return;
+    }
+
+    this.loading = true;
+    this.http.post(`${this.baseUrl}/api/quiz/update-grades`, updatePayload, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: () => {
+        // Update successful
+        this.loading = false;
+        console.log('Grades updated successfully');
+      },
+      error: (err) => {
+        this.loading = false;
+        this.error = 'Failed to update grades';
+        console.error('Error updating grades:', err);
+      }
+    });
   }
 
   goBack() {

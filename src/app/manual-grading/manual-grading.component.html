@@ -104,16 +104,35 @@ class="min-h-screen bg-gray-50 p-6">
              'outline-orange': question.aiConfidence < 5
            }"
            [class.needs-review]="needsReview(question)">
-        <!-- Points Badge -->
-        <div class="absolute top-4 right-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold shadow border border-green-200 z-10">
-          {{ question.isCorrect ? question.points : 0 }} / {{ question.points }} pts
+        <!-- Points Badge and Toggle -->
+        <div class="absolute top-4 right-4 flex items-center gap-3">
+          <button type="button"
+                  class="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-200"
+                  [ngClass]="{
+                    'bg-red-100 text-red-800 hover:bg-red-200': !question.isCorrect,
+                    'bg-green-100 text-green-800 hover:bg-green-200': question.isCorrect
+                  }"
+                  (click)="toggleQuestionCorrectness(question)">
+            <span class="text-lg">{{ question.isCorrect ? '✔' : '✖' }}</span>
+            {{ question.isCorrect ? 'Mark Incorrect' : 'Mark Correct' }}
+          </button>
+          <div class="px-3 py-1 rounded-full text-sm font-semibold shadow border z-10"
+               [ngClass]="{
+                 'bg-red-100 text-red-800 border-red-200': !question.isCorrect,
+                 'bg-green-100 text-green-800 border-green-200': question.isCorrect && question.points > 0,
+                 'bg-orange-100 text-orange-800 border-orange-200': question.isCorrect && question.points === 0
+               }">
+            {{ question.isCorrect ? question.points : 0 }} / {{ question.points }} pts
+          </div>
         </div>
         <div class="flex items-center justify-between mb-2">
           <div class="text-lg font-bold">Q{{ i + 1 }}: {{ question.questionText }}</div>
-          <span *ngIf="needsReview(question)"
-                class="ml-2 px-2 py-1 text-sm bg-orange-100 text-orange-800 rounded">
-            Needs Review
-          </span>
+          <div class="flex items-center gap-2">
+            <span *ngIf="needsReview(question)"
+                  class="px-2 py-1 text-sm bg-orange-100 text-orange-800 rounded">
+              Needs Review
+            </span>
+          </div>
         </div>
 
         <!-- MCQ Options -->
@@ -147,5 +166,14 @@ class="min-h-screen bg-gray-50 p-6">
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Save Button (centered, not fixed) -->
+  <div *ngIf="submission && !loading" class="flex justify-center mt-8 mb-4">
+    <button type="button"
+            class="px-8 py-3 rounded-lg flex items-center gap-2 text-lg font-semibold shadow bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-200"
+            (click)="saveAllChanges()">
+      Save All Changes
+    </button>
   </div>
 </div>
