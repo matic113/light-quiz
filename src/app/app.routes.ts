@@ -14,12 +14,14 @@ import { QuizzesComponent } from './quizzes/quizzes.component';
 import { StudentComponent } from './groups/student/student.component';
 import { PushNotificationComponent } from './push-notifications/push-notifications.component';
 import { ManualGradingComponent } from './manual-grading/manual-grading.component';
+import { LandingComponent } from './landing/landing.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'create', pathMatch: 'full' },
+  { path: '', redirectTo: 'landing', pathMatch: 'full' },
 
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'landing', component: LandingComponent },
 
   {
     path: '',

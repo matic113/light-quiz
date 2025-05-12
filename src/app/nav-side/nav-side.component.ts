@@ -102,7 +102,7 @@ export class NavSideComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.authService.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/landing']);
         this.sub = null;
         this.token = null;
         Swal.fire({

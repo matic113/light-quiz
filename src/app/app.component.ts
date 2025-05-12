@@ -17,22 +17,20 @@ export class AppComponent {
 
   ngOnInit(): void {
     // Listen to route changes
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        // Hide the sidebar on login, register, or student pages
-        if (
-          event.url === '/login' ||
-          event.url === '/register' ||
-          event.url.startsWith('/take-quiz/')
-        ) {
-          this.showSidebar = false;
-        } else {
-          this.showSidebar = true;
-        }
-      });
-  }
+
+  
+      this.router.events
+        .pipe(filter((event) => event instanceof NavigationEnd))
+        .subscribe((event: NavigationEnd) => {
+          const hiddenRoutes = ['/login', '/register', '/landing'];
+          const isHidden =
+            hiddenRoutes.includes(event.urlAfterRedirects) ||
+            event.urlAfterRedirects.startsWith('/take-quiz/');
+  
+          this.showSidebar = !isHidden;
+        });
+    }
   isExcludedPage(): boolean {
-    return this.router.url === '/t-groups' || this.router.url === '/s-groups';
+    return this.router.url === '/t-groups' || this.router.url === '/s-groups'|| this.router.url === '/landing';
   }
 }
