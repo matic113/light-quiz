@@ -104,6 +104,12 @@ class="min-h-screen bg-gray-50 p-6">
              'outline-orange': question.aiConfidence < 5
            }"
            [class.needs-review]="needsReview(question)">
+        <!-- Needs Review Badge (moved to top) -->
+        <div *ngIf="needsReview(question)" class="mb-3 flex justify-start">
+          <span class="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded font-semibold shadow border border-orange-200">
+            Needs Review
+          </span>
+        </div>
         <!-- Points Badge and Toggle -->
         <div class="absolute top-4 right-4 flex items-center gap-3">
           <button type="button"
@@ -127,12 +133,7 @@ class="min-h-screen bg-gray-50 p-6">
         </div>
         <div class="flex items-center justify-between mb-2">
           <div class="text-lg font-bold">Q{{ i + 1 }}: {{ question.questionText }}</div>
-          <div class="flex items-center gap-2">
-            <span *ngIf="needsReview(question)"
-                  class="px-2 py-1 text-sm bg-orange-100 text-orange-800 rounded">
-              Needs Review
-            </span>
-          </div>
+          <div class="flex items-center gap-2"></div>
         </div>
 
         <!-- MCQ Options -->
