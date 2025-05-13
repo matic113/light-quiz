@@ -142,7 +142,9 @@ class="min-h-screen bg-gray-50 p-6">
                class="p-2 rounded flex items-center"
                [class.bg-green-100]="option.optionLetter === question.correctOption"
                [class.bg-red-100]="option.optionLetter === question.studentAnsweredOption && option.optionLetter !== question.correctOption">
-            <span class="font-medium">{{ option.optionLetter }}.</span> {{ option.optionText }}
+            <span class="font-medium">{{ option.optionLetter }}.</span>
+            <span *ngIf="option.optionLetter === question.studentAnsweredOption" class="arrow-to-answer text-blue-500 mr-2">&#8594;</span>
+            {{ option.optionText }}
           </div>
         </div>
 
