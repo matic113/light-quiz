@@ -296,7 +296,7 @@ getGroupQuizzes(shortCode: string): void {
 onDeleteQuiz(quizId: string) {
   Swal.fire({
     title: 'Are you sure?',
-    text: 'You won’t be able to revert this!',
+    text: "You won't be able to revert this!",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Yes, delete it!',
@@ -327,6 +327,10 @@ showresult(): void {
   this.router.navigate(['/results']);
 }
 
+/** Redirect to quiz metadata page with the given shortcode */
+joinQuiz(shortCode: string): void {
+  this.router.navigate(['/quiz'], { queryParams: { shortcode: shortCode } });
+}
 
   // ===========================
   // Helper Methods

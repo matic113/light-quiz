@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { SidebarStateService } from '../services/sidebar-state.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface QuizMetadata {
   quizId: string;
@@ -96,9 +97,16 @@ export class QuizComponent {
 
   ngOnInit(): void {
     this.sidebarStateService.setSidebarState(true);
-
     this.sidebarStateService.isExpanded$.subscribe(value => {
       this.isExpanded = value;
+    });
+    // Auto-fetch quiz metadata if shortcode is present in query params
+    this.route.queryParams.subscribe(params => {
+      const shortcode = params['shortcode'];
+      if (shortcode) {
+        this.shortcode = shortcode;
+        this.getQuizMetadata();
+      }
     });
   }
   // ----------------------------------------------------------------------------
@@ -115,8 +123,8 @@ export class QuizComponent {
     public authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private sidebarStateService: SidebarStateService
-
+    private sidebarStateService: SidebarStateService,
+    private route: ActivatedRoute
   ) { }
 
   async getQuizMetadata() {
