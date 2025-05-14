@@ -40,7 +40,7 @@
                         <p *ngIf="!quiz.isStarted" class="text-red-500 text-sm">Not Started</p>
                         <div class="flex items-center mt-2">
                             <!-- Shortcode Box -->
-                            <div class="flex items-center bg-gray-50 p-2 rounded-md border border-gray-200">
+                            <div (click)="quiz.code && copyExamLink(quiz.code)" class="flex items-center bg-gray-50 p-2 rounded-md border border-gray-200">
                                 <button class="text-green-800 hover:text-green-600 transition-colors" (click)="quiz.code && copyExamLink(quiz.code)">
                                     <img src="../../assets/images/Copy.png" alt="Copy" class="w-5 h-5 object-contain" />
                                 </button>
