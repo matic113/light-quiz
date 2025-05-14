@@ -13,13 +13,13 @@
   <!-- Quiz Content -->
   <div *ngIf="quiz && !loading" class="space-y-6 mt-24">
     <!-- Timer and Progress -->
-    <div [class]="getProgress() >= 70 ? 'bg-red-50' : 'bg-blue-50'"
+    <div [class]="getTimeRemainingPercentage() <= 30 ? 'bg-red-50' : 'bg-blue-50'"
       class="p-4 rounded-xl shadow space-y-2 fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-4xl">
       <div class="flex justify-between items-center">
         <h2 class="text-2xl font-bold text-gray-800">{{ quiz.title }}</h2>
         <div class="text-lg font-semibold">
           Time Remaining:
-          <span [class]="minutes < 5 ? 'text-red-600' : 'text-blue-600'">
+          <span [class]="getTimeRemainingPercentage() <= 30 ? 'text-red-600' : 'text-blue-600'">
             {{ minutes.toString().padStart(2, "0") }}:{{
             seconds.toString().padStart(2, "0")
             }}
@@ -28,7 +28,7 @@
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2">
         <div class="h-2 rounded-full transition-all duration-1000" [style.width.%]="getProgress()"
-          [class]="getProgress() >= 70 ? 'bg-red-500' : 'bg-blue-500'"></div>
+          [class]="getTimeRemainingPercentage() <= 30 ? 'bg-red-500' : 'bg-blue-500'"></div>
       </div>
     </div>
 

@@ -31,6 +31,7 @@ interface QuizDetails {
   title: string;
   description: string;
   startsAtUTC: string;
+  endsAtUTC: string;
   durationMinutes: number;
   questions: QuizQuestion[];
 }
@@ -132,10 +133,13 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
         this.fetchLatestProgress();
       }
 
-      // Start timer based on progress or initial duration
+      // Start timer based on progress or quiz end time
       if (this.progress?.attemptEndTimeUTC) {
         this.startTimerFromEndTime(this.progress.attemptEndTimeUTC);
+      } else if (this.quiz.endsAtUTC) {
+        this.startTimerFromEndTime(this.quiz.endsAtUTC);
       } else {
+        // Fallback to duration minutes if no end time is available
         this.startTimer(this.quiz.durationMinutes);
       }
 
@@ -356,26 +360,35 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     this.seconds = totalSeconds % 60;
   }
 
-  getProgress(): number {
-    if (!this.quiz?.durationMinutes) return 0;
+  getTimeRemainingPercentage(): number {
+    if (!this.quiz) return 100;
 
     let totalDurationSeconds: number;
     let remainingSeconds = this.minutes * 60 + this.seconds;
 
-    // If resuming, calculate total duration based on start/end times if possible
+    // Calculate total duration based on available end time
     if (this.progress?.attemptStartTimeUTC && this.progress?.attemptEndTimeUTC) {
+      // If resuming, use attempt start/end times
       const startTime = new Date(this.progress.attemptStartTimeUTC);
       const endTime = new Date(this.progress.attemptEndTimeUTC);
       totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
+    } else if (this.quiz.endsAtUTC) {
+      // If starting fresh, use quiz start/end times
+      const startTime = new Date(this.quiz.startsAtUTC);
+      const endTime = new Date(this.quiz.endsAtUTC);
+      totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
     } else {
-      // Fallback to durationMinutes if start/end times aren't available
+      // Fallback to durationMinutes if no end time is available
       totalDurationSeconds = this.quiz.durationMinutes * 60;
     }
 
-    if (totalDurationSeconds <= 0) return 100; // Avoid division by zero, assume completed if duration is zero or negative
+    if (totalDurationSeconds <= 0) return 0; // Avoid division by zero, assume no time remaining if duration is zero or negative
 
-    const elapsedSeconds = totalDurationSeconds - remainingSeconds;
-    return (elapsedSeconds / totalDurationSeconds) * 100;
+    return (remainingSeconds / totalDurationSeconds) * 100;
+  }
+
+  getProgress(): number {
+    return 100 - this.getTimeRemainingPercentage();
   }
 
   async submitQuiz(): Promise<void> { // Make async to await final save
