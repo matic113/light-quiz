@@ -46,6 +46,7 @@ interface QuizDetails { // Structure expected within ResumeResponse and potentia
   title: string;
   description: string;
   startsAtUTC: string;
+  endsAtUTC: string;
   durationMinutes: number;
   questions: QuizQuestion[];
 }
@@ -75,6 +76,7 @@ interface QuizData extends QuizMetadata {
   questions: QuizQuestion[];
   durationMinutes: number;
   startsAtUTC: string;
+  endsAtUTC: string;
 }
 
 @Component({
@@ -259,8 +261,9 @@ export class QuizComponent {
           attemptId: startResponse.attemptId,
           title: startResponse.title,
           description: startResponse.description,
-          startsAtUTC: startResponse.startsAtUTC, // Directly use from QuizData
-          durationMinutes: startResponse.durationMinutes, // Directly use from QuizData
+          startsAtUTC: startResponse.startsAtUTC,
+          endsAtUTC: startResponse.endsAtUTC,
+          durationMinutes: startResponse.durationMinutes,
           questions: startResponse.questions
         };
 
