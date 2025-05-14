@@ -85,6 +85,10 @@
               <label class="block text-xs text-gray-500 mb-1">Group Code:</label>
               <div class="relative w-full max-w-[150px]">
                 <div
+                  style="cursor: pointer;"
+
+                (click)="copyCode(group.shortCode)"
+
                   class="bg-gray-100 rounded px-4 py-2 text-sm font-mono break-all w-full pr-10"
                 >
                   {{ group.shortCode }}

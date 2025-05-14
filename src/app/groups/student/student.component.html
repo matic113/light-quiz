@@ -56,10 +56,13 @@
             <div class="text-sm text-gray-500 mt-2">
               <span>1 teacher, </span><span>{{ group.members.length }} students</span>
             </div>
-            <div class="mt-2">
+            <!-- <div class="mt-2">
               <label class="block text-xs text-gray-500 mb-1">Group Code:</label>
               <div class="relative w-full max-w-[150px]">
                 <div
+                  (click)="copyCode(group.shortCode)"
+                style="cursor: pointer;"
+
                   class="bg-gray-100 rounded px-4 py-2 text-sm font-mono break-all w-full pr-10"
                 >
                   {{ group.shortCode }}
@@ -75,7 +78,7 @@
                   />
                 </button>
               </div>
-            </div>
+            </div> -->
             <!-- View Details button for large screens -->
             <button
               (click)="selectGroup(group)"
