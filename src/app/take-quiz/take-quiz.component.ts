@@ -133,15 +133,8 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
         this.fetchLatestProgress();
       }
 
-      // Start timer based on progress or quiz end time
-      if (this.progress?.attemptEndTimeUTC) {
-        this.startTimerFromEndTime(this.progress.attemptEndTimeUTC);
-      } else if (this.quiz.endsAtUTC) {
-        this.startTimerFromEndTime(this.quiz.endsAtUTC);
-      } else {
-        // Fallback to duration minutes if no end time is available
-        this.startTimer(this.quiz.durationMinutes);
-      }
+      // Start timer based on quiz end time
+      this.startTimerFromEndTime(this.quiz.endsAtUTC);
 
       // Setup debounced saving
       this.saveSubscription = this.saveSubject
@@ -308,13 +301,6 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
     }
   }
 
-  private startTimer(durationMinutes: number): void {
-    if (!durationMinutes) return;
-    let totalSeconds = durationMinutes * 60;
-    this.updateTimerDisplay(totalSeconds);
-    this.startInterval(totalSeconds);
-  }
-
   private startTimerFromEndTime(endTimeUTC: string): void {
     const now = new Date();
     const endTime = new Date(endTimeUTC);
@@ -363,26 +349,14 @@ export class TakeQuizComponent implements OnInit, OnDestroy {
   getTimeRemainingPercentage(): number {
     if (!this.quiz) return 100;
 
-    let totalDurationSeconds: number;
-    let remainingSeconds = this.minutes * 60 + this.seconds;
+    const now = new Date();
+    const endTime = new Date(this.quiz.endsAtUTC);
+    const startTime = new Date(this.quiz.startsAtUTC);
+    
+    const totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
+    const remainingSeconds = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
 
-    // Calculate total duration based on available end time
-    if (this.progress?.attemptStartTimeUTC && this.progress?.attemptEndTimeUTC) {
-      // If resuming, use attempt start/end times
-      const startTime = new Date(this.progress.attemptStartTimeUTC);
-      const endTime = new Date(this.progress.attemptEndTimeUTC);
-      totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-    } else if (this.quiz.endsAtUTC) {
-      // If starting fresh, use quiz start/end times
-      const startTime = new Date(this.quiz.startsAtUTC);
-      const endTime = new Date(this.quiz.endsAtUTC);
-      totalDurationSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-    } else {
-      // Fallback to durationMinutes if no end time is available
-      totalDurationSeconds = this.quiz.durationMinutes * 60;
-    }
-
-    if (totalDurationSeconds <= 0) return 0; // Avoid division by zero, assume no time remaining if duration is zero or negative
+    if (totalDurationSeconds <= 0) return 0;
 
     return (remainingSeconds / totalDurationSeconds) * 100;
   }
