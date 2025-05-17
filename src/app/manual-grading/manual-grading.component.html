@@ -104,38 +104,45 @@ class="min-h-screen bg-gray-50 p-6">
              'outline-orange': question.aiConfidence < 5
            }"
            [class.needs-review]="needsReview(question)">
-        <!-- Needs Review Badge (moved to top) -->
-        <div *ngIf="needsReview(question)" class="mb-3 flex justify-start">
-          <span class="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded font-semibold shadow border border-orange-200">
-            Needs Review
-          </span>
-        </div>
-        <!-- Points Badge and Toggle -->
-        <div class="absolute top-4 right-4 flex items-center gap-3">
-          <button type="button"
-                  class="flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-200"
-                  [ngClass]="{
-                    'bg-red-100 text-red-800 hover:bg-red-200': !question.isCorrect,
-                    'bg-green-100 text-green-800 hover:bg-green-200': question.isCorrect
-                  }"
-                  (click)="toggleQuestionCorrectness(question)">
-            <span class="text-lg">{{ question.isCorrect ? '✔' : '✖' }}</span>
-            {{ question.isCorrect ? 'Mark Incorrect' : 'Mark Correct' }}
-          </button>
-          <div class="px-3 py-1 rounded-full text-sm font-semibold shadow border z-10"
-               [ngClass]="{
-                 'bg-red-100 text-red-800 border-red-200': !question.isCorrect,
-                 'bg-green-100 text-green-800 border-green-200': question.isCorrect && question.points > 0,
-                 'bg-orange-100 text-orange-800 border-orange-200': question.isCorrect && question.points === 0
-               }">
-            {{ question.isCorrect ? question.points : 0 }} / {{ question.points }} pts
+        <!-- Responsive Badges Row -->
+        <div class="flex flex-col sm:flex-row sm:justify-between mb-4 gap-2">
+          <!-- Mobile: only show if needs review; Desktop: always show for alignment -->
+          <div *ngIf="needsReview(question); else emptyBadge" class="flex justify-start min-h-[40px] sm:min-h-0">
+            <span class="badge bg-orange-100 text-orange-800 border-orange-200">
+              Needs Review
+            </span>
+          </div>
+          <ng-template #emptyBadge>
+            <div class="hidden sm:flex min-h-[40px] sm:min-h-0"></div>
+          </ng-template>
+          <div class="flex gap-3 mt-2 sm:mt-0 sm:justify-end">
+            <button type="button"
+                    class="badge border transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-200 flex items-center gap-1"
+                    [ngClass]="{
+                      'bg-red-100 text-red-800 hover:bg-red-200 border-red-200': !question.isCorrect,
+                      'bg-green-100 text-green-800 hover:bg-green-200 border-green-200': question.isCorrect
+                    }"
+                    (click)="toggleQuestionCorrectness(question)">
+              <span class="text-lg">{{ question.isCorrect ? '✔' : '✖' }}</span>
+              {{ question.isCorrect ? 'Mark Incorrect' : 'Mark Correct' }}
+            </button>
+            <div class="badge flex items-center justify-center"
+                 [ngClass]="{
+                   'bg-red-100 text-red-800 border-red-200': !question.isCorrect,
+                   'bg-green-100 text-green-800 border-green-200': question.isCorrect && question.points > 0,
+                   'bg-orange-100 text-orange-800 border-orange-200': question.isCorrect && question.points === 0
+                 }">
+              {{ question.isCorrect ? question.points : 0 }} / {{ question.points }} pts
+            </div>
           </div>
         </div>
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-lg font-bold">Q{{ i + 1 }}: {{ question.questionText }}</div>
-          <div class="flex items-center gap-2"></div>
+        <!-- Question Text and Image Side-by-Side -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-2">
+          <div class="text-lg font-bold flex-1">Q{{ i + 1 }}: {{ question.questionText }}</div>
+          <div *ngIf="question.imageUrl" class="flex justify-center sm:justify-end flex-shrink-0">
+            <img [src]="question.imageUrl" [alt]="'Question ' + (i + 1) + ' image'" class="max-w-md w-full rounded-lg shadow-md mx-auto">
+          </div>
         </div>
-
         <!-- MCQ Options -->
         <div *ngIf="question.options.length > 0" class="mt-2 space-y-2">
           <div *ngFor="let option of question.options"
@@ -146,11 +153,6 @@ class="min-h-screen bg-gray-50 p-6">
             <span *ngIf="option.optionLetter === question.studentAnsweredOption" class="arrow-to-answer text-blue-500 mr-2">&#8594;</span>
             {{ option.optionText }}
           </div>
-        </div>
-
-        <!-- Question Image -->
-        <div *ngIf="question.imageUrl" class="mt-4">
-          <img [src]="question.imageUrl" [alt]="'Question ' + (i + 1) + ' image'" class="max-w-full rounded-lg shadow-md">
         </div>
 
         <!-- Text Answer -->
