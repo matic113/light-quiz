@@ -71,6 +71,7 @@ interface ReportData {
 
 interface Student {
   name: string;
+  avatarUrl: string;
   status: string;
   score: number;
   scorePercentage: number;
@@ -362,6 +363,7 @@ export class QuizzesComponent implements OnInit {
         // تجهيز بيانات الطلاب كما في السابق
         const students: Student[] = topStudents.studentsGrades.map((s: any) => ({
           name: s.fullName,
+          avatarUrl: s.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(s.fullName)}&background=FF1654&color=fff&bold=true&size=128&font-size=0.5&rounded=true`,
           status: s.score >= (quizInfo.possiblePoints * 0.5) ? 'Passed' : 'Failed',
           score: s.score,
           scorePercentage: quizInfo.possiblePoints

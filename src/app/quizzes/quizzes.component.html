@@ -319,7 +319,7 @@
                             <tr *ngFor="let student of filteredStudents"
                                 class="border-b border-gray-200 hover:bg-gray-50">
                                 <td class="p-3 flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-200 mr-2"></div>
+                                    <img [src]="student.avatarUrl" [alt]="student.name" class="w-8 h-8 rounded-full mr-2 object-cover" onerror="this.src='../../assets/images/default-avatar.png'">
                                     <span class="text-sm text-gray-800">{{ student.name }}</span>
                                 </td>
                                 <td class="p-3">
