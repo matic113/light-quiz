@@ -1,6 +1,7 @@
 # Light Quiz
 
 A lightweight online quiz platform built with Angular, focusing on simplicity and ease of use.
+![Screenshot 2025-05-20 094714](https://github.com/user-attachments/assets/0f3ef0c4-20d5-4d6e-9b87-c15d0acd53fc)
 
 ## Features
 
