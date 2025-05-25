@@ -58,14 +58,14 @@ npm run env:production
 
 ### 3. Start Development
 ```bash
-npm start
+npm run start
 # Application available at http://localhost:4200
 ```
 
 ## 🔧 Available Scripts
 
 ```bash
-npm start                     # Start development server
+npm run start                     # Start development server
 npm run build                 # Build for production
 
 # Environment Management
