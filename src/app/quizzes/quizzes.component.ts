@@ -14,6 +14,7 @@ import { SidebarStateService } from '../services/sidebar-state.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { environment } from '../../environments/environment';
 
 // Register Chart.js components
 Chart.register(
@@ -129,7 +130,7 @@ export class QuizzesComponent implements OnInit {
   isExpanded = true;
   isMobile = true;
 
-  baseUrl = 'https://api.theknight.tech';
+  baseUrl = environment.apiUrl;
 
   showReportPopup = false;
   selectedReport: ReportData | null = null;

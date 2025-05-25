@@ -4,13 +4,14 @@ import { AuthService } from '../auth/auth.service';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuizzesService {
 
-  private baseUrl = 'https://api.theknight.tech';
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private authService: AuthService,private dialog: MatDialog) {}
 

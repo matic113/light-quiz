@@ -6,7 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "env:local": "node scripts/switch-env.js local",
+    "env:staging": "node scripts/switch-env.js staging",
+    "env:production": "node scripts/switch-env.js production",
+    "env:help": "node scripts/switch-env.js"
   },
   "private": true,
   "dependencies": {

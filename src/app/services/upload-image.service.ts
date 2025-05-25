@@ -2,6 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ImageUploadService {
@@ -13,7 +14,7 @@ export class ImageUploadService {
     const headers = {
       Authorization: `Bearer ${token}`
     };
-    return this.http.post<{ uploadUri: string }>(`https://api.theknight.tech/api/images/upload`, {}, { headers });
+    return this.http.post<{ uploadUri: string }>(`${environment.apiHost}/images/upload`, {}, { headers });
   }
 
   uploadFileToSasUrl(file: File, uploadUri: string) {

@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private registerUrl = 'https://api.theknight.tech/api/auth/register';
-  private loginUrl = 'https://api.theknight.tech/api/auth/token';
+  private registerUrl = `${environment.apiHost}/auth/register`;
+  private loginUrl = `${environment.apiHost}/auth/token`;
   private tokenKey = 'auth_token';
 
   constructor(
