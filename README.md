@@ -31,6 +31,10 @@ A comprehensive online quiz management platform built with Angular 19, featuring
 - **Authentication**: JWT tokens
 - **Backend API**: .NET Core (required dependency)
 
+## 📱 Mobile App
+
+A Flutter mobile app for students is also available ([Application Repository](https://github.com/YousefDewidar/light_quiz_mobile)).
+
 ## 📋 Prerequisites
 
 - **Node.js** (v18+) and **NPM** (v9+)
@@ -79,10 +83,6 @@ npm run env:production        # Production API configuration
 This frontend requires the Light Quiz .NET API to function:
 - **Repository**: [https://github.com/matic113/light-quiz-api](https://github.com/matic113/light-quiz-api)
 - **Required for**: Authentication, quiz data, analytics, file uploads, AI grading
-
-## 📱 Mobile App
-
-A Flutter mobile app for students is also available (repository link coming soon).
 
 ## 📁 Key Components
 
